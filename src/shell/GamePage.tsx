@@ -9,7 +9,8 @@ import { AnrufQueuePanel } from '../panels/AnrufQueuePanel.tsx'
 import { AbfragePanel } from '../panels/AbfragePanel.tsx'
 import { EinsatzPanel } from '../panels/EinsatzPanel.tsx'
 import { RessourcenPanel } from '../panels/RessourcenPanel.tsx'
-import { FunkfeldPanel, ProtokollPanel } from '../panels/FeedPanels.tsx'
+import { FunkPanel } from '../panels/FunkPanel.tsx'
+import { ProtokollPanel } from '../panels/FeedPanels.tsx'
 import { startGameLoop } from '../state/simulation.ts'
 import './game-page.css'
 
@@ -80,7 +81,7 @@ export function GamePage() {
           <RessourcenPanel />
         </WindowFrame>
         <WindowFrame id="funk" title="Funkfeld">
-          <FunkfeldPanel />
+          <FunkPanel />
         </WindowFrame>
         <WindowFrame id="protokoll" title="Protokoll">
           <ProtokollPanel />

@@ -1,0 +1,98 @@
+.funk-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.funk-feed {
+  flex: 1;
+  overflow: auto;
+  padding: var(--sp-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.funk-spruch {
+  display: flex;
+  gap: var(--sp-2);
+  padding: var(--sp-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel-inset);
+  font-size: var(--fs-xs);
+}
+
+.funk-spruch.funk-pending {
+  border-color: var(--signal-amber);
+}
+
+.funk-spruch.funk-nachforderung-na {
+  border-color: var(--danger);
+}
+
+.funk-time {
+  color: var(--text-muted);
+  flex: none;
+}
+
+.funk-lines {
+  flex: 1;
+}
+
+.funk-line {
+  margin: 0 0 2px;
+  line-height: var(--lh-dense);
+  color: var(--text-secondary);
+}
+
+.funk-speaker {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.funk-action {
+  font-size: var(--fs-xs);
+  margin-top: 2px;
+  background: var(--signal-amber);
+  color: var(--text-inverse);
+  border: none;
+  font-weight: 600;
+}
+
+.funk-nachforderung-na .funk-action {
+  background: var(--danger);
+}
+
+.funk-compose {
+  flex: none;
+  border-top: 1px solid var(--border-strong-solid);
+  padding: var(--sp-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  background: var(--bg-panel);
+}
+
+.funk-compose-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.funk-compose-row select {
+  font-size: var(--fs-xs);
+  max-width: 220px;
+}
+
+.funk-compose-row button {
+  font-size: var(--fs-xs);
+  padding: 2px var(--sp-1);
+}
+
+.funk-compose-row input {
+  flex: 1;
+  min-width: 120px;
+  font-size: var(--fs-xs);
+}

@@ -208,3 +208,30 @@ Settings→Mock-WebLLM aktivieren→Freitext-Dialog; Light-Modus-Freitext über 
 **Offene Punkte:** Echte WebLLM-Läufe sind nur manuell testbar (GPU/Download) —
 in CI per Mock ersetzt. Tier-2-JSON-Live-Scoring (AI_CALLER_TECH „Mini-Check")
 übernimmt der wahrheitsgetriebene Capture-Pfad.
+
+## M7 — Funk bidirektional (2026-06-12)
+
+**Was:**
+- **Funkprotokoll-Engine** (`engine/funk.ts`) EXAKT nach GAME_DATA §10c:
+  „[Gerufener] von [Rufer]" / „kommen" / „Verstanden", Kurzrufnamen ohne 5.-Präfix;
+  Dialoge als Sprecher-Zeilen.
+- **Statusgetriebener Funkfeed**: Eintreffmeldung (Status 3), Transportmeldung (Status 4),
+  **NA-Nachforderung** bei kritischem Einsatz ohne NA-Mittel → Button „A4-Nachforderung
+  anlegen" erzeugt den A4-Auftrag am selben Ort (GAME_DATA-Beispiel „Laufende CPR…"),
+  **Polizei-Nachforderung** → Button alarmiert POL, **Sprechwunsch** bei Status 5 mit
+  Quittieren-Mechanik (Inhalt erst nach Quittung).
+- **Aktives Anfunken**: Fahrzeugwahl (auch via „Anfunken" im Ressourcenmonitor),
+  Schnellphrasen „Status?", „Eintreffzeit?" (echte ETA aus der Sim), „Abbruch"
+  (führt Einsatzabbruch wirklich aus; „Negativ, Patient an Bord" bei Status 4/5),
+  „NA abkömmlich?"; Freitext-Funksprüche — Antwort via LLM (wenn aktiv, mit
+  Besatzungs-Systemprompt) oder Template, immer protokollkonform.
+- **Töne**: Funk-Quittungston je Spruch, Pager-Gong bei Alarmierung (Status 1).
+- Funkfeld-Panel neu (Dialog-Feed + Compose), Status-Log bleibt im Protokoll.
+
+**Wie getestet:** `npm run lint` ✓ · `npm test` ✓ (123 Tests; neu: 12 Protokoll-/Trigger-/
+Quick-Reply-Tests + 2 Integrationstests A4-Anlage & POL-Alarm) · `npm run build` ✓
+(WebLLM-Chunks bleiben lazy, Entry 164 kB) · `npm run smoke` ✓ (17 E2E; neu:
+protokollkonformer Status-Funkspruch ohne 5.-Präfix, Freitext-Template-Antwort,
+Anfunken-Vorauswahl aus dem Ressourcenmonitor).
+
+**Offene Punkte:** Stil-Bonus für Spieler-Funkdisziplin kommt mit dem Scoring (M8).

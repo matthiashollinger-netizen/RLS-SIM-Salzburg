@@ -159,6 +159,20 @@
 - Beim Verbinden eines Endpoints wird ein Mini-Request gesendet, damit Fehler
   (URL/Key) sofort sichtbar sind. `/v1` wird automatisch ergänzt, wenn es fehlt.
 
+## 2026-06-12 — M7
+
+### Funk-Auslöser (Spielmodell)
+- NA-Nachforderung: RTW/KTW trifft bei `severity: hoch` ein und kein NA-Mittel
+  (NEF/NAW/Heli) ist disponiert → Funkspruch mit A4-Aktion (GAME_DATA-§10c-Beispiel).
+- Polizei-Nachforderung: Kategorie schlägt POL vor, aber nicht alarmiert.
+- Sprechwunsch: deterministisch ca. jede dritte Einheit bei Status 5
+  (GAME_DATA §12 nennt Sprechwünsche bei Status 5, Quote unbekannt).
+- Eintreff-/Transportmeldung bei Status 3/4 (Template-Varianten, deterministisch).
+
+### NA-abkömmlich
+- Antwort derzeit rein informativ (deterministisch ~50 %); mechanische Freigabe
+  des NA-Mittels folgt ggf. in Phase 2.
+
 ### Playwright-Smoke gegen Production-Preview
 - **Entscheidung:** Smoke-Tests laufen gegen `vite build` + `vite preview` (Port 4173),
   nicht gegen den Dev-Server.

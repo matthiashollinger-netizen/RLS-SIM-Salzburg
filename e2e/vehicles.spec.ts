@@ -36,8 +36,9 @@ test('resource monitor shows live fleet with status badges and dispatches a test
   await page.getByRole('button', { name: 'Probealarm (ÜBUNG)' }).click()
   await expect(row.locator('.status-badge')).toHaveText('1')
 
-  // the status feed logs the transition
-  await expect(page.getByTestId('funkfeld-panel')).toContainText(`${callSign} → Status 1`)
+  // the protocol logs the transition (Funkfeld is the radio dialogue since M7)
+  await page.getByRole('toolbar', { name: 'Fenster' }).getByRole('button', { name: 'Protokoll' }).click()
+  await expect(page.getByTestId('protokoll-panel')).toContainText(`${callSign} → Status 1`)
 })
 
 test('day-only vehicles are off duty outside their window', async ({ page }) => {

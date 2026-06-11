@@ -6,6 +6,8 @@ import { useVehicleVersion } from '../state/useVehicles.ts'
 import { vehicleSim } from '../state/simulation.ts'
 import { useGameStore } from '../state/gameStore.ts'
 import { probealarm } from '../state/debugActions.ts'
+import { useFunkStore } from '../state/funkStore.ts'
+import { useWindowStore } from '../windows/windowStore.ts'
 import { StatusBadge } from '../components/StatusBadge.tsx'
 import './panels.css'
 
@@ -76,6 +78,16 @@ export function RessourcenPanel() {
                 → {h.short} ({h.positionsCode})
               </button>
             ))}
+          {sel.status !== 'AUS' && (
+            <button
+              onClick={() => {
+                useFunkStore.getState().setTarget(sel.id)
+                useWindowStore.getState().setOpen('funk', true)
+              }}
+            >
+              Anfunken
+            </button>
+          )}
           {isAvailable(sel.status) && (
             <>
               <button onClick={() => probealarm(sel.id)}>Probealarm (ÜBUNG)</button>
