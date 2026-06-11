@@ -120,6 +120,29 @@
 - Saison+Tageslicht steuern „im Dienst" (Sim), Wetter-Flag filtert nur NEUE
   Dispositionen (bereits fliegende Helis bleiben im Einsatz).
 
+## 2026-06-12 — M5
+
+### Anrufrate (Spielbarkeit)
+- Generator nutzt `emergenciesPerDay × 1,6` (statt aller 800 Anrufe/Tag) mit
+  Tagesganglinie als Poisson-Prozess; Queue-Deckel 4 Anrufe (solo spielbar).
+  Mix: 55 % Notfall, 25 % KT-Anmeldung, 10 % Rückfrage, 6 % Irrläufer,
+  4 % Taschenwähler. Schwierigkeit skaliert das in M8.
+
+### Ortungskaskade-Parameter
+- AML bei 75 % der Handy-Anrufe, 10–30 s, Radius 40–400 m (GAME_DATA §3b nennt
+  „nicht immer"; Quote geschätzt). Ortungs-SMS: Antwort nach ~30 s, Klick-Quote 85 %
+  (panisch unberuhigt: 40 %), Ergebnis ±25 m. Netzbetreiber: 3 min, ±1500 m.
+
+### Duplizitätsanrufe
+- 18 % Wahrscheinlichkeit, wenn offene SoSi-Einsätze < 30 min alt existieren.
+  UI zeigt offene Einsätze < 2 km um die ermittelte Position als Zuordnen-Buttons.
+
+### Anrufer-Wissen & Störungen
+- Passanten kennen die Adresse nur zu 45 %, andere zu 93 %. Verschwiegen bis
+  gefragt: Detailinfos 50 %, Alter 35 %, Zugang 30 %. Falsche Hausnummer 18 %
+  (korrigiert sich in derselben Antwort), Panik braucht Beruhigen-Button 30 %,
+  legt früh auf 6 %, Englisch 8 %. Alles Tier-1-Schätzwerte, seedbar.
+
 ### Playwright-Smoke gegen Production-Preview
 - **Entscheidung:** Smoke-Tests laufen gegen `vite build` + `vite preview` (Port 4173),
   nicht gegen den Dev-Server.

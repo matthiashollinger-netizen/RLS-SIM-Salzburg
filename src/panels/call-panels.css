@@ -1,0 +1,321 @@
+/* Anruf-Queue */
+.anruf-queue {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.queue-count {
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.debug-btn {
+  font-size: var(--fs-xs);
+}
+
+.queue-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  flex: 1;
+}
+
+.queue-entry {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.queue-ring {
+  color: var(--sosi-pulse);
+  animation: ring-pulse 1.2s infinite;
+  font-size: var(--fs-lg);
+}
+
+@keyframes ring-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.15);
+  }
+}
+
+.queue-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  font-size: var(--fs-xs);
+}
+
+.queue-wait {
+  color: var(--warn);
+}
+
+.queue-answer {
+  background: var(--ok);
+  color: var(--text-inverse);
+  border: none;
+  font-weight: 600;
+}
+
+.queue-answer:hover {
+  background: var(--status-00);
+}
+
+.queue-answer:disabled {
+  opacity: 0.4;
+}
+
+.queue-active-hint {
+  padding: var(--sp-2);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* Abfragemaske */
+.abfrage-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+  gap: var(--sp-1);
+  padding: var(--sp-1);
+}
+
+.abfrage-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  flex: none;
+}
+
+.hangup-btn {
+  margin-left: auto;
+  background: var(--danger);
+  color: var(--text-inverse);
+  border: none;
+  font-size: var(--fs-xs);
+}
+
+.transcript {
+  flex: none;
+  max-height: 180px;
+  min-height: 90px;
+  overflow: auto;
+  background: var(--bg-panel-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-1) var(--sp-2);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-normal);
+}
+
+.transcript p {
+  margin: 2px 0;
+}
+
+.transcript-anrufer {
+  color: var(--text-primary);
+}
+
+.transcript-calltaker {
+  color: var(--info);
+}
+
+.transcript-system {
+  color: var(--signal-amber);
+  font-style: italic;
+}
+
+.frage-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: none;
+}
+
+.frage-buttons button {
+  font-size: var(--fs-xs);
+  padding: 2px var(--sp-2);
+}
+
+.beschwerde-section {
+  flex: none;
+}
+
+.beschwerde-toggle {
+  font-size: var(--fs-xs);
+  width: 100%;
+  text-align: left;
+}
+
+.beschwerde-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: var(--sp-1);
+  background: var(--bg-panel-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  margin-top: 2px;
+}
+
+.beschwerde-grid button {
+  font-size: var(--fs-xs);
+  padding: 2px var(--sp-1);
+}
+
+.beschwerde-active {
+  background: var(--bg-active) !important;
+  border-color: var(--border-focus) !important;
+}
+
+.kt-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  width: 100%;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.anrufer-rolle-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  flex: none;
+}
+
+.anrufer-rolle-row button {
+  font-size: var(--fs-xs);
+  padding: 1px var(--sp-1);
+}
+
+.adresse-block {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--fs-xs);
+}
+
+.adresse-quelle {
+  color: var(--text-muted);
+}
+
+.adresse-search {
+  position: relative;
+}
+
+.adresse-search input {
+  width: 100%;
+  font-size: var(--fs-xs);
+}
+
+.adresse-hits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--bg-panel-raised);
+  border: 1px solid var(--border-strong-solid);
+  border-radius: var(--radius-sm);
+  max-height: 120px;
+  overflow: auto;
+}
+
+.adresse-hits button {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  font-size: var(--fs-xs);
+  padding: 2px var(--sp-2);
+}
+
+.adresse-hits button:hover {
+  background: var(--bg-hover);
+}
+
+.ortung-row {
+  display: flex;
+  gap: var(--sp-1);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ortung-row button {
+  font-size: var(--fs-xs);
+  padding: 1px var(--sp-1);
+}
+
+.ortung-ok {
+  color: var(--ok);
+}
+
+.ortung-wait {
+  color: var(--text-muted);
+}
+
+.duplikat-block {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--sp-1);
+  border: 1px solid var(--warn);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  color: var(--warn);
+}
+
+.duplikat-block button {
+  font-size: var(--fs-xs);
+  text-align: left;
+}
+
+.merkmalskette-preview {
+  flex: none;
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.abfrage-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex: none;
+}
+
+.code-preview {
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+}
+
+.create-auftrag-btn {
+  margin-left: auto;
+  background: var(--accent);
+  color: var(--text-inverse);
+  border: none;
+  font-weight: 600;
+}
+
+.create-auftrag-btn:disabled {
+  opacity: 0.4;
+}

@@ -3,6 +3,7 @@ import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { helicopters, hospitals, stations } from '../data/index.ts'
 import { attachVehicleMarkers } from './vehicleMarkers.ts'
+import { attachIncidentMarkers } from './incidentMarkers.ts'
 import './map-panel.css'
 
 /**
@@ -106,6 +107,7 @@ export function MapPanel() {
     }
 
     const detachVehicles = attachVehicleMarkers(map)
+    const detachIncidents = attachIncidentMarkers(map)
 
     const ro = new ResizeObserver(() => map.resize())
     ro.observe(container)
@@ -113,6 +115,7 @@ export function MapPanel() {
     return () => {
       ro.disconnect()
       detachVehicles()
+      detachIncidents()
       for (const m of markers) m.remove()
       map.remove()
       mapRef.current = null

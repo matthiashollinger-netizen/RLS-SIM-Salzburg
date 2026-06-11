@@ -35,3 +35,15 @@ export function lerpLatLon(a: LatLon, b: LatLon, t: number): LatLon {
   const c = Math.min(1, Math.max(0, t))
   return { lat: a.lat + (b.lat - a.lat) * c, lon: a.lon + (b.lon - a.lon) * c }
 }
+
+/** Circle polygon (lon/lat ring) around a center, radius in meters. */
+export function geoCircle(center: LatLon, radiusM: number, points = 48): [number, number][] {
+  const ring: [number, number][] = []
+  const latR = radiusM / 111320
+  const lonR = radiusM / (111320 * Math.cos((center.lat * Math.PI) / 180))
+  for (let i = 0; i <= points; i++) {
+    const a = (i / points) * Math.PI * 2
+    ring.push([center.lon + Math.cos(a) * lonR, center.lat + Math.sin(a) * latR])
+  }
+  return ring
+}

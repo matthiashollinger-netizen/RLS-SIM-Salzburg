@@ -1,10 +1,37 @@
 import { balancing, categoryById, hospitals, places } from '../data/index.ts'
 import { haversineKm } from '../engine/geo.ts'
+import { generateScenario } from '../engine/scenario.ts'
+import { mulberry32 } from '../engine/rng.ts'
 import { vehicleSim } from './simulation.ts'
 import { useGameStore } from './gameStore.ts'
 import { useEventLog } from './eventLog.ts'
 import { useDispatchStore } from './dispatchStore.ts'
+import { useCallStore } from './callStore.ts'
 import { unitDisplayName } from '../lib/format.ts'
+
+const demoRng = mulberry32(4242)
+
+/**
+ * Deterministic demo call for testing/tutorial: Festnetz INTERN Brustschmerz,
+ * caller knows the address, no disturbances.
+ */
+export function simulateDemoCall(): void {
+  const region = useGameStore.getState().region
+  const scenario = generateScenario(demoRng, {
+    region,
+    forceType: 'notfall',
+    forceHauptbeschwerde: 'brustschmerz',
+  })
+  scenario.phone = 'festnetz'
+  scenario.anschlussAdresse = { ...scenario.truth.ort }
+  scenario.anrufer.kenntAdresse = true
+  scenario.anrufer.emotion = 'aufgeregt'
+  scenario.anrufer.sprache = 'de'
+  scenario.stoerungen = []
+  scenario.amlAfterSec = undefined
+  scenario.amlRadiusM = undefined
+  useCallStore.getState().incoming(scenario)
+}
 
 let testCounter = 1
 

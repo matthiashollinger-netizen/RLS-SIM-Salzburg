@@ -15,6 +15,9 @@ interface GameState extends SimContext {
   /** Heli no-go when 'schlecht' (GAME_MECHANICS §2 Heli-Logik) */
   weather: Weather
   region: Region
+  /** incoming call generation (calltaker role) */
+  callsEnabled: boolean
+  setCallsEnabled: (v: boolean) => void
   setSpeed: (s: GameSpeed) => void
   setRunning: (r: boolean) => void
   setWeather: (w: Weather) => void
@@ -37,6 +40,8 @@ export const useGameStore = create<GameState>((set) => ({
   season: seasonOf(6),
   weather: 'gut',
   region: 'NORD',
+  callsEnabled: true,
+  setCallsEnabled: (callsEnabled) => set({ callsEnabled }),
   setSpeed: (speed) => set({ speed }),
   setRunning: (running) => set({ running }),
   setWeather: (weather) => set({ weather }),

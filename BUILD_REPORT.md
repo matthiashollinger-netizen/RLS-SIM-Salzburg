@@ -145,3 +145,37 @@ Einsatz erzeugen→AO→disponieren→KH-Liste; Code-Override ändert SoSi/Hilfs
 
 **Offene Punkte:** Scoring der Über-/Unterdisposition und Sekundärtransporte folgt in M8;
 echte Aufträge kommen ab M5 aus der Notrufabfrage.
+
+## M5 — Calltaker & Szenario-Engine Tier 1 (2026-06-12)
+
+**Was:**
+- **Szenario-Generator** (`engine/scenario.ts`): gewichtete Kategorien aus balancing,
+  Anruf-Mix (Notfall/KT/Rückfrage/Irrläufer/Taschenwähler), Wahrheit-Objekt
+  (Kategorie, Personen, Vitalstatus, Lagetext, Ort aus Orts-Index),
+  Anruferprofil (Rolle/Emotion/Sprache/kennt Adresse/verschweigt-bis-gefragt),
+  Störungen (falsche Hausnummer, Panik, legt auf), AML-Setup, Duplizitätsanrufe
+  zu offenen Einsätzen — komplett seedbar.
+- **Tier-1-Anrufer** (`engine/callerScript.ts`): Dialogbaum-Fallback, ohne LLM voll
+  spielbar; Antworten nur aus der Wahrheit, verschwiegene Infos nur auf passende Frage,
+  Panik-Mechanik (Beruhigen), SMS-Klick-Verhalten.
+- **Abfragemaske** (`engine/abfrage.ts` + AbfragePanel): standardisiertes Frageschema
+  (Phase 1/2 + 2 kategorie­spezifische Detailfragen je Hauptbeschwerde, 24 Beschwerden),
+  Anruferrolle-Buttons, KT-Triage (HEIM/DIALYSE/AMB/STAT/EINWEISUNG), Transcript,
+  Merkmalskette live im offiziellen ELS-Stil, Stichwort-Vorschau, Auftrag-Übergabe an
+  die Dispo (keine-Atmung→STILL-Override).
+- **Ortungskaskade**: AML-Punkt nach 10–30 s mit Genauigkeitsradius auf der Karte
+  (GeoJSON-Kreis), Ortungs-SMS-Button (Anrufer entscheidet), Netzbetreiber-Abfrage
+  (3 min, grob), Festnetz-Anschlussadresse vorausgefüllt; „Ortung übernehmen".
+- **Adress-Fuzzy-Suche** über den Orts-Index (umlaut-normalisiert, Token-Matching).
+- **Anruf-Queue** mit synthetischem Klingelton (WebAudio, kein Asset), Wartezeit,
+  Annehmen; Anrufgenerator im Game-Loop (Poisson, Tagesganglinie, Queue-Deckel).
+- **Duplikat-UI**: offene Einsätze < 2 km werden im Gespräch angezeigt → Zuordnen.
+- Karte: Einsatzort-Marker (pulsierend, klick→Auswahl) + AML-Kreis.
+
+**Wie getestet:** `npm run lint` ✓ · `npm test` ✓ (102 Tests; neu: 6 Generator-Verteilung
+über 2000 Szenarien, 14 Abfrage/Skript/Fuzzy inkl. STILL-Override, Hausnummer-Störung,
+Panik-Mechanik) · `npm run build` ✓ · `npm run smoke` ✓ (12 E2E; neu: kompletter
+Calltaker-Flow Anruf→Abfrage→Hauptbeschwerde→Auftrag→Einsatzliste; Fuzzy-Adresse).
+
+**Offene Punkte:** Telefonreanimations-Minigame (M8-Outcome-Bonus als T-CPR-Flag),
+englischsprachige Anrufer nutzen aktuell nur den Begrüßungstext (Tier 2 in M6).
