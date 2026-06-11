@@ -13,6 +13,8 @@ import { FunkPanel } from '../panels/FunkPanel.tsx'
 import { ProtokollPanel } from '../panels/FeedPanels.tsx'
 import { startGameLoop } from '../state/simulation.ts'
 import { ShiftReportDialog } from '../components/ShiftReportDialog.tsx'
+import { TutorialOverlay } from '../components/TutorialOverlay.tsx'
+import { AchievementToast } from '../components/AchievementToast.tsx'
 import './game-page.css'
 
 function defaultRects(): Record<WindowId, WindowRect> {
@@ -90,6 +92,8 @@ export function GamePage() {
       </div>
       <Taskbar defs={WINDOW_DEFS} />
       <ShiftReportDialog />
+      <TutorialOverlay />
+      <AchievementToast />
     </div>
   )
 }

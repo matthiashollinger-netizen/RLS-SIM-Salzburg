@@ -48,6 +48,12 @@ export const useShiftStore = create<ShiftState>((set) => ({
       void dbSet('history', HISTORY_KEY, history)
       return { report, history, showReport: true }
     })
+    // achievements (M10)
+    const startHour = Math.floor(g.shiftStartSec / 3600)
+    void import('./achievementStore.ts').then(async ({ useAchievementStore }) => {
+      await useAchievementStore.getState().load()
+      useAchievementStore.getState().evaluateReport(report, startHour)
+    })
   },
 
   closeReport: () => set({ showReport: false }),

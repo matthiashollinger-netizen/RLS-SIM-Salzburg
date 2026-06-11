@@ -7,6 +7,7 @@ import {
   type PlayerRole,
 } from '../state/gameStore.ts'
 import { resetWorld } from '../state/simulation.ts'
+import { useTutorialStore } from '../state/tutorialStore.ts'
 import type { Region } from '../data/schemas.ts'
 import './home.css'
 
@@ -38,6 +39,22 @@ export function HomePage() {
       startHour,
       startWeekday: 1,
     })
+    navigate('/spiel')
+  }
+
+  const startTutorial = async () => {
+    await resetWorld()
+    useGameStore.getState().startShift({
+      region: 'NORD',
+      mode: 'endlos',
+      difficulty: 'entspannt',
+      role: 'voll',
+      month: 6,
+      startHour: 8,
+      startWeekday: 1,
+    })
+    useGameStore.getState().setCallsEnabled(false) // only the guided call
+    useTutorialStore.getState().start()
     navigate('/spiel')
   }
 
@@ -139,6 +156,13 @@ export function HomePage() {
         <button className="home-start" data-testid="schicht-starten" onClick={() => void start()}>
           Schicht starten
         </button>
+
+        <div className="menu-secondary">
+          <button data-testid="tutorial-starten" onClick={() => void startTutorial()}>
+            Tutorial (geführte erste Schicht)
+          </button>
+          <button onClick={() => navigate('/editor')}>Szenario-Editor</button>
+        </div>
       </div>
     </div>
   )

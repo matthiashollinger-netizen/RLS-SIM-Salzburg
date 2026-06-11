@@ -6,6 +6,9 @@ import { HomePage } from './shell/HomePage.tsx'
 const GamePage = lazy(() =>
   import('./shell/GamePage.tsx').then((m) => ({ default: m.GamePage })),
 )
+const EditorPage = lazy(() =>
+  import('./shell/EditorPage.tsx').then((m) => ({ default: m.EditorPage })),
+)
 const DataBrowser = lazy(() =>
   import('./debug/DataBrowser.tsx').then((m) => ({ default: m.DataBrowser })),
 )
@@ -20,6 +23,14 @@ export default function App() {
           element={
             <Suspense fallback={<div className="route-loading">Leitstelle wird geladen…</div>}>
               <GamePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="editor"
+          element={
+            <Suspense fallback={<div className="route-loading">Editor wird geladen…</div>}>
+              <EditorPage />
             </Suspense>
           }
         />

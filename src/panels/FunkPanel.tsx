@@ -77,7 +77,7 @@ export function FunkPanel() {
 
   return (
     <div className="funk-panel" data-testid="funkfeld-panel">
-      <div className="funk-feed">
+      <div className="funk-feed" role="log" aria-live="polite" aria-label="Funkverkehr">
         {sprueche.length === 0 && <div className="panel-empty">Kein Funkverkehr.</div>}
         {sprueche.map((s) => (
           <div key={s.id} className={`funk-spruch funk-${s.kind}${s.requiresAck && !s.acked ? ' funk-pending' : ''}`}>

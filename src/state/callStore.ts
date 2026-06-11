@@ -382,6 +382,7 @@ export const useCallStore = create<CallStoreState>((set, get) => ({
       truthCategoryId: isNotfall ? call.scenario.truth.categoryId : undefined,
       truthSeverity: isNotfall ? call.scenario.truth.severity : undefined,
       tcpr,
+      uebung: call.scenario.uebung ?? false,
     })
     set((st) => ({
       active: st.active ? { ...st.active, auftragId } : null,

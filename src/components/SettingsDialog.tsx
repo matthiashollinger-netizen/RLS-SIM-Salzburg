@@ -1,8 +1,62 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLlmStore } from '../state/llmStore.ts'
 import { isTtsAvailable } from '../llm/tts.ts'
 import { WEBLLM_MODELS, type WebLlmModelId } from '../llm/types.ts'
+import { getVolume, setVolume } from '../audio/sounds.ts'
+import { ACHIEVEMENTS, useAchievementStore } from '../state/achievementStore.ts'
 import './settings-dialog.css'
+
+const MIXER_CHANNELS = [
+  { id: 'master' as const, label: 'Gesamt' },
+  { id: 'ring' as const, label: 'Telefon' },
+  { id: 'funk' as const, label: 'Funk-Quittung' },
+  { id: 'gong' as const, label: 'Pager-Gong' },
+]
+
+function SoundMixer() {
+  const [, force] = useState(0)
+  return (
+    <section className="settings-section">
+      <h3>Sound-Mixer</h3>
+      {MIXER_CHANNELS.map((c) => (
+        <label key={c.id} className="mixer-row">
+          <span>{c.label}</span>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            aria-label={`Lautstärke ${c.label}`}
+            value={Math.round(getVolume(c.id) * 100)}
+            onChange={(e) => {
+              setVolume(c.id, Number(e.target.value) / 100)
+              force((n) => n + 1)
+            }}
+          />
+        </label>
+      ))}
+    </section>
+  )
+}
+
+function AchievementList() {
+  const unlocked = useAchievementStore((s) => s.unlocked)
+  useEffect(() => {
+    void useAchievementStore.getState().load()
+  }, [])
+  return (
+    <section className="settings-section">
+      <h3>Erfolge</h3>
+      <ul className="achievement-list">
+        {ACHIEVEMENTS.map((a) => (
+          <li key={a.id} className={unlocked[a.id] ? 'achievement-unlocked' : 'achievement-locked'}>
+            <span aria-hidden="true">{unlocked[a.id] ? '★' : '☆'}</span> <strong>{a.title}</strong>{' '}
+            — {a.description}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
 
 export function SettingsDialog({ onClose }: { onClose: () => void }) {
   const llm = useLlmStore()
@@ -135,6 +189,9 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
             Anrufer vorlesen (Web Speech, deutsche Stimme{isTtsAvailable() ? '' : ' — nicht verfügbar'})
           </label>
         </section>
+
+        <SoundMixer />
+        <AchievementList />
       </div>
     </div>
   )

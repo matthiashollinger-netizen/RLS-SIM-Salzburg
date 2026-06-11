@@ -295,3 +295,70 @@ wechselt auf „disponiert"; manueller WebRTC-Flow erzeugt Offer/Answer-Codes).
 
 **Offene Punkte:** Echte P2P-Verbindung (Cloud/manuell) ist umgebungsabhängig
 manuell zu testen; Gast-Marker ohne Interpolation (Phase 2).
+
+## M10 — Editor, Story, Polish (2026-06-12)
+
+**Was:**
+- **Szenario-Editor** (`/#/editor`): Einsätze mit Zeitpunkt, Hauptbeschwerde,
+  Ort/Straße (Orts-Index), Personenzahl, Emotion und eigenem Anrufer-Skript;
+  Export/Import als validierte JSON-Datei (`*.rls-uebung.json`); „Als ÜBUNG
+  starten" spielt die geskripteten Anrufe ab — Aufträge laufen als ÜBUNG ohne
+  Scoring (GAME_DATA §4).
+- **2 dezente Story-Arcs** (flag-basiert, mehrschichtig, IndexedDB): Brandserie
+  Lehen (NORD) und der vermisste Wanderer (SÜD) mit Auflösungs-Meldungen.
+- **Achievements** (6, lokal) mit Unlock-Toast und Liste in den Einstellungen.
+- **Sound-Mixer** (Gesamt/Telefon/Funk/Gong) in den Einstellungen.
+- **Onboarding-Tutorial**: geführte erste Schicht in 8 Schritten mit
+  Auto-Advance (Anruf → Abfrage → Hauptbeschwerde → Auftrag → Disposition →
+  Status/Funk → Report), Overlay oben mittig, jederzeit abbrechbar.
+- **A11y-Pass**: durchgängige aria-Labels, `role="log"`/`aria-live` für Funk- und
+  Gesprächs-Feeds, sichtbare Fokus-Ringe, Status & Marker tragen Ziffern/Formen
+  zusätzlich zur Farbe (Farbfehlsicht), `lang="de-AT"`.
+- **README** mit Screenshots (Hauptmenü, Cockpit, Editor) + Spielanleitung,
+  Lizenz-/Markenhinweisen; Screenshot-Generator als gateter Playwright-Spec.
+- **Finale Smoke-Suite**: Definition-of-Done-Test spielt die komplette
+  Tutorial-Schicht End-to-End inkl. Funkprüfung, Schichtreport und
+  Achievement-Toast; Editor-Übung-Flow + Datei-Export.
+
+**Wie getestet:** `npm run lint` ✓ · `npm run validate-data` ✓ · `npm test` ✓
+(141 Tests) · `npm run build` ✓ · `npm run smoke` ✓ (26 E2E).
+
+**Gefunden & gefixt:** Tutorial-Overlay verdeckte den „Auftrag anlegen"-Button
+(nach oben mittig verlegt).
+
+---
+
+# ABSCHLUSSBERICHT (M0–M10 komplett)
+
+**Definition of Done erfüllt:** Eine Person ohne Vorwissen kann auf der
+GitHub-Pages-URL Nord wählen → Tutorial-Schicht spielen → Anruf annehmen und
+abfragen (Dialogbaum sofort, KI optional) → Auftrag erzeugen → disponieren
+(AO + SoSi nach codes.json) → Status-Lauf & Funk verfolgen, Fahrzeuge anfunken →
+Outcome + Debriefing sehen → Schichtreport mit Note erhalten. Layouts persistent.
+Ohne Kosten, ohne Server, ohne Eingriff. (Automatisiert nachgewiesen durch den
+Definition-of-Done-E2E-Test.)
+
+**Stand:** 141 Unit-Tests, 26 E2E-Tests, Lint/Build/Datenvalidierung grün.
+11 Meilenstein-Tags (m0–m10). CI: Lint → validate-data → Test → Build → Smoke →
+Pages-Deploy.
+
+**Bekannte Limits (Phase 1):**
+- Fahrzeiten: Luftlinie × Umwegfaktor (kein Straßenrouting) — OSRM-Adapter-
+  Interface vorbereitet (`engine/routing.ts`).
+- WebLLM real nur mit WebGPU-Gerät nutzbar (CI nutzt Mock); Qualität kleiner
+  Modelle schwankt — Wahrheit bleibt Tier-1-gesichert.
+- Coop: P2P (Cloud/manueller Code) ist umgebungsabhängig (NAT); lokaler
+  2-Fenster-Modus immer verfügbar. Gast-Marker ohne Interpolation.
+- Viele Flotten-/Dienstzeit-Werte sind als `estimated` geflaggt (Insider-Korrektur
+  willkommen, siehe research/OPEN_QUESTIONS.md).
+- Sonderstatus-Ziffern 91–95 sind Spiel-Platzhalter (GAME_DATA §10b).
+
+**Phase-2-Hinweise (ARCHITECTURE.md):**
+- Tauri-Build (Win/macOS): KI ist bereits hinter OpenAI-kompatiblem Interface
+  (Ollama-Sidecar andocken), Fenster-Engine abstrahiert, kein Browser-only-Hack
+  im Kern.
+- OSRM-Routing, Whisper-Push-to-Talk, echtes Multi-Monitor, F-Tasten-Belegung,
+  Neural-TTS (transformers.js), Positions-Codes Süd, weitere Sonderlagen
+  (MANV-Bereitstellungsraum-UI, Krisen-Callcenter).
+
+**STOP** — alle Meilensteine M0–M10 abgeschlossen.

@@ -26,7 +26,7 @@ function Transcript() {
   }, [active?.transcript.length])
   if (!active) return null
   return (
-    <div className="transcript" data-testid="transcript">
+    <div className="transcript" data-testid="transcript" role="log" aria-live="polite" aria-label="Gesprächsverlauf">
       {active.transcript.map((t, i) => (
         <p key={i} className={`transcript-${t.from}`}>
           {t.from === 'anrufer' ? '☎ ' : t.from === 'calltaker' ? '🎧 ' : 'ℹ '}

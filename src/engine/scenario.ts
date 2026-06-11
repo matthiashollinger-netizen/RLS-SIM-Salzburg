@@ -65,6 +65,10 @@ export interface Scenario {
   ktKategorie?: string
   /** Second caller for an existing incident */
   duplicateOfAuftragId?: string
+  /** Editor exercise call — resulting Auftrag is ÜBUNG (no scoring) */
+  uebung?: boolean
+  /** Story-arc hook id (M10) */
+  storyArc?: string
 }
 
 const LAGE_TEXTE: Record<string, string[]> = {

@@ -219,6 +219,30 @@
 - Gast-Aktionen laufen über eine Whitelist (Store-Methoden) zum Host;
   Rückgabewerte sind optimistisch (UI liest den nächsten Sync).
 
+## 2026-06-12 — M10
+
+### Story-Arcs
+- Genau 2 Arcs (CLAUDE-Vorgabe „dezent"): Brandserie Lehen (NORD, 3 Schichten)
+  und vermisster Wanderer Hundstein (SÜD, 2 Schichten). Auslösefenster 30–90 min
+  in die Schicht, max. 1 Arc-Anruf pro Schicht, Flags persistent in IndexedDB.
+
+### Achievements
+- 6 lokale Erfolge (Erste Schicht, Goldener Hörer, Telefon-Lebensretter,
+  Eiserne Hilfsfrist, Nachtschwärmer, Note 1). Bewertung beim Schichtende.
+
+### Tutorial
+- 8 Schritte mit Auto-Advance auf Spielzustand; nutzt den deterministischen
+  Demo-Anruf (Festnetz/Brustschmerz) und deaktiviert den Anrufgenerator.
+
+### Editor-Übungen
+- Dateiformat `*.rls-uebung.json` (Zod-validiert, version: 1). Übung startet als
+  Endlos-Schicht „entspannt" mit deaktiviertem Anrufgenerator; nur geskriptete
+  Anrufe; resultierende Aufträge sind ÜBUNG (kein Scoring).
+
+### Screenshots
+- `docs/screenshots/` wird von `e2e/screenshots.spec.ts` erzeugt (nur mit
+  `SCREENSHOTS=1`, in CI übersprungen).
+
 ### Playwright-Smoke gegen Production-Preview
 - **Entscheidung:** Smoke-Tests laufen gegen `vite build` + `vite preview` (Port 4173),
   nicht gegen den Dev-Server.

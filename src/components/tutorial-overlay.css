@@ -1,0 +1,50 @@
+.tutorial-overlay {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: var(--sp-2);
+  z-index: var(--z-toast);
+  width: min(460px, 88vw);
+  background: var(--bg-panel-raised);
+  border: 1px solid var(--info);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-popup);
+  padding: var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.tutorial-progress {
+  font-size: var(--fs-xs);
+  color: var(--info);
+}
+
+.tutorial-text {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+}
+
+.tutorial-actions {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+}
+
+.tutorial-actions button {
+  font-size: var(--fs-xs);
+}
+
+.tutorial-next {
+  background: var(--info);
+  color: var(--text-inverse);
+  border: none;
+  font-weight: 600;
+}
+
+.tutorial-waiting {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  font-style: italic;
+}

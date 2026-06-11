@@ -41,3 +41,15 @@
   cursor: pointer;
   font-size: var(--fs-md);
 }
+
+.menu-secondary {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-1);
+}
+
+.menu-secondary button {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}

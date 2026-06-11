@@ -132,6 +132,10 @@ async function tickWorld(simSec: number) {
   const ai = await import('./aiPartners.ts')
   if (g.role === 'disponent') ai.aiCalltakerTick(simSec)
   if (g.role === 'calltaker') ai.aiDispatcherTick(simSec)
+  const { useUebungStore } = await import('./uebungStore.ts')
+  useUebungStore.getState().tick(simSec)
+  const { storyTick } = await import('./storyStore.ts')
+  storyTick(simSec)
   const { checkShiftEnd } = await import('./shiftStore.ts')
   checkShiftEnd()
 }
