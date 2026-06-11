@@ -361,4 +361,9 @@ Pages-Deploy.
   Neural-TTS (transformers.js), Positions-Codes Süd, weitere Sonderlagen
   (MANV-Bereitstellungsraum-UI, Krisen-Callcenter).
 
+**Deployment:** CI auf `main` grün (build-test + deploy). GitHub Pages wurde per
+API aktiviert (`build_type: workflow`); das Repo wurde GitHub-seitig zu
+`RLS-SIM-Salzburg` umbenannt — dank relativer Vite-`base` ohne Folgen.
+**Live:** <https://matthiashollinger-netizen.github.io/RLS-SIM-Salzburg/>
+
 **STOP** — alle Meilensteine M0–M10 abgeschlossen.
