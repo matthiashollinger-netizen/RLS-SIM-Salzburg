@@ -1,6 +1,28 @@
+# Secrets — NEVER commit (CLAUDE.md rule 3)
 secrets/
 *.key
 .env*
-.DS_Store
+
+# Dependencies & build output
 node_modules/
 dist/
+dist-ssr/
+
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
+# OS / editor
+.DS_Store
+*.local
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*

@@ -1,0 +1,48 @@
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.app-main {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.app-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-1) var(--sp-3);
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--sp-2);
+}
+
+.home-title {
+  font-size: var(--fs-display);
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+.home-subtitle {
+  color: var(--text-secondary);
+  font-size: var(--fs-lg);
+  margin: 0;
+}
+
+.home-note {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}

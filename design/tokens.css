@@ -1,0 +1,113 @@
+/* PROVISORISCH — durch Claude-Design-Pass ersetzen */
+/*
+ * RLS-SIM Salzburg — Design Tokens (provisional set)
+ * Derived strictly from research/DESIGN_BRIEF.md:
+ *  - Dark-first dispatch cockpit, information over decoration
+ *  - Status color system is sacred (00/7 green · 1/2 yellow · 3 red ·
+ *    4/5 orange · 6 cyan · 88/positions blue · out-of-service gray)
+ *  - Own signal red derived from #E2001A (NOT ÖRK CI 1:1) + amber for urgency
+ *  - Mono for data tables, high density, minimal window chrome
+ */
+
+:root {
+  /* ---- Surfaces (dark-first) ---- */
+  --bg-app: #0b0e13; /* deepest app background */
+  --bg-panel: #141922; /* window/panel surface */
+  --bg-panel-raised: #1b2230; /* raised surface: titlebars, headers */
+  --bg-panel-inset: #0f131b; /* inset wells, map background, inputs */
+  --bg-hover: #232c3d;
+  --bg-active: #2b3650;
+  --bg-overlay: rgba(8, 10, 14, 0.78);
+
+  /* ---- Borders & lines ---- */
+  --border-subtle: #232a38;
+  --border-strong: #36405466;
+  --border-strong-solid: #364054;
+  --border-focus: #6ea8ff;
+
+  /* ---- Text ---- */
+  --text-primary: #e8edf5;
+  --text-secondary: #a8b3c5;
+  --text-muted: #6b7689;
+  --text-inverse: #0b0e13;
+
+  /* ---- Brand / signal (own tone, not ÖRK CI) ---- */
+  --signal-red: #ef4352; /* warmer emergency red, derived from #E2001A */
+  --signal-red-dim: #b32a37;
+  --signal-amber: #f5a623; /* urgency accent */
+  --accent: var(--signal-red);
+
+  /* ---- Status colors (GAME_DATA §10 — sacred!) ---- */
+  --status-00: #34d167; /* 00 in Dienststelle — green */
+  --status-1: #f2d24b; /* 1 Auftrag angenommen — yellow */
+  --status-2: #f2d24b; /* 2 unterwegs zum EO — yellow */
+  --status-3: #f0464f; /* 3 eingetroffen am EO — red */
+  --status-4: #f58a3c; /* 4 Abfahrt zum ZO — orange */
+  --status-5: #f58a3c; /* 5 eingetroffen am ZO — orange */
+  --status-6: #3fd2e0; /* 6 Auftrag abgeschlossen — cyan */
+  --status-7: #34d167; /* 7 unterwegs zur DSt — green */
+  --status-88: #5a8df5; /* 88 Anfahrt Vorhalteposition — blue */
+  --status-pos: #5a8df5; /* 08/09/10 Position LKH/UKH/CDK — blue */
+  --status-oos: #6b7689; /* 91–95 außer Betrieb etc. — gray */
+
+  /* ---- Semantic ---- */
+  --ok: #34d167;
+  --warn: #f5a623;
+  --danger: #f0464f;
+  --info: #5a8df5;
+
+  /* ---- SoSi (Sondersignal) indicator ---- */
+  --sosi: var(--signal-red);
+  --sosi-pulse: #ff6b75;
+
+  /* ---- Typography ---- */
+  --font-ui:
+    'Inter', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:
+    'JetBrains Mono', ui-monospace, 'SF Mono', 'Cascadia Code', 'Fira Code', Menlo, Consolas,
+    monospace;
+  --fs-xs: 0.6875rem; /* 11px — dense table rows */
+  --fs-sm: 0.78125rem; /* 12.5px — secondary UI */
+  --fs-md: 0.875rem; /* 14px — default */
+  --fs-lg: 1.0625rem; /* 17px — panel titles */
+  --fs-xl: 1.375rem; /* 22px — page titles */
+  --fs-display: 2rem; /* 32px — menu/report headlines */
+  --lh-dense: 1.25;
+  --lh-normal: 1.45;
+
+  /* ---- Spacing (4px grid) ---- */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-8: 3rem;
+
+  /* ---- Radii ---- */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  /* ---- Shadows ---- */
+  --shadow-window: 0 8px 28px rgba(0, 0, 0, 0.55), 0 0 0 1px var(--border-subtle);
+  --shadow-window-active: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 0 1px var(--border-strong-solid);
+  --shadow-popup: 0 4px 16px rgba(0, 0, 0, 0.5);
+
+  /* ---- Z-Index layers ---- */
+  --z-map: 0;
+  --z-windows: 100; /* window manager assigns 100..899 */
+  --z-taskbar: 900;
+  --z-modal: 1000;
+  --z-toast: 1100;
+
+  /* ---- Window manager ---- */
+  --window-titlebar-h: 30px;
+  --window-snap-grid: 8px;
+  --window-min-w: 220px;
+  --window-min-h: 140px;
+
+  /* ---- Motion ---- */
+  --t-fast: 120ms ease-out;
+  --t-normal: 200ms ease-out;
+}
