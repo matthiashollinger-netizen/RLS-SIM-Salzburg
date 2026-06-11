@@ -1,0 +1,34 @@
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 18px;
+  padding: 0 4px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--text-inverse);
+  line-height: 1;
+}
+
+/* shape per status kind — redundant encoding besides color */
+.status-badge-lifecycle {
+  border-radius: 9px;
+}
+
+.status-badge-position {
+  border-radius: var(--radius-sm);
+}
+
+.status-badge-sonder {
+  border-radius: var(--radius-sm);
+  transform: skewX(-8deg);
+}
+
+.status-badge-aus {
+  border-radius: 9px;
+  background: transparent;
+  border: 1px dashed var(--text-muted);
+  color: var(--text-muted);
+}

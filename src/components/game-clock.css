@@ -1,0 +1,28 @@
+.game-clock {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.game-clock-time {
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+  min-width: 96px;
+}
+
+.game-clock-speeds {
+  display: flex;
+  gap: 2px;
+}
+
+.game-clock-speeds button {
+  font-size: var(--fs-xs);
+  padding: 2px var(--sp-1);
+  min-width: 28px;
+}
+
+.game-clock-speeds button.speed-active {
+  background: var(--bg-active);
+  border-color: var(--border-strong-solid);
+  color: var(--text-primary);
+}

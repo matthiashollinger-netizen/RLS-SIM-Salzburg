@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useWindowStore } from './windowStore.ts'
 import { listPresets, restoreLayout, savePreset } from './layoutPersistence.ts'
 import type { WindowDef } from './windowDefs.ts'
+import { GameClock } from '../components/GameClock.tsx'
 import './windows.css'
 
 export function Taskbar({ defs }: { defs: WindowDef[] }) {
@@ -17,6 +18,7 @@ export function Taskbar({ defs }: { defs: WindowDef[] }) {
 
   return (
     <div className="taskbar">
+      <GameClock />
       <div className="taskbar-windows" role="toolbar" aria-label="Fenster">
         {defs.map((def) => {
           const win = windows[def.id]

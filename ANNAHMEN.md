@@ -71,6 +71,28 @@
 - D/E-Kategorien: Zuordnung zu D/E-Ziffern (Transportart bzw. E-Typ) nach Plausibilität;
   Blockzeiten INFEKTION 30 min / HITT 120 min geschätzt (`estimated: true`).
 
+## 2026-06-12 — M3
+
+### Dienstende-Verhalten
+- Fahrzeuge auf Vorhalteposition (88/08/09/10) gehen bei Dienstende direkt außer Dienst
+  (ohne sichtbare Heimfahrt). Fahrzeuge im Einsatz (Status 1–7) beenden den Auftrag und
+  fahren ein, bevor sie außer Dienst gehen. Vereinfachung für Phase 1.
+
+### Ausrückzeiten (GAME_MECHANICS §2 „abgestufte Bereitschaft")
+- hauptamtlich 60 s · gemischt tags 90 s / nachts 240 s · ehrenamtlich tags 240 s /
+  nachts 420 s (Pager) · NEF 5.10-101 nachts 600 s (KH-Personal, GAME_DATA §12b).
+- Folgeauftrag aus Status 6/7/88/Position: 15 s (Besatzung sitzt im Fahrzeug).
+- Nacht = 20:00–06:00. Alle Werte in balancing.json tunebar, estimated.
+
+### Fahrzeugcheck (Status 92)
+- Wahrscheinlichkeit 35 % bei Schichtbeginn, Dauer 10–20 min (GAME_DATA §10b nennt
+  Existenz, keine Quote) — geschätzt, seedbarer Zufall.
+
+### Status-Übergänge über das Kernschema hinaus
+- 3→6 (kein Transport), 6/7/Position→1 (Folgeauftrag), 00→88, Sonderstatus nur aus
+  einsatzbereiten Zuständen. Einsatzabbruch (Disponent) nur in Status 1–3, danach ist
+  der Patient an Bord.
+
 ### Playwright-Smoke gegen Production-Preview
 - **Entscheidung:** Smoke-Tests laufen gegen `vite build` + `vite preview` (Port 4173),
   nicht gegen den Dev-Server.

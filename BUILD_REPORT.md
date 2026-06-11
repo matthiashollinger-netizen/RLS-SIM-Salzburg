@@ -77,3 +77,37 @@ Minimieren/Schließen/Reopen via Taskbar; Preset speichern).
 
 **Offene Punkte:** Kartenstil-Feinschliff (eigener Dispatch-Stil) für den Design-Pass;
 Fahrzeug-Marker folgen in M3.
+
+## M3 — Fahrzeug-Engine (2026-06-12)
+
+**Was:**
+- `src/engine/` (UI-frei): `geo` (Haversine, Point-in-Polygon, Lerp), `routing`
+  (deterministisches Fahrzeitmodell nach CLAUDE.md §3, OSRM-Interface vorbereitet),
+  `time` (Sim-Uhr, Saison, Tageslicht-Tabelle Salzburg, Nachtfenster), `duty`
+  (Dienstzeiten inkl. Übernacht-Fenster, Saison, Hof-Regel), `status` (exaktes
+  Salzburg-Schema 00→1→…→7→00, 88→08/09/10, 91–95, Übergangsvalidierung),
+  `rng` (seedbar), `vehicleSim` (kompletter Lebenszyklus: Spawn/Despawn nach Dienst,
+  Ausrückzeiten nach Staffing + NEF-101-Regel, Bewegung mit Interpolation,
+  Fahrzeugcheck 92 bei Schichtstart, Sonderstatus mit Blockzeit, Reserve-Aktivierung,
+  Vorhaltepositionen, Einsatzabbruch).
+- Spieluhr (Zustand-Store) + globaler Loop (250 ms-Ticks, Geschwindigkeit 0/1/2/4×),
+  Uhr + Tempo-Steuerung in der Taskbar.
+- Karte: Fahrzeug-Marker rAF-getrieben außerhalb von React (Statusfarbe + Statusziffer +
+  Typ-Form, Jitter gegen Stapelung), Popup mit Aktionen (Position senden, Probealarm).
+- Ressourcenmonitor live: Filter (Text/Region/außer Dienst), Auswahl mit Aktionsleiste,
+  Status-Badges (Farbe + Ziffer + Form je Status-Art — farbfehlsichttauglich).
+- Funkfeld/Protokoll zeigen Status-/System-Feed (Event-Log-Store, Vorstufe M7).
+- Debug-„Probealarm" (ÜBUNG) zum Durchspielen des Lifecycles vor M4.
+
+**Wie getestet:** `npm run lint` ✓ · `npm test` ✓ (58 Tests: 27 neue Engine-Tests für
+Lifecycle-Übergänge, Dienstzeit-Logik inkl. Hof/Übernacht/Saison/Split-Schichten,
+Routing inkl. SoSi-Faktor/Stadt-Polygon/Heli, kompletter Sim-Durchlauf 00→…→00,
+3→6, Positionen, 92, 94+Reserve, Abbruch, Dienstende-Verhalten) · `npm run build` ✓ ·
+`npm run smoke` ✓ (8 E2E: Uhr läuft/pausiert, Live-Monitor + Probealarm + Feed,
+Hof-Fahrzeug tagsüber nicht gelistet).
+
+**Gefixte Flakes:** Layout-Restore-Test wartet jetzt deterministisch auf den
+IndexedDB-Write; Probealarm-Test pinnt Zeile per Rufname (Live-Locator-Falle).
+
+**Offene Punkte:** Heli-Einheiten fliegen erst mit M4-Dispo; Funkfeld bekommt in M7
+echte Funksprüche.

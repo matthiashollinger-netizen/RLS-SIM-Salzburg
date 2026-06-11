@@ -5,12 +5,10 @@ import { useWindowStore, type WindowId, type WindowRect } from '../windows/windo
 import { restoreLayout, startLayoutAutosave } from '../windows/layoutPersistence.ts'
 import { WINDOW_DEFS } from '../windows/windowDefs.ts'
 import { MapPanel } from '../panels/MapPanel.tsx'
-import {
-  EinsatzlistePanel,
-  FunkfeldPanel,
-  ProtokollPanel,
-  RessourcenPanel,
-} from '../panels/StubPanels.tsx'
+import { EinsatzlistePanel } from '../panels/StubPanels.tsx'
+import { RessourcenPanel } from '../panels/RessourcenPanel.tsx'
+import { FunkfeldPanel, ProtokollPanel } from '../panels/FeedPanels.tsx'
+import { startGameLoop } from '../state/simulation.ts'
 import './game-page.css'
 
 function defaultRects(): Record<WindowId, WindowRect> {
@@ -55,6 +53,7 @@ export function GamePage() {
 
   useEffect(() => {
     void restoreLayout()
+    startGameLoop()
     const stop = startLayoutAutosave()
     return stop
   }, [])

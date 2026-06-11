@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { helicopters, hospitals, stations } from '../data/index.ts'
+import { attachVehicleMarkers } from './vehicleMarkers.ts'
 import './map-panel.css'
 
 /**
@@ -104,11 +105,14 @@ export function MapPanel() {
       )
     }
 
+    const detachVehicles = attachVehicleMarkers(map)
+
     const ro = new ResizeObserver(() => map.resize())
     ro.observe(container)
 
     return () => {
       ro.disconnect()
+      detachVehicles()
       for (const m of markers) m.remove()
       map.remove()
       mapRef.current = null

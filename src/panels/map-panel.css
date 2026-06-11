@@ -52,3 +52,71 @@
 .maplibregl-popup-tip {
   border-top-color: var(--bg-panel-raised) !important;
 }
+
+/* Vehicle markers: status color + status digit; shape varies by type
+   (color-blind redundancy per DESIGN_SYSTEM) */
+.map-marker-vehicle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 16px;
+  padding: 0 2px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-inverse);
+  border: 1px solid var(--bg-app);
+  cursor: pointer;
+}
+
+.map-marker-vehicle[data-typ='NEF'],
+.map-marker-vehicle[data-typ='NAW'] {
+  border-radius: 3px;
+  border-width: 2px;
+}
+
+.map-marker-vehicle[data-typ='RTW'],
+.map-marker-vehicle[data-typ='ITW'] {
+  border-radius: 8px;
+}
+
+.map-marker-vehicle[data-typ='KTW'],
+.map-marker-vehicle[data-typ='GKTW'],
+.map-marker-vehicle[data-typ='BTW'] {
+  border-radius: 2px;
+}
+
+.vehicle-popup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-width: 200px;
+}
+
+.vehicle-popup-title {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.vehicle-popup-status {
+  color: var(--text-secondary);
+  font-size: var(--fs-xs);
+}
+
+.vehicle-popup-assignment {
+  color: var(--signal-amber);
+  font-size: var(--fs-xs);
+}
+
+.vehicle-popup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.vehicle-popup-actions button {
+  font-size: var(--fs-xs);
+  padding: 2px 6px;
+}

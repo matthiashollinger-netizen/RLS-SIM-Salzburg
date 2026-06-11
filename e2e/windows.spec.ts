@@ -1,4 +1,30 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
+
+interface SavedLayout {
+  einsatzliste?: { x: number; y: number }
+}
+
+function readCurrentLayout(page: Page): Promise<SavedLayout | null> {
+  return page.evaluate(
+    () =>
+      new Promise((resolve) => {
+        const req = indexedDB.open('rls-sim-salzburg')
+        req.onsuccess = () => {
+          try {
+            const get = req.result
+              .transaction('layouts', 'readonly')
+              .objectStore('layouts')
+              .get('current')
+            get.onsuccess = () => resolve(get.result ?? null)
+            get.onerror = () => resolve(null)
+          } catch {
+            resolve(null)
+          }
+        }
+        req.onerror = () => resolve(null)
+      }),
+  ) as Promise<SavedLayout | null>
+}
 
 test('window can be moved, layout persists across reload', async ({ page }) => {
   await page.goto('/#/spiel')
@@ -19,13 +45,19 @@ test('window can be moved, layout persists across reload', async ({ page }) => {
   const after = await win.boundingBox()
   expect(Math.round(after!.x)).not.toBe(Math.round(before!.x))
 
-  // Autosave is debounced (250 ms) — wait, then reload and compare
-  await page.waitForTimeout(600)
+  // Wait until the debounced autosave has actually hit IndexedDB (robust under load)
+  await expect
+    .poll(async () => (await readCurrentLayout(page))?.einsatzliste?.x, { timeout: 10_000 })
+    .toBe(Math.round(after!.x))
+
   await page.reload()
   await expect(win).toBeVisible()
-  const restored = await win.boundingBox()
-  expect(Math.round(restored!.x)).toBe(Math.round(after!.x))
-  expect(Math.round(restored!.y)).toBe(Math.round(after!.y))
+  await expect
+    .poll(async () => {
+      const box = await win.boundingBox()
+      return box ? [Math.round(box.x), Math.round(box.y)] : null
+    })
+    .toEqual([Math.round(after!.x), Math.round(after!.y)])
 })
 
 test('window minimize and close/reopen via taskbar', async ({ page }) => {
@@ -42,7 +74,10 @@ test('window minimize and close/reopen via taskbar', async ({ page }) => {
   await win.getByRole('button', { name: 'Funkfeld schließen' }).click()
   await expect(win).toBeHidden()
 
-  await page.getByRole('toolbar', { name: 'Fenster' }).getByRole('button', { name: 'Funkfeld' }).click()
+  await page
+    .getByRole('toolbar', { name: 'Fenster' })
+    .getByRole('button', { name: 'Funkfeld' })
+    .click()
   await expect(win).toBeVisible()
 })
 
