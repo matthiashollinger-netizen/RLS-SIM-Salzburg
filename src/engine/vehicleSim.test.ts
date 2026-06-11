@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { VehicleSim, type VehicleEvent } from './vehicleSim.ts'
+import { unitFromVehicle, VehicleSim, type VehicleEvent } from './vehicleSim.ts'
 import type { DutyContext } from './duty.ts'
 import type { Vehicle } from '../data/schemas.ts'
 
@@ -23,9 +23,9 @@ const dayVehicle: Vehicle = {
 }
 
 function makeSim(vehicles: Vehicle[], seed = 1) {
-  const sim = new VehicleSim(seed, vehicles)
+  const sim = new VehicleSim(seed, vehicles.map(unitFromVehicle))
   const events: VehicleEvent[] = []
-  sim.onEvent = (e) => events.push(e)
+  sim.addEventListener((e) => events.push(e))
   return { sim, events }
 }
 

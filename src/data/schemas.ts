@@ -203,6 +203,22 @@ export const helicopterSchema = z.object({
 export type Helicopter = z.infer<typeof helicopterSchema>
 export const helicoptersFileSchema = z.array(helicopterSchema)
 
+// ---- places.json (Orts-Index für Alarmtexte + Adress-Fuzzy-Suche, estimated) ----
+
+export const placeSchema = z.object({
+  id: z.string().min(2),
+  name: z.string(),
+  bezirk: z.string(),
+  region: regionSchema,
+  lat: z.number().min(46).max(49),
+  lon: z.number().min(11.5).max(14.5),
+  /** Inside the Salzburg city speed polygon */
+  city: z.boolean().default(false),
+  strassen: z.array(z.string()).min(1),
+})
+export type Place = z.infer<typeof placeSchema>
+export const placesFileSchema = z.array(placeSchema)
+
 // ---- balancing.json (GAME_DATA Jahreszahlen 2024 + §3 CLAUDE.md routing) ----
 
 export const balancingSchema = z.object({

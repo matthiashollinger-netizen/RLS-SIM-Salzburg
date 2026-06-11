@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { hospitals } from '../data/index.ts'
 import { isAvailable } from '../engine/status.ts'
-import { shortCallSign } from '../lib/format.ts'
+import { unitDisplayName } from '../lib/format.ts'
 import { useVehicleVersion } from '../state/useVehicles.ts'
 import { vehicleSim } from '../state/simulation.ts'
 import { useGameStore } from '../state/gameStore.ts'
@@ -22,14 +22,14 @@ export function RessourcenPanel() {
   const rows = useMemo(() => {
     const f = filter.trim().toLowerCase()
     return runtimes
-      .filter((rt) => region === 'ALLE' || rt.homeStation.region === region)
+      .filter((rt) => region === 'ALLE' || rt.unit.region === region)
       .filter((rt) => showAus || rt.status !== 'AUS')
       .filter(
         (rt) =>
           !f ||
           rt.id.toLowerCase().includes(f) ||
-          rt.vehicle.typ.toLowerCase().includes(f) ||
-          rt.homeStation.name.toLowerCase().includes(f),
+          rt.unit.typ.toLowerCase().includes(f) ||
+          rt.unit.stationName.toLowerCase().includes(f),
       )
       .sort((a, b) => a.id.localeCompare(b.id))
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,8 +64,8 @@ export function RessourcenPanel() {
       {sel && (
         <div className="vehicle-actions" data-testid="vehicle-actions">
           <span className="mono vehicle-actions-title">
-            {shortCallSign(sel.id)} · {sel.vehicle.typ}
-            {sel.vehicle.nickname ? ` „${sel.vehicle.nickname}"` : ''}
+            {unitDisplayName(sel.unit)} · {sel.unit.typ}
+            {sel.unit.nickname && sel.unit.typ !== 'HELI' ? ` „${sel.unit.nickname}"` : ''}
           </span>
           {isAvailable(sel.status) &&
             positionHospitals.map((h) => (
@@ -88,7 +88,7 @@ export function RessourcenPanel() {
               </button>
             </>
           )}
-          {sel.vehicle.reserve && (
+          {sel.unit.reserve && (
             <button
               onClick={() =>
                 vehicleSim.setReserveActive(sel.id, sel.status === 'AUS', simSec)
@@ -117,15 +117,15 @@ export function RessourcenPanel() {
                 className={selected === rt.id ? 'row-selected' : ''}
                 onClick={() => setSelected(rt.id === selected ? null : rt.id)}
               >
-                <td className="mono">{shortCallSign(rt.id)}</td>
+                <td className="mono">{unitDisplayName(rt.unit)}</td>
                 <td>
-                  {rt.vehicle.typ}
-                  {rt.vehicle.notfallKtw ? ' (N)' : ''}
+                  {rt.unit.typ}
+                  {rt.unit.notfallKtw ? ' (N)' : ''}
                 </td>
                 <td>
                   <StatusBadge status={rt.status} />
                 </td>
-                <td>{rt.homeStation.name}</td>
+                <td>{rt.unit.stationName}</td>
               </tr>
             ))}
           </tbody>

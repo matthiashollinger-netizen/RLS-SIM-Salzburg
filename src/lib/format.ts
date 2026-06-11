@@ -23,3 +23,9 @@ export function formatCountdown(seconds: number): string {
 export function shortCallSign(funkrufname: string): string {
   return funkrufname.replace(/^5\./, '')
 }
+
+/** Display name: helicopters use their Rufname (e.g. "Christophorus 6"). */
+export function unitDisplayName(unit: { id: string; typ: string; nickname?: string }): string {
+  if (unit.typ === 'HELI') return unit.nickname ?? unit.id
+  return shortCallSign(unit.id)
+}

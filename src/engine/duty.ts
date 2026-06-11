@@ -1,5 +1,11 @@
-import type { DutyWindow, Vehicle } from '../data/schemas.ts'
+import type { DutyWindow } from '../data/schemas.ts'
 import { secondsOfDay, weekdayAt, type Season, type SimContext } from './time.ts'
+
+/** Structural subset of Vehicle/SimUnit needed for duty checks. */
+export interface DutySchedulable {
+  dienstzeiten: DutyWindow[]
+  reserve?: boolean
+}
 
 /** Parse "HH:MM" (or "24:00") into seconds of day. */
 export function parseClock(s: string): number {
@@ -41,7 +47,7 @@ export interface DutyContext extends SimContext {
 
 /** True when the vehicle is in service at simSec. Reserve vehicles are never
  *  on duty by schedule (activated manually on status 94 of another unit). */
-export function isOnDuty(vehicle: Vehicle, simSec: number, ctx: DutyContext): boolean {
+export function isOnDuty(vehicle: DutySchedulable, simSec: number, ctx: DutyContext): boolean {
   if (vehicle.reserve) return false
   const weekday = weekdayAt(simSec, ctx)
   const tod = secondsOfDay(simSec)

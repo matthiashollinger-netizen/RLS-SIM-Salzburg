@@ -1,0 +1,584 @@
+[
+  {
+    "id": "lehen",
+    "name": "Lehen",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.8153,
+    "lon": 13.0269,
+    "city": true,
+    "strassen": ["Ignaz-Harrer-Straße", "Rudolf-Biebl-Straße", "Strubergasse", "Franz-Martin-Straße"]
+  },
+  {
+    "id": "altstadt",
+    "name": "Altstadt",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.7997,
+    "lon": 13.0453,
+    "city": true,
+    "strassen": ["Getreidegasse", "Judengasse", "Residenzplatz", "Kaigasse", "Mozartplatz"]
+  },
+  {
+    "id": "schallmoos",
+    "name": "Schallmoos",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.8095,
+    "lon": 13.057,
+    "city": true,
+    "strassen": ["Sterneckstraße", "Vogelweiderstraße", "Bayerhamerstraße", "Fürbergstraße"]
+  },
+  {
+    "id": "itzling",
+    "name": "Itzling",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.8281,
+    "lon": 13.0419,
+    "city": true,
+    "strassen": ["Itzlinger Hauptstraße", "Plainstraße", "Kirchenstraße", "Schillerstraße"]
+  },
+  {
+    "id": "liefering",
+    "name": "Liefering",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.8311,
+    "lon": 13.0119,
+    "city": true,
+    "strassen": ["Münchner Bundesstraße", "Lieferinger Hauptstraße", "Forellenwegsiedlung", "Laufenstraße"]
+  },
+  {
+    "id": "maxglan",
+    "name": "Maxglan",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.7958,
+    "lon": 13.0167,
+    "city": true,
+    "strassen": ["Maxglaner Hauptstraße", "Innsbrucker Bundesstraße", "Siezenheimer Straße", "Kleßheimer Allee"]
+  },
+  {
+    "id": "elisabethvorstadt",
+    "name": "Elisabeth-Vorstadt",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.8131,
+    "lon": 13.0394,
+    "city": true,
+    "strassen": ["Rainerstraße", "Elisabethstraße", "Gabelsbergerstraße", "Saint-Julien-Straße"]
+  },
+  {
+    "id": "andraeviertel",
+    "name": "Andräviertel",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.8064,
+    "lon": 13.0447,
+    "city": true,
+    "strassen": ["Linzer Gasse", "Wolf-Dietrich-Straße", "Auerspergstraße", "Mirabellplatz"]
+  },
+  {
+    "id": "nonntal",
+    "name": "Nonntal",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.7919,
+    "lon": 13.0506,
+    "city": true,
+    "strassen": ["Hellbrunner Straße", "Nonntaler Hauptstraße", "Petersbrunnstraße", "Erzabt-Klotz-Straße"]
+  },
+  {
+    "id": "aigen",
+    "name": "Aigen",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.7869,
+    "lon": 13.0792,
+    "city": true,
+    "strassen": ["Aigner Straße", "Glaserstraße", "Schwarzenbergpromenade", "Doblerweg"]
+  },
+  {
+    "id": "parsch",
+    "name": "Parsch",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.8022,
+    "lon": 13.0703,
+    "city": true,
+    "strassen": ["Gaisbergstraße", "Apothekerhofstraße", "Geroldgasse", "Preuschenstraße"]
+  },
+  {
+    "id": "gnigl",
+    "name": "Gnigl",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.8175,
+    "lon": 13.0697,
+    "city": true,
+    "strassen": ["Linzer Bundesstraße", "Grazer Bundesstraße", "Eichstraße", "Turnerstraße"]
+  },
+  {
+    "id": "taxham",
+    "name": "Taxham",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.8089,
+    "lon": 13.0094,
+    "city": true,
+    "strassen": ["Kleßheimer Allee", "Otto-von-Lilienthal-Straße", "Europastraße", "Stadionstraße"]
+  },
+  {
+    "id": "leopoldskron",
+    "name": "Leopoldskron-Moos",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.7811,
+    "lon": 13.0292,
+    "city": true,
+    "strassen": ["Moosstraße", "Leopoldskronstraße", "Firmianstraße", "Königsseestraße"]
+  },
+  {
+    "id": "salzburgsued",
+    "name": "Salzburg-Süd",
+    "bezirk": "Salzburg Stadt",
+    "region": "NORD",
+    "lat": 47.7728,
+    "lon": 13.0639,
+    "city": true,
+    "strassen": ["Alpenstraße", "Hellbrunner Landesstraße", "Berchtesgadner Straße", "Friedensstraße"]
+  },
+  {
+    "id": "hallein",
+    "name": "Hallein",
+    "bezirk": "Tennengau",
+    "region": "NORD",
+    "lat": 47.6831,
+    "lon": 13.0969,
+    "strassen": ["Salzachtalstraße", "Neualmer Straße", "Davisstraße", "Griesplatz", "Burgfried"]
+  },
+  {
+    "id": "oberalm",
+    "name": "Oberalm",
+    "bezirk": "Tennengau",
+    "region": "NORD",
+    "lat": 47.7,
+    "lon": 13.1,
+    "strassen": ["Hauptstraße", "Halleiner Landesstraße", "Wiestalstraße"]
+  },
+  {
+    "id": "kuchl",
+    "name": "Kuchl",
+    "bezirk": "Tennengau",
+    "region": "NORD",
+    "lat": 47.6256,
+    "lon": 13.1453,
+    "strassen": ["Markt", "Garnei", "Weißenbach"]
+  },
+  {
+    "id": "golling",
+    "name": "Golling",
+    "bezirk": "Tennengau",
+    "region": "NORD",
+    "lat": 47.5997,
+    "lon": 13.1664,
+    "strassen": ["Markt", "Bahnhofstraße", "Torrener Straße"]
+  },
+  {
+    "id": "abtenau",
+    "name": "Abtenau",
+    "bezirk": "Tennengau",
+    "region": "NORD",
+    "lat": 47.5631,
+    "lon": 13.3456,
+    "strassen": ["Markt", "Au", "Fischbach", "Lammertalstraße"]
+  },
+  {
+    "id": "annaberg",
+    "name": "Annaberg-Lungötz",
+    "bezirk": "Tennengau",
+    "region": "NORD",
+    "lat": 47.525,
+    "lon": 13.4083,
+    "strassen": ["Annaberg", "Lungötz", "Steuer"]
+  },
+  {
+    "id": "mattsee",
+    "name": "Mattsee",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.9667,
+    "lon": 13.1,
+    "strassen": ["Marktplatz", "Seestraße", "Wertheim", "Aug"]
+  },
+  {
+    "id": "obertrum",
+    "name": "Obertrum am See",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.9372,
+    "lon": 13.0744,
+    "strassen": ["Hauptstraße", "Mattseer Landesstraße", "Seestraße"]
+  },
+  {
+    "id": "seekirchen",
+    "name": "Seekirchen",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.9,
+    "lon": 13.1333,
+    "strassen": ["Hauptstraße", "Bahnhofstraße", "Wallerseestraße", "Bayerhamer Straße"]
+  },
+  {
+    "id": "eugendorf",
+    "name": "Eugendorf",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.8667,
+    "lon": 13.1239,
+    "strassen": ["Dorf", "Gewerbestraße", "Wiener Bundesstraße"]
+  },
+  {
+    "id": "strasswalchen",
+    "name": "Straßwalchen",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.9786,
+    "lon": 13.2553,
+    "strassen": ["Marktplatz", "Salzburger Straße", "Braunauer Straße", "Mondseer Straße"]
+  },
+  {
+    "id": "neumarkt",
+    "name": "Neumarkt am Wallersee",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.9433,
+    "lon": 13.2261,
+    "strassen": ["Hauptstraße", "Bahnhofstraße", "Sighartsteiner Straße"]
+  },
+  {
+    "id": "oberndorf",
+    "name": "Oberndorf bei Salzburg",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.9408,
+    "lon": 12.9414,
+    "strassen": ["Stille-Nacht-Platz", "Brückenstraße", "Salzburger Straße", "Ziegelhaiden"]
+  },
+  {
+    "id": "lamprechtshausen",
+    "name": "Lamprechtshausen",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.9897,
+    "lon": 12.9608,
+    "strassen": ["Dorfplatz", "Arnsdorfer Straße", "Bürmooser Landesstraße"]
+  },
+  {
+    "id": "buermoos",
+    "name": "Bürmoos",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.9831,
+    "lon": 12.9167,
+    "strassen": ["Karl-Zillner-Platz", "Ignaz-Glaser-Straße", "Waldstraße"]
+  },
+  {
+    "id": "hofbeisalzburg",
+    "name": "Hof bei Salzburg",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.8167,
+    "lon": 13.2167,
+    "strassen": ["Dorf", "Wolfgangsee Bundesstraße", "Sonnleitenweg"]
+  },
+  {
+    "id": "thalgau",
+    "name": "Thalgau",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.8419,
+    "lon": 13.2528,
+    "strassen": ["Marktplatz", "Salzburger Straße", "Mondseer Straße"]
+  },
+  {
+    "id": "fuschl",
+    "name": "Fuschl am See",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.7997,
+    "lon": 13.3033,
+    "strassen": ["Dorfplatz", "Seestraße", "Wolfgangsee Bundesstraße"]
+  },
+  {
+    "id": "stgilgen",
+    "name": "St. Gilgen",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.7656,
+    "lon": 13.3653,
+    "strassen": ["Mozartplatz", "Ischler Straße", "Aberseestraße"]
+  },
+  {
+    "id": "strobl",
+    "name": "Strobl",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.7167,
+    "lon": 13.4833,
+    "strassen": ["Dorfplatz", "Ischler Straße", "Weißenbachstraße"]
+  },
+  {
+    "id": "grossgmain",
+    "name": "Großgmain",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.7228,
+    "lon": 12.9089,
+    "strassen": ["Dorfplatz", "Salzburger Straße", "Untersbergstraße"]
+  },
+  {
+    "id": "wals",
+    "name": "Wals-Siezenheim",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.7886,
+    "lon": 12.9714,
+    "strassen": ["Walser Straße", "Bundesstraße 1", "Kasernenstraße", "Outlet-Boulevard"]
+  },
+  {
+    "id": "anif",
+    "name": "Anif",
+    "bezirk": "Flachgau",
+    "region": "NORD",
+    "lat": 47.75,
+    "lon": 13.0667,
+    "strassen": ["Salzachtal Bundesstraße", "Hellbrunner Straße", "Dorfstraße"]
+  },
+  {
+    "id": "zellamsee",
+    "name": "Zell am See",
+    "bezirk": "Pinzgau",
+    "region": "SUED",
+    "lat": 47.3239,
+    "lon": 12.7981,
+    "strassen": ["Brucker Bundesstraße", "Schmittenstraße", "Stadtplatz", "Seespitzstraße", "Schüttdorf"]
+  },
+  {
+    "id": "saalfelden",
+    "name": "Saalfelden",
+    "bezirk": "Pinzgau",
+    "region": "SUED",
+    "lat": 47.4269,
+    "lon": 12.8483,
+    "strassen": ["Loferer Bundesstraße", "Bahnhofstraße", "Almerstraße", "Ramseiden"]
+  },
+  {
+    "id": "saalbach",
+    "name": "Saalbach-Hinterglemm",
+    "bezirk": "Pinzgau",
+    "region": "SUED",
+    "lat": 47.3903,
+    "lon": 12.6364,
+    "strassen": ["Glemmtaler Landesstraße", "Dorfstraße", "Zwölferkogelweg", "Reiterkogelweg"]
+  },
+  {
+    "id": "kaprun",
+    "name": "Kaprun",
+    "bezirk": "Pinzgau",
+    "region": "SUED",
+    "lat": 47.2728,
+    "lon": 12.7594,
+    "strassen": ["Wilhelm-Fazokas-Straße", "Kitzsteinhornstraße", "Schlossstraße"]
+  },
+  {
+    "id": "mittersill",
+    "name": "Mittersill",
+    "bezirk": "Pinzgau",
+    "region": "SUED",
+    "lat": 47.2825,
+    "lon": 12.4836,
+    "strassen": ["Stadtplatz", "Gerlos Bundesstraße", "Felberstraße", "Klausgasse"]
+  },
+  {
+    "id": "lofer",
+    "name": "Lofer",
+    "bezirk": "Pinzgau",
+    "region": "SUED",
+    "lat": 47.5847,
+    "lon": 12.6936,
+    "strassen": ["Hauptstraße", "Loferer Bundesstraße", "Gumping"]
+  },
+  {
+    "id": "rauris",
+    "name": "Rauris",
+    "bezirk": "Pinzgau",
+    "region": "SUED",
+    "lat": 47.2269,
+    "lon": 12.9947,
+    "strassen": ["Marktstraße", "Wörth", "Bucheben"]
+  },
+  {
+    "id": "waldimpinzgau",
+    "name": "Wald im Pinzgau",
+    "bezirk": "Pinzgau",
+    "region": "SUED",
+    "lat": 47.2667,
+    "lon": 12.2333,
+    "strassen": ["Dorfstraße", "Gerlos Bundesstraße", "Königsleiten"]
+  },
+  {
+    "id": "taxenbach",
+    "name": "Taxenbach",
+    "bezirk": "Pinzgau",
+    "region": "SUED",
+    "lat": 47.2906,
+    "lon": 12.9633,
+    "strassen": ["Marktstraße", "Salzachtal Bundesstraße", "Eschenau"]
+  },
+  {
+    "id": "stjohann",
+    "name": "St. Johann im Pongau",
+    "bezirk": "Pongau",
+    "region": "SUED",
+    "lat": 47.35,
+    "lon": 13.2,
+    "strassen": ["Hauptstraße", "Ing.-Ludwig-Pech-Straße", "Premweg", "Alpendorf"]
+  },
+  {
+    "id": "schwarzach",
+    "name": "Schwarzach im Pongau",
+    "bezirk": "Pongau",
+    "region": "SUED",
+    "lat": 47.3206,
+    "lon": 13.1508,
+    "strassen": ["Markt", "Kardinal-Schwarzenberg-Platz", "Salzburger Straße"]
+  },
+  {
+    "id": "bischofshofen",
+    "name": "Bischofshofen",
+    "bezirk": "Pongau",
+    "region": "SUED",
+    "lat": 47.4172,
+    "lon": 13.2194,
+    "strassen": ["Bahnhofstraße", "Salzburger Straße", "Sparefeldstraße", "Gasteiner Straße"]
+  },
+  {
+    "id": "werfen",
+    "name": "Werfen",
+    "bezirk": "Pongau",
+    "region": "SUED",
+    "lat": 47.4756,
+    "lon": 13.19,
+    "strassen": ["Markt", "Eisriesenweltstraße", "Tenneck"]
+  },
+  {
+    "id": "wagrain",
+    "name": "Wagrain",
+    "bezirk": "Pongau",
+    "region": "SUED",
+    "lat": 47.3322,
+    "lon": 13.3033,
+    "strassen": ["Markt", "Kirchboden", "Hofmark"]
+  },
+  {
+    "id": "flachau",
+    "name": "Flachau",
+    "bezirk": "Pongau",
+    "region": "SUED",
+    "lat": 47.3447,
+    "lon": 13.3917,
+    "strassen": ["Flachauer Straße", "Hermann-Maier-Platz", "Reitdorf"]
+  },
+  {
+    "id": "altenmarkt",
+    "name": "Altenmarkt im Pongau",
+    "bezirk": "Pongau",
+    "region": "SUED",
+    "lat": 47.3819,
+    "lon": 13.4214,
+    "strassen": ["Marktplatz", "Zauchenseestraße", "Sportplatzstraße"]
+  },
+  {
+    "id": "radstadt",
+    "name": "Radstadt",
+    "bezirk": "Pongau",
+    "region": "SUED",
+    "lat": 47.3833,
+    "lon": 13.45,
+    "strassen": ["Stadtplatz", "Salzburger Straße", "Schlossstraße", "Tauernstraße"]
+  },
+  {
+    "id": "obertauern",
+    "name": "Obertauern",
+    "bezirk": "Pongau",
+    "region": "SUED",
+    "lat": 47.2519,
+    "lon": 13.5564,
+    "strassen": ["Römerstraße", "Tauernpassstraße", "Gamsleitenweg"]
+  },
+  {
+    "id": "badhofgastein",
+    "name": "Bad Hofgastein",
+    "bezirk": "Gastein",
+    "region": "SUED",
+    "lat": 47.1708,
+    "lon": 13.1058,
+    "strassen": ["Kaiser-Franz-Platz", "Pyrkerstraße", "Kurgartenstraße", "Griesgasse"]
+  },
+  {
+    "id": "badgastein",
+    "name": "Bad Gastein",
+    "bezirk": "Gastein",
+    "region": "SUED",
+    "lat": 47.1147,
+    "lon": 13.1339,
+    "strassen": ["Kaiser-Franz-Josef-Straße", "Böcksteiner Bundesstraße", "Stubnerkogelstraße"]
+  },
+  {
+    "id": "dorfgastein",
+    "name": "Dorfgastein",
+    "bezirk": "Gastein",
+    "region": "SUED",
+    "lat": 47.2417,
+    "lon": 13.1067,
+    "strassen": ["Dorfplatz", "Gasteiner Bundesstraße", "Unterberg"]
+  },
+  {
+    "id": "tamsweg",
+    "name": "Tamsweg",
+    "bezirk": "Lungau",
+    "region": "SUED",
+    "lat": 47.1281,
+    "lon": 13.8114,
+    "strassen": ["Marktplatz", "Kuenburgstraße", "Bahnhofstraße", "Sauerfeld"]
+  },
+  {
+    "id": "stmichael",
+    "name": "St. Michael im Lungau",
+    "bezirk": "Lungau",
+    "region": "SUED",
+    "lat": 47.0992,
+    "lon": 13.6383,
+    "strassen": ["Marktplatz", "Murtalstraße", "Katschbergstraße"]
+  },
+  {
+    "id": "mauterndorf",
+    "name": "Mauterndorf",
+    "bezirk": "Lungau",
+    "region": "SUED",
+    "lat": 47.1342,
+    "lon": 13.6781,
+    "strassen": ["Markt", "Tauernstraße", "Steindorf"]
+  },
+  {
+    "id": "obertauern-sued",
+    "name": "Tweng",
+    "bezirk": "Lungau",
+    "region": "SUED",
+    "lat": 47.1894,
+    "lon": 13.5953,
+    "strassen": ["Tauernstraße", "Dorf"]
+  }
+]

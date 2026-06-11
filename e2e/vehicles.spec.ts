@@ -5,9 +5,7 @@ test('game clock runs and can be paused', async ({ page }) => {
   const clock = page.getByTestId('game-clock')
   await expect(clock).toBeVisible()
   const t1 = await clock.textContent()
-  await page.waitForTimeout(1500)
-  const t2 = await clock.textContent()
-  expect(t2).not.toBe(t1)
+  await expect.poll(() => clock.textContent(), { timeout: 10_000 }).not.toBe(t1)
 
   await page.getByRole('button', { name: '⏸' }).click()
   const t3 = await clock.textContent()

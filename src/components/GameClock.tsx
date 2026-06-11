@@ -9,6 +9,7 @@ const SPEEDS: GameSpeed[] = [0, 1, 2, 4]
 export function GameClock() {
   const simSec = useGameStore((s) => s.simSec)
   const speed = useGameStore((s) => s.speed)
+  const weather = useGameStore((s) => s.weather)
   const startWeekday = useGameStore((s) => s.startWeekday)
   const month = useGameStore((s) => s.month)
   const weekday = weekdayAt(simSec, { startWeekday, month })
@@ -30,6 +31,14 @@ export function GameClock() {
           </button>
         ))}
       </div>
+      <button
+        className="weather-toggle"
+        title={weather === 'gut' ? 'Wetter: gut (Heli fliegt)' : 'Wetter: schlecht (Heli no-go)'}
+        aria-label="Wetter umschalten"
+        onClick={() => useGameStore.getState().setWeather(weather === 'gut' ? 'schlecht' : 'gut')}
+      >
+        {weather === 'gut' ? '☀' : '⛈'}
+      </button>
     </div>
   )
 }

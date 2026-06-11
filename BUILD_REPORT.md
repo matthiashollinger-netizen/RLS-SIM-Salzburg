@@ -111,3 +111,37 @@ IndexedDB-Write; Probealarm-Test pinnt Zeile per Rufname (Live-Locator-Falle).
 
 **Offene Punkte:** Heli-Einheiten fliegen erst mit M4-Dispo; Funkfeld bekommt in M7
 echte Funksprüche.
+
+## M4 — Einsatz-Kern / Disponent (2026-06-12)
+
+**Was:**
+- **Sim-Refactor auf `SimUnit`**: Bodenflotte + 5 Hubschrauber laufen in derselben
+  Engine; Heli-Dienst = Saison + sunrise–sunset (GAME_DATA §8), Wetter-Flag (Taskbar ☀/⛈)
+  blockt neue Heli-Dispositionen.
+- **AO-Engine** (`engine/ao.ts`): Code-Ableitung aus Kategorie (+Severity, akuitätsbasiert),
+  MANV-Prüfung ab 6 Personen mit offiziellen Schwellen, SoSi aus codes.json,
+  Partner-Vorschläge (FW/POL/WR/BR), Lagefreigabe-Hinweis, Heli-Empfehlung,
+  Mittelzusammensetzung je Code inkl. MANV-Skalierung und G-KTW-Pflicht (SCHWER).
+- **Mittelsuche** (`engine/dispatchSearch.ts`): nächstes geeignetes Mittel nach
+  Typ+Status+Fahrzeit (Ausrückzeit + Routing), N-KTW-Sonderlogik, Heli-Wetter-Filter.
+- **KH-Matching** (`engine/hospitalMatch.ts`): Ranking nach Fahrzeit mit
+  Eignungs-Markierung + fehlenden Fähigkeiten („nächstes ≠ richtiges").
+- **Auftrag-Modell + Dispatch-Store**: Klasse+Ziffer+Kategorie+Ort+Merkmalskette,
+  Alarmtext exakt `CODE STADTTEIL STRASSE` (GAME_DATA §3a), Hilfsfrist-Deadline,
+  Code-Übersteuern, Fahrzeug-Zuteilung→Sim-Dispatch (Transport ans gewählte/automatische
+  KH, NA/EL ohne Transport), KH-Wechsel aktualisiert laufende Aufträge,
+  Einsatzabbruch, Statusereignisse → Auftragszustand (offen→disponiert→laufend→abgeschlossen).
+- **Orts-Index** `places.json` (~65 Orte, reale Straßennamen, estimated) für
+  Alarmtexte und die spätere Adresssuche (M5).
+- **Einsatzliste-UI**: Liste mit Hilfsfrist-Countdown (rot bei Überschreitung,
+  ✓/✗ nach Eintreffen), Code-Chips mit SoSi-Optik, Detail mit AO-Slots + Top-Kandidaten
+  (ETA in min, Alarmieren-Button), Partner-Toggles, Zielklinik-Auswahl mit ⚠-Warnung,
+  MANV-Flag, ÜBUNG-Chip; Debug-Generator „Neuer Einsatz (Test)".
+
+**Wie getestet:** `npm run lint` ✓ · `npm test` ✓ (82 Tests; neu: 13 AO inkl. aller
+offizieller MANV-Schwellen, 5 KH-Matching inkl. Psych-Zell-Falle, 6 Mittelsuche inkl.
+Heli Tag/Nacht/Saison/Wetter) · `npm run build` ✓ · `npm run smoke` ✓ (10 E2E; neu:
+Einsatz erzeugen→AO→disponieren→KH-Liste; Code-Override ändert SoSi/Hilfsfrist-Timer).
+
+**Offene Punkte:** Scoring der Über-/Unterdisposition und Sekundärtransporte folgt in M8;
+echte Aufträge kommen ab M5 aus der Notrufabfrage.

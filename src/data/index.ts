@@ -6,12 +6,14 @@ import vehiclesJson from './vehicles.json'
 import hospitalsJson from './hospitals.json'
 import helicoptersJson from './helicopters.json'
 import balancingJson from './balancing.json'
+import placesJson from './places.json'
 import {
   balancingSchema,
   categoriesFileSchema,
   codesFileSchema,
   helicoptersFileSchema,
   hospitalsFileSchema,
+  placesFileSchema,
   stationsFileSchema,
   statusFileSchema,
   vehiclesFileSchema,
@@ -20,6 +22,7 @@ import {
   type EinsatzCode,
   type Helicopter,
   type Hospital,
+  type Place,
   type Station,
   type StatusDef,
   type Vehicle,
@@ -38,6 +41,7 @@ export const vehicles: Vehicle[] = vehiclesFileSchema.parse(vehiclesJson)
 export const hospitals: Hospital[] = hospitalsFileSchema.parse(hospitalsJson)
 export const helicopters: Helicopter[] = helicoptersFileSchema.parse(helicoptersJson)
 export const balancing: Balancing = balancingSchema.parse(balancingJson)
+export const places: Place[] = placesFileSchema.parse(placesJson)
 
 export const codeByCode = new Map(codes.map((c) => [c.code, c]))
 export const categoryById = new Map(categories.map((c) => [c.id, c]))
@@ -45,6 +49,7 @@ export const statusByCode = new Map(statusDefs.map((s) => [s.code, s]))
 export const stationById = new Map(stations.map((s) => [s.id, s]))
 export const vehicleByFunkrufname = new Map(vehicles.map((v) => [v.funkrufname, v]))
 export const hospitalById = new Map(hospitals.map((h) => [h.id, h]))
+export const placeById = new Map(places.map((p) => [p.id, p]))
 
 /**
  * Cross-reference checks beyond per-file schemas.

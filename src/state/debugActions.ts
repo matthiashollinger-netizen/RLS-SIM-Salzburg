@@ -1,11 +1,49 @@
-import { hospitals } from '../data/index.ts'
+import { balancing, categoryById, hospitals, places } from '../data/index.ts'
 import { haversineKm } from '../engine/geo.ts'
 import { vehicleSim } from './simulation.ts'
 import { useGameStore } from './gameStore.ts'
 import { useEventLog } from './eventLog.ts'
-import { shortCallSign } from '../lib/format.ts'
+import { useDispatchStore } from './dispatchStore.ts'
+import { unitDisplayName } from '../lib/format.ts'
 
 let testCounter = 1
+
+/**
+ * Debug helper (M4): create a random Auftrag like the scenario engine (M5)
+ * will — weighted category, real place + street, small position scatter.
+ */
+export function createRandomAuftrag(): string {
+  const region = useGameStore.getState().region
+  const weighted = Object.entries(balancing.categoryWeights)
+    .map(([id, w]) => ({ id, weight: w[region] ?? w.base }))
+    .filter((w) => w.weight > 0 && categoryById.has(w.id))
+  let roll = Math.random() * weighted.reduce((s, w) => s + w.weight, 0)
+  let categoryId = weighted[0]!.id
+  for (const w of weighted) {
+    roll -= w.weight
+    if (roll <= 0) {
+      categoryId = w.id
+      break
+    }
+  }
+  const regionPlaces = places.filter((p) => p.region === region)
+  const place = regionPlaces[Math.floor(Math.random() * regionPlaces.length)]!
+  const strasse = place.strassen[Math.floor(Math.random() * place.strassen.length)]!
+  const personen = Math.random() < 0.05 ? 6 + Math.floor(Math.random() * 10) : 1
+  return useDispatchStore.getState().createAuftrag({
+    categoryId,
+    severity: Math.random() < 0.6 ? 'hoch' : 'normal',
+    personen,
+    ort: {
+      lat: place.lat + (Math.random() - 0.5) * 0.01,
+      lon: place.lon + (Math.random() - 0.5) * 0.014,
+      stadtteil: place.name,
+      strasse,
+    },
+    merkmalskette: ['Testeinsatz (Debug-Generator M4)'],
+    uebung: true,
+  })
+}
 
 /**
  * Debug helper (M3): exercise the full status lifecycle without the dispatch
@@ -44,7 +82,7 @@ export function probealarm(vehicleId: string): boolean {
       simSec,
       kind: 'einsatz',
       vehicleId,
-      text: `ÜBUNG Probealarm für ${shortCallSign(vehicleId)}${target ? ` → ${target.short}` : ''}`,
+      text: `ÜBUNG Probealarm für ${unitDisplayName(rt.unit)}${target ? ` → ${target.short}` : ''}`,
     })
   }
   return ok

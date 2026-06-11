@@ -1,27 +1,35 @@
-import { VehicleSim } from '../engine/vehicleSim.ts'
-import { statusByCode } from '../data/index.ts'
-import { shortCallSign } from '../lib/format.ts'
+import {
+  unitFromHelicopter,
+  unitFromVehicle,
+  VehicleSim,
+} from '../engine/vehicleSim.ts'
+import { helicopters, statusByCode, vehicles } from '../data/index.ts'
+import { unitDisplayName } from '../lib/format.ts'
 import { useEventLog } from './eventLog.ts'
 import { useGameStore } from './gameStore.ts'
 
-/** Singleton vehicle simulation wired to the event log. */
-export const vehicleSim = new VehicleSim(Date.now() % 100000)
+/** Singleton unit simulation (ground fleet + helicopters) wired to the event log. */
+export const vehicleSim = new VehicleSim(Date.now() % 100000, [
+  ...vehicles.map(unitFromVehicle),
+  ...helicopters.map(unitFromHelicopter),
+])
 
-vehicleSim.onEvent = (e) => {
-  const short = shortCallSign(e.vehicleId)
+vehicleSim.addEventListener((e) => {
+  const rt = vehicleSim.get(e.vehicleId)
+  const name = rt ? unitDisplayName(rt.unit) : e.vehicleId
   if (e.type === 'spawn') {
     useEventLog.getState().append({
       simSec: e.simSec,
       kind: 'system',
       vehicleId: e.vehicleId,
-      text: `${short} in Dienst`,
+      text: `${name} in Dienst`,
     })
   } else if (e.type === 'despawn') {
     useEventLog.getState().append({
       simSec: e.simSec,
       kind: 'system',
       vehicleId: e.vehicleId,
-      text: `${short} außer Dienst`,
+      text: `${name} außer Dienst`,
     })
   } else if (e.type === 'status' && e.to) {
     const label = statusByCode.get(e.to)?.label ?? ''
@@ -29,10 +37,10 @@ vehicleSim.onEvent = (e) => {
       simSec: e.simSec,
       kind: 'status',
       vehicleId: e.vehicleId,
-      text: `${short} → Status ${e.to}${label ? ` (${label})` : ''}${e.note ? ` — ${e.note}` : ''}`,
+      text: `${name} → Status ${e.to}${label ? ` (${label})` : ''}${e.note ? ` — ${e.note}` : ''}`,
     })
   }
-}
+})
 
 let loopHandle: ReturnType<typeof setInterval> | null = null
 const REAL_TICK_MS = 250

@@ -3,7 +3,7 @@ import { statusByCode, hospitals } from '../data/index.ts'
 import { vehicleSim } from '../state/simulation.ts'
 import { useGameStore } from '../state/gameStore.ts'
 import { probealarm } from '../state/debugActions.ts'
-import { shortCallSign } from '../lib/format.ts'
+import { unitDisplayName } from '../lib/format.ts'
 import { isAvailable } from '../engine/status.ts'
 import type { VehicleRuntime } from '../engine/vehicleSim.ts'
 
@@ -26,7 +26,7 @@ function popupHtml(rt: VehicleRuntime): HTMLElement {
   el.className = 'vehicle-popup'
   const title = document.createElement('div')
   title.className = 'vehicle-popup-title mono'
-  title.textContent = `${shortCallSign(rt.id)} · ${rt.vehicle.typ}${rt.vehicle.nickname ? ` „${rt.vehicle.nickname}"` : ''}`
+  title.textContent = `${unitDisplayName(rt.unit)} · ${rt.unit.typ}${rt.unit.nickname && rt.unit.typ !== 'HELI' ? ` „${rt.unit.nickname}"` : ''}`
   el.appendChild(title)
   const statusLine = document.createElement('div')
   statusLine.className = 'vehicle-popup-status'
@@ -77,13 +77,13 @@ export function attachVehicleMarkers(map: maplibregl.Map): () => void {
       if (!entry) {
         const el = document.createElement('div')
         el.className = 'map-marker-vehicle'
-        el.dataset.typ = rt.vehicle.typ
+        el.dataset.typ = rt.unit.typ
         const marker = new maplibregl.Marker({ element: el })
           .setLngLat([rt.basePos.lon, rt.basePos.lat])
           .setPopup(new maplibregl.Popup({ closeButton: false, maxWidth: '280px' }))
           .addTo(map)
         el.addEventListener('mouseenter', () => {
-          el.title = `${shortCallSign(rt.id)} ${rt.vehicle.typ}`
+          el.title = `${unitDisplayName(rt.unit)} ${rt.unit.typ}`
         })
         marker.getPopup().on('open', () => {
           const current = vehicleSim.get(rt.id)

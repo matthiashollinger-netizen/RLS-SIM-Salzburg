@@ -93,6 +93,33 @@
   einsatzbereiten Zuständen. Einsatzabbruch (Disponent) nur in Status 1–3, danach ist
   der Patient an Bord.
 
+## 2026-06-12 — M4
+
+### AO-Mittelzusammensetzung je Code (Spielmodell, geschätzt)
+- A1/A3: 1 NA-Mittel (NEF/NAW/Heli) + 1 RTW · A2: Heli zuerst · A4: nur NA-Mittel
+  (RTW ist vor Ort). B: 1 RTW (N-KTW zulässig). C1: NEF+RTW · C2: Heli · C3/C5:
+  RTW/ITW · C4/C6: KTW. D nach Transportart (SCHWER→G-KTW). E1–E4: EL/MTW,
+  E5/E6 ohne Fahrzeug. MANV1–4: 1/2/3/4 NA + 3/6/10/15 RTW + 1/1/2/2 EL.
+  Das offizielle PDF enthält keine AO — Zusammensetzung ist Spiel-Balancing.
+
+### Severity-Logik bei Code-Paaren
+- Offizielle Tabelle listet Paare in beiden Richtungen („A1/B1" vs. „B1, schwer: A1").
+  `severity: 'hoch'` wählt immer den akuteren Code des Paars (konservativ),
+  'normal' den niedrigeren. Default: hoch.
+
+### Hilfsfrist-Anwendung
+- 15-min-Timer für Klasse A, B mit SoSi (B1/B2) und MANV. B3/B4, C–E ohne Timer
+  (GAME_DATA §11 bezieht die Frist auf Notfälle).
+
+### Orts-Index (places.json)
+- ~65 Stadtteile/Gemeinden mit je 2–5 realen Straßennamen, Koordinaten Ortszentrum,
+  alle estimated. Dient Alarmtext (`CODE STADTTEIL STRASSE`) und ab M5 der
+  Adress-Fuzzy-Suche. Einsatzkoordinate = Ortszentrum ± ~500 m Streuung.
+
+### Heli-Verfügbarkeit in der Mittelsuche
+- Saison+Tageslicht steuern „im Dienst" (Sim), Wetter-Flag filtert nur NEUE
+  Dispositionen (bereits fliegende Helis bleiben im Einsatz).
+
 ### Playwright-Smoke gegen Production-Preview
 - **Entscheidung:** Smoke-Tests laufen gegen `vite build` + `vite preview` (Port 4173),
   nicht gegen den Dev-Server.
