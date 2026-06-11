@@ -179,3 +179,32 @@ Calltaker-Flow Anruf→Abfrage→Hauptbeschwerde→Auftrag→Einsatzliste; Fuzzy
 
 **Offene Punkte:** Telefonreanimations-Minigame (M8-Outcome-Bonus als T-CPR-Flag),
 englischsprachige Anrufer nutzen aktuell nur den Begrüßungstext (Tier 2 in M6).
+
+## M6 — KI-Anrufer (Tier 2+3) & TTS (2026-06-12)
+
+**Was:**
+- **Engine-Abstraktion** (`src/llm/`): OpenAI-kompatibles `CallerEngine`-Interface
+  (Tauri-ready, ARCHITECTURE.md) mit vier Implementierungen:
+  WebLLM-WebWorker (Llama-3.2-3B default, 1B-Option, Lade-Progress,
+  Lazy-Chunk — lädt erst bei Nutzer-Opt-in), Tier-3-Endpoint (URL+Key,
+  localStorage, /v1-Autovervollständigung, Verbindungs-Probe), deterministische
+  Mock-Engine (CI ohne GPU) und Tier 1 als Default („Light-Modus ohne KI").
+- **System-Prompt aus dem Szenario** nach AI_CALLER_TECH-Regeln: nur Wahrheits-Fakten,
+  nichts erfinden, verschwiegene Infos nur auf konkrete Frage, kurz antworten,
+  Rolle/Emotion/Sprache (engl. Touristen), Panik-Beruhigungs-Verhalten.
+- **Gesprächs-Pipeline**: Frage-Buttons UND Freitext laufen durch denselben Pfad;
+  Freitext-Klassifikator (Regex-Katalog) mappt getippte Fragen auf das Frageschema,
+  damit Erfassung + Scoring identisch funktionieren; „Anrufer spricht…"-Indikator;
+  Tier-1-Fallback antwortet skriptbasiert.
+- **Settings-Dialog** (Taskbar ⚙): KI-Stufe, Modellwahl, Endpoint-Felder,
+  Fortschrittsbalken, Fehleranzeige; Einstellungen persistiert (localStorage).
+- **TTS**: Web-Speech-Toggle, bevorzugt de-AT-Stimme, liest Anrufer-Antworten.
+
+**Wie getestet:** `npm run lint` ✓ · `npm test` ✓ (110 Tests; neu: Prompt-Builder-Regeln,
+Freitext-Klassifikator, Mock-Engine, Endpoint-Engine mit gemocktem fetch inkl.
+Header/URL/Fehlerpfad) · `npm run build` ✓ · `npm run smoke` ✓ (14 E2E; neu:
+Settings→Mock-WebLLM aktivieren→Freitext-Dialog; Light-Modus-Freitext über Klassifikator).
+
+**Offene Punkte:** Echte WebLLM-Läufe sind nur manuell testbar (GPU/Download) —
+in CI per Mock ersetzt. Tier-2-JSON-Live-Scoring (AI_CALLER_TECH „Mini-Check")
+übernimmt der wahrheitsgetriebene Capture-Pfad.

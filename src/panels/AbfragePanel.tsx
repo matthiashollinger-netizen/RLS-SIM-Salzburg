@@ -164,12 +164,15 @@ function DuplikatBlock() {
 export function AbfragePanel() {
   const active = useCallStore((s) => s.active)
   const ask = useCallStore((s) => s.ask)
+  const askFreeText = useCallStore((s) => s.askFreeText)
+  const generating = useCallStore((s) => s.generating)
   const hangup = useCallStore((s) => s.hangup)
   const chooseHauptbeschwerde = useCallStore((s) => s.chooseHauptbeschwerde)
   const setAnswer = useCallStore((s) => s.setAnswer)
   const createAuftrag = useCallStore((s) => s.createAuftrag)
   const simSec = useGameStore((s) => s.simSec)
   const [showBeschwerden, setShowBeschwerden] = useState(false)
+  const [freeText, setFreeText] = useState('')
 
   if (!active) {
     return (
@@ -204,6 +207,29 @@ export function AbfragePanel() {
       </div>
 
       <Transcript />
+      {generating && <div className="caller-typing">Anrufer spricht…</div>}
+
+      <form
+        className="freitext-row"
+        onSubmit={(e) => {
+          e.preventDefault()
+          const text = freeText.trim()
+          if (!text) return
+          askFreeText(text)
+          setFreeText('')
+        }}
+      >
+        <input
+          aria-label="Freitext-Frage"
+          placeholder="Eigene Frage stellen…"
+          value={freeText}
+          disabled={generating}
+          onChange={(e) => setFreeText(e.target.value)}
+        />
+        <button type="submit" disabled={generating || !freeText.trim()}>
+          Fragen
+        </button>
+      </form>
 
       <div className="frage-buttons">
         {FRAGEN.filter((f) => f.phase === 1).map((f) => (

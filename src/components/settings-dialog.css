@@ -1,0 +1,87 @@
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+}
+
+.settings-dialog {
+  width: min(540px, 92vw);
+  max-height: 84vh;
+  overflow: auto;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong-solid);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-window-active);
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+
+.settings-section h3 {
+  margin: 0 0 var(--sp-1);
+  font-size: var(--fs-md);
+  color: var(--text-secondary);
+}
+
+.settings-hint {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  margin: 0 0 var(--sp-2);
+}
+
+.settings-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  font-size: var(--fs-sm);
+  margin-bottom: var(--sp-2);
+}
+
+.settings-row label {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.settings-endpoint {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-2);
+}
+
+.settings-status {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+}
+
+.settings-status progress {
+  flex: 1;
+}
+
+.settings-ok {
+  color: var(--ok);
+}
+
+.settings-error {
+  color: var(--danger);
+}

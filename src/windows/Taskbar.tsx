@@ -3,6 +3,7 @@ import { useWindowStore } from './windowStore.ts'
 import { listPresets, restoreLayout, savePreset } from './layoutPersistence.ts'
 import type { WindowDef } from './windowDefs.ts'
 import { GameClock } from '../components/GameClock.tsx'
+import { SettingsDialog } from '../components/SettingsDialog.tsx'
 import './windows.css'
 
 export function Taskbar({ defs }: { defs: WindowDef[] }) {
@@ -11,6 +12,7 @@ export function Taskbar({ defs }: { defs: WindowDef[] }) {
   const focus = useWindowStore((s) => s.focus)
   const [presets, setPresets] = useState<string[]>([])
   const [presetName, setPresetName] = useState('')
+  const [showSettings, setShowSettings] = useState(false)
 
   useEffect(() => {
     void listPresets().then(setPresets)
@@ -72,7 +74,11 @@ export function Taskbar({ defs }: { defs: WindowDef[] }) {
             </option>
           ))}
         </select>
+        <button aria-label="Einstellungen" title="Einstellungen" onClick={() => setShowSettings(true)}>
+          ⚙
+        </button>
       </div>
+      {showSettings && <SettingsDialog onClose={() => setShowSettings(false)} />}
     </div>
   )
 }

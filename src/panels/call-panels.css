@@ -139,6 +139,28 @@
   font-style: italic;
 }
 
+.caller-typing {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  font-style: italic;
+  flex: none;
+}
+
+.freitext-row {
+  display: flex;
+  gap: var(--sp-1);
+  flex: none;
+}
+
+.freitext-row input {
+  flex: 1;
+  font-size: var(--fs-xs);
+}
+
+.freitext-row button {
+  font-size: var(--fs-xs);
+}
+
 .frage-buttons {
   display: flex;
   flex-wrap: wrap;

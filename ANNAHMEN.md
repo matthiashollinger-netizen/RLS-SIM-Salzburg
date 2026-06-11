@@ -143,6 +143,22 @@
   (korrigiert sich in derselben Antwort), Panik braucht Beruhigen-Button 30 %,
   legt früh auf 6 %, Englisch 8 %. Alles Tier-1-Schätzwerte, seedbar.
 
+## 2026-06-12 — M6
+
+### LLM-Pfad für Frage-Buttons
+- Bei aktivem Tier 2/3 laufen AUCH die strukturierten Frage-Buttons durch das LLM
+  (einheitliches Gesprächsgefühl); die strukturierte Antwort-Erfassung bleibt
+  wahrheitsgetrieben aus Tier 1 (das LLM kann das Scoring nicht brechen —
+  AI_CALLER_TECH-Regel „Wahrheit liegt in Tier 1").
+
+### CI-Mock
+- localStorage-Flag `rls-llm-mock=1` ersetzt WebLLM durch eine deterministische
+  Mock-Engine (CI ohne GPU, CLAUDE.md M6). Wirkt nur, wenn explizit gesetzt.
+
+### Tier-3-Probe
+- Beim Verbinden eines Endpoints wird ein Mini-Request gesendet, damit Fehler
+  (URL/Key) sofort sichtbar sind. `/v1` wird automatisch ergänzt, wenn es fehlt.
+
 ### Playwright-Smoke gegen Production-Preview
 - **Entscheidung:** Smoke-Tests laufen gegen `vite build` + `vite preview` (Port 4173),
   nicht gegen den Dev-Server.

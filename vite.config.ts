@@ -9,7 +9,11 @@ export default defineConfig({
   plugins: [react()],
   build: {
     target: 'es2022',
-    chunkSizeWarningLimit: 1500,
+    // the WebLLM library chunk is huge but loads lazily on user opt-in only
+    chunkSizeWarningLimit: 8000,
+  },
+  worker: {
+    format: 'es',
   },
   test: {
     environment: 'jsdom',

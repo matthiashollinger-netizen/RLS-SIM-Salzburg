@@ -16,9 +16,14 @@ import {
 } from '../engine/callerScript.ts'
 import type { Scenario } from '../engine/scenario.ts'
 import { haversineKm } from '../engine/geo.ts'
+import { buildSystemPrompt } from '../llm/prompt.ts'
+import { classifyFreeText } from '../llm/classify.ts'
+import { speakCaller } from '../llm/tts.ts'
+import type { ChatMessage } from '../llm/types.ts'
 import { useGameStore } from './gameStore.ts'
 import { useDispatchStore } from './dispatchStore.ts'
 import { useEventLog } from './eventLog.ts'
+import { useLlmStore } from './llmStore.ts'
 
 /** Calltaker state: ringing queue, active call, transcript, Abfrage answers, Ortung. */
 
@@ -54,12 +59,15 @@ export interface ActiveCall {
 interface CallStoreState {
   queue: ActiveCall[]
   active: ActiveCall | null
+  /** caller is "typing" (LLM generation running) */
+  generating: boolean
   /** answered+ended call counters for the shift report (M8) */
   stats: { angenommen: number; aufgelegt: number; auftraege: number; zugeordnet: number }
   incoming: (scenario: Scenario) => void
   answer: (id: string) => void
   hangup: () => void
   ask: (frageId: string) => void
+  askFreeText: (text: string) => void
   setAnswer: (patch: Partial<AbfrageAnswers>) => void
   chooseHauptbeschwerde: (id: string) => void
   setAdresse: (adresse: NonNullable<AbfrageAnswers['adresse']>) => void
@@ -75,6 +83,110 @@ let callCounter = 1
 
 function say(call: ActiveCall, from: TranscriptEntry['from'], text: string, simSec: number) {
   call.transcript = [...call.transcript, { from, text, simSec }]
+  if (from === 'anrufer') speakCaller(text)
+}
+
+/** Question text for the structured catalog incl. action buttons. */
+function questionText(frageId: string): string {
+  if (frageId === 'beruhigen') return 'Ich bin bei Ihnen, atmen Sie ruhig durch. Wir schicken Hilfe.'
+  if (frageId === 'eh_anweisung') return 'Ich sage Ihnen jetzt, was Sie bis zum Eintreffen tun können.'
+  return frageById.get(frageId)?.text ?? frageId
+}
+
+/** Capture structured interview facts revealed by a question (truth-driven). */
+function captureAnswers(call: ActiveCall, frageId: string): Partial<AbfrageAnswers> {
+  const t = call.scenario.truth
+  switch (frageId) {
+    case 'personen':
+      if (call.scenario.anrufer.emotion !== 'panisch' || call.callerState.calmed)
+        return { personen: t.personen }
+      return {}
+    case 'bewusstsein':
+      return { ansprechbar: t.ansprechbar }
+    case 'atmung':
+      return { atmet: t.atmet }
+    case 'alter':
+      return { alter: t.alter }
+    case 'zugang':
+      return {
+        zugang: t.zugang === 'frei' ? 'frei' : t.zugang === 'versperrt' ? 'versperrt' : 'schwer',
+      }
+    case 'rueckruf':
+      return { rueckrufOk: true }
+    default:
+      return {}
+  }
+}
+
+/** Transcript → OpenAI-style messages (caller = assistant, calltaker = user). */
+function toChatMessages(call: ActiveCall): ChatMessage[] {
+  const msgs: ChatMessage[] = [{ role: 'system', content: buildSystemPrompt(call.scenario) }]
+  for (const t of call.transcript) {
+    if (t.from === 'anrufer') msgs.push({ role: 'assistant', content: t.text })
+    else if (t.from === 'calltaker') msgs.push({ role: 'user', content: t.text })
+  }
+  return msgs
+}
+
+function maybeEarlyHangup(call: ActiveCall, simSec: number) {
+  if (
+    call.scenario.stoerungen.includes('legt_frueh_auf') &&
+    call.callerState.asked.length >= 3 &&
+    !call.ended
+  ) {
+    say(call, 'system', 'Anrufer hat aufgelegt!', simSec)
+    call.ended = true
+  }
+}
+
+type SetFn = (
+  partial:
+    | Partial<CallStoreState>
+    | ((s: CallStoreState) => Partial<CallStoreState>),
+) => void
+type GetFn = () => CallStoreState
+
+/** Shared question pipeline: scripted Tier 1 or LLM Tier 2/3 (M6). */
+function sendQuestion(set: SetFn, get: GetFn, text: string, frageId: string | null) {
+  const simSec = useGameStore.getState().simSec
+  const call = get().active
+  if (!call || call.ended || get().generating) return
+  const updated = { ...call }
+  say(updated, 'calltaker', text, simSec)
+  if (frageId) updated.answers = { ...updated.answers, ...captureAnswers(updated, frageId) }
+
+  const llm = useLlmStore.getState()
+  const engine = llm.status === 'ready' ? llm.engine : null
+  if (!engine) {
+    // Tier 1: scripted dialogue tree (answerFor tracks asked/calmed itself)
+    const antwort = frageId
+      ? answerFor(updated.scenario, frageId, updated.callerState)
+      : 'Ich versteh die Frage nicht ganz… was meinen Sie?'
+    say(updated, 'anrufer', antwort, simSec)
+    maybeEarlyHangup(updated, simSec)
+    set({ active: updated })
+    return
+  }
+
+  // Tier 2/3: the LLM verbalizes the scenario; structured capture stays truth-driven
+  updated.callerState.asked.push(frageId ?? 'frei')
+  if (frageId === 'beruhigen') updated.callerState.calmed = true
+  set({ active: updated, generating: true })
+  void engine
+    .generate(toChatMessages(updated))
+    .catch(() => 'Hallo?? Sind Sie noch dran? Bitte schicken Sie wen!')
+    .then((antwort) => {
+      const after = useGameStore.getState().simSec
+      const cur = get().active
+      if (!cur || cur.id !== call.id) {
+        set({ generating: false })
+        return
+      }
+      const next = { ...cur }
+      say(next, 'anrufer', antwort, after)
+      maybeEarlyHangup(next, after)
+      set({ active: next, generating: false })
+    })
 }
 
 /** Nearest place for locating a point without an address (AML-only). */
@@ -94,6 +206,7 @@ function nearestPlace(lat: number, lon: number) {
 export const useCallStore = create<CallStoreState>((set, get) => ({
   queue: [],
   active: null,
+  generating: false,
   stats: { angenommen: 0, aufgelegt: 0, auftraege: 0, zugeordnet: 0 },
 
   incoming: (scenario) => {
@@ -163,60 +276,11 @@ export const useCallStore = create<CallStoreState>((set, get) => ({
   },
 
   ask: (frageId) => {
-    const simSec = useGameStore.getState().simSec
-    set((s) => {
-      const call = s.active
-      if (!call || call.ended) return s
-      const frage = frageById.get(frageId)
-      const frageText =
-        frageId === 'beruhigen'
-          ? 'Ich bin bei Ihnen, atmen Sie ruhig durch. Wir schicken Hilfe.'
-          : frageId === 'eh_anweisung'
-            ? 'Ich sage Ihnen jetzt, was Sie bis zum Eintreffen tun können.'
-            : (frage?.text ?? frageId)
-      const updated = { ...call }
-      say(updated, 'calltaker', frageText, simSec)
-      const antwort = answerFor(updated.scenario, frageId, updated.callerState)
-      say(updated, 'anrufer', antwort, simSec)
+    sendQuestion(set, get, questionText(frageId), frageId)
+  },
 
-      // auto-capture structured answers from truth where the question reveals them
-      const t = updated.scenario.truth
-      const answers = { ...updated.answers }
-      switch (frageId) {
-        case 'personen':
-          if (updated.scenario.anrufer.emotion !== 'panisch' || updated.callerState.calmed)
-            answers.personen = t.personen
-          break
-        case 'bewusstsein':
-          answers.ansprechbar = t.ansprechbar
-          break
-        case 'atmung':
-          answers.atmet = t.atmet
-          break
-        case 'alter':
-          answers.alter = t.alter
-          break
-        case 'zugang':
-          answers.zugang =
-            t.zugang === 'frei' ? 'frei' : t.zugang === 'versperrt' ? 'versperrt' : 'schwer'
-          break
-        case 'rueckruf':
-          answers.rueckrufOk = true
-          break
-      }
-      updated.answers = answers
-
-      // early hang-up disturbance: caller drops after a few questions
-      if (
-        updated.scenario.stoerungen.includes('legt_frueh_auf') &&
-        updated.callerState.asked.length >= 3 &&
-        !updated.ended
-      ) {
-        say(updated, 'system', 'Anrufer hat aufgelegt!', simSec)
-        updated.ended = true
-      }
-      return { active: updated }
-    })
+  askFreeText: (text) => {
+    sendQuestion(set, get, text, classifyFreeText(text))
   },
 
   setAnswer: (patch) =>
