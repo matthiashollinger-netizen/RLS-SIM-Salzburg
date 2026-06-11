@@ -1,0 +1,79 @@
+{
+  "estimated": true,
+  "calls": {
+    "NORD": { "perDay": 800, "emergenciesPerDay": 160 },
+    "SUED": { "perDay": 430, "emergenciesPerDay": 85 }
+  },
+  "hourlyFactors": [
+    0.4, 0.35, 0.3, 0.3, 0.35, 0.5, 0.8, 1.2, 1.7, 2.0, 1.9, 1.6, 1.4, 1.3, 1.3, 1.3, 1.3, 1.2,
+    1.1, 1.0, 0.9, 0.8, 0.7, 0.5
+  ],
+  "weekdayFactors": {
+    "1": 1.15,
+    "2": 1.05,
+    "3": 1.0,
+    "4": 1.0,
+    "5": 1.05,
+    "6": 0.95,
+    "7": 0.85
+  },
+  "seasons": {
+    "winterMonths": [12, 1, 2, 3],
+    "summerMonths": [6, 7, 8],
+    "winterFactor": 1.15,
+    "summerFactor": 1.05
+  },
+  "routing": {
+    "detourFactor": 1.35,
+    "speedRuralKmh": 60,
+    "speedCityKmh": 35,
+    "sosiSpeedFactor": 1.3,
+    "heliSpeedKmh": 220,
+    "heliStartMin": 3,
+    "cityPolygon": [
+      [12.99, 47.76],
+      [13.1, 47.76],
+      [13.1, 47.85],
+      [12.99, 47.85]
+    ]
+  },
+  "turnout": {
+    "hauptamtlichSec": 60,
+    "ehrenamtlichTagSec": 240,
+    "ehrenamtlichNachtSec": 420,
+    "khPersonalNachtSec": 600
+  },
+  "hilfsfristMin": 15,
+  "categoryWeights": {
+    "INTERN": { "base": 22 },
+    "TRAUMA": { "base": 16 },
+    "KRANK": { "base": 12 },
+    "NEURO": { "base": 8 },
+    "VERKEHR": { "base": 8 },
+    "CHIR": { "base": 6 },
+    "INTOX": { "base": 4 },
+    "PSYCH": { "base": 4 },
+    "ALPIN": { "base": 2, "NORD": 0.5, "SUED": 6 },
+    "GEWALT": { "base": 2.5 },
+    "ALLERGIE": { "base": 2 },
+    "STILL": { "base": 1.5 },
+    "GYN": { "base": 1.5 },
+    "RUFHILFE": { "base": 2 },
+    "EINGESCHLOSSEN": { "base": 1 },
+    "BRAND": { "base": 1 },
+    "SONST": { "base": 1 },
+    "COVID": { "base": 0.5 },
+    "WASSER": { "base": 0.5, "NORD": 0.6, "SUED": 0.5 },
+    "STROM": { "base": 0.3 },
+    "GEFAHRGUT": { "base": 0.2 },
+    "VERSCHUETTUNG": { "base": 0.15, "SUED": 0.3 },
+    "POLIZEI": { "base": 0.2 },
+    "HOEHLE_GRUBE": { "base": 0.05, "SUED": 0.1 },
+    "EINSTURZ": { "base": 0.05 },
+    "EXPLOSION": { "base": 0.05 },
+    "VERKEHR_SCHIENE": { "base": 0.1 },
+    "VERKEHR_LUFT": { "base": 0.03 },
+    "BEREIT": { "base": 0.2 }
+  },
+  "nonEmergencyCallShare": 0.8
+}

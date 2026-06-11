@@ -1,0 +1,1152 @@
+[
+  {
+    "funkrufname": "5.10-107",
+    "typ": "NEF",
+    "homeStation": "zell",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "besonderheiten": "NEF Pinzgau, 24h (Schichten 7-19/19-7)"
+  },
+  {
+    "funkrufname": "5.71-201",
+    "typ": "RTW",
+    "homeStation": "zell",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "08:00", "to": "20:00" }]
+  },
+  {
+    "funkrufname": "5.71-210",
+    "typ": "ITW",
+    "homeStation": "zell",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "besonderheiten": "Intensivtransporter 24h — eigene Nummer statt Doppelbelegung 5.71-201 (GAME_DATA §5 Anomalie ①)",
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.71-202",
+    "typ": "RTW",
+    "homeStation": "zell",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }]
+  },
+  {
+    "funkrufname": "5.10-302",
+    "typ": "KTW",
+    "homeStation": "zell",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "06:30", "to": "18:30" }],
+    "besonderheiten": "VW T6.1 4motion, Dlouhy"
+  },
+  {
+    "funkrufname": "5.71-301",
+    "typ": "KTW",
+    "homeStation": "zell",
+    "dienstzeiten": [
+      { "days": [1, 2, 3, 4, 5, 6, 7], "from": "08:00", "to": "17:30" },
+      { "days": [1, 2, 3, 4, 5, 6, 7], "from": "19:00", "to": "07:00" }
+    ]
+  },
+  {
+    "funkrufname": "5.71-303",
+    "typ": "KTW",
+    "homeStation": "zell",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "12:00", "to": "22:00" }]
+  },
+  {
+    "funkrufname": "5.75-301",
+    "typ": "KTW",
+    "homeStation": "zell",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "09:00", "to": "19:00" }],
+    "besonderheiten": "Rauris-Kennung, stationiert in Zell (GAME_DATA §5 Anomalie ②)"
+  },
+  {
+    "funkrufname": "5.10-504",
+    "typ": "BTW",
+    "homeStation": "zell",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "09:00", "to": "19:00" }],
+    "rollstuhlgeeignet": true
+  },
+  {
+    "funkrufname": "5.71-601",
+    "typ": "MTW",
+    "homeStation": "zell",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "06:00", "to": "16:00" }]
+  },
+  {
+    "funkrufname": "5.71-701",
+    "typ": "EL",
+    "homeStation": "zell",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "08:00", "to": "18:00" }],
+    "besonderheiten": "EL Pinzgau / Sachtransport (PKW)"
+  },
+  {
+    "funkrufname": "5.72-201",
+    "typ": "RTW",
+    "homeStation": "saalfelden",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }]
+  },
+  {
+    "funkrufname": "5.10-308",
+    "typ": "KTW",
+    "homeStation": "saalfelden",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "06:00", "to": "18:00" }]
+  },
+  {
+    "funkrufname": "5.72-301",
+    "typ": "KTW",
+    "homeStation": "saalfelden",
+    "dienstzeiten": [
+      { "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "17:00" },
+      { "days": [1, 2, 3, 4, 5, 6, 7], "from": "19:00", "to": "07:00" }
+    ]
+  },
+  {
+    "funkrufname": "5.72-302",
+    "typ": "KTW",
+    "homeStation": "saalfelden",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "09:00", "to": "19:00" }]
+  },
+  {
+    "funkrufname": "5.10-105",
+    "typ": "NEF",
+    "homeStation": "mittersill",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "besonderheiten": "NEF Oberpinzgau"
+  },
+  {
+    "funkrufname": "5.73-201",
+    "typ": "RTW",
+    "homeStation": "mittersill",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }]
+  },
+  {
+    "funkrufname": "5.10-304",
+    "typ": "KTW",
+    "homeStation": "mittersill",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "18:00" }]
+  },
+  {
+    "funkrufname": "5.73-301",
+    "typ": "KTW",
+    "homeStation": "mittersill",
+    "dienstzeiten": [
+      { "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "17:00" },
+      { "days": [1, 2, 3, 4, 5, 6, 7], "from": "19:00", "to": "07:00" }
+    ]
+  },
+  {
+    "funkrufname": "5.74-201",
+    "typ": "RTW",
+    "homeStation": "stmartin-lofer",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }]
+  },
+  {
+    "funkrufname": "5.74-301",
+    "typ": "KTW",
+    "homeStation": "stmartin-lofer",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "18:00" }]
+  },
+  {
+    "funkrufname": "5.74-302",
+    "typ": "KTW",
+    "homeStation": "stmartin-lofer",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "08:00", "to": "19:00" }]
+  },
+  {
+    "funkrufname": "5.10-307",
+    "typ": "KTW",
+    "homeStation": "rauris",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "17:00" }]
+  },
+  {
+    "funkrufname": "5.71-302",
+    "typ": "KTW",
+    "homeStation": "rauris",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true,
+    "besonderheiten": "Dienstzeit in Quelle offen — geschätzt"
+  },
+  {
+    "funkrufname": "5.75-302",
+    "typ": "KTW",
+    "homeStation": "rauris",
+    "dienstzeiten": [
+      { "days": [1, 2, 3, 4, 5, 6, 7], "from": "09:00", "to": "19:00" },
+      { "days": [1, 2, 3, 4, 5, 6, 7], "from": "19:00", "to": "07:00" }
+    ]
+  },
+  {
+    "funkrufname": "5.10-315",
+    "typ": "KTW",
+    "homeStation": "saalbach",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "08:00", "to": "18:00" }],
+    "estimated": true,
+    "besonderheiten": "In Quellen doppelt (Stadt-KTW-Liste + Saalbach) — eindeutig Saalbach zugeordnet, Dienstzeit geschätzt (ANNAHMEN.md M1)"
+  },
+  {
+    "funkrufname": "5.76-301",
+    "typ": "KTW",
+    "homeStation": "saalbach",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "19:00" }]
+  },
+  {
+    "funkrufname": "5.76-302",
+    "typ": "KTW",
+    "homeStation": "saalbach",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "notfallKtw": true
+  },
+  {
+    "funkrufname": "5.77-301",
+    "typ": "KTW",
+    "homeStation": "wald",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "notfallKtw": true
+  },
+  {
+    "funkrufname": "5.77-302",
+    "typ": "KTW",
+    "homeStation": "wald",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "18:00" }],
+    "notfallKtw": true
+  },
+  {
+    "funkrufname": "5.61-201",
+    "typ": "RTW",
+    "homeStation": "stjohann",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "10:00", "to": "20:00" }],
+    "besonderheiten": "MB Sprinter 2020, Dlouhy"
+  },
+  {
+    "funkrufname": "5.61-202",
+    "typ": "RTW",
+    "homeStation": "stjohann",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "besonderheiten": "MB Sprinter, 24h-Muster"
+  },
+  {
+    "funkrufname": "5.61-301",
+    "typ": "KTW",
+    "homeStation": "stjohann",
+    "dienstzeiten": [
+      { "days": [1, 2, 3, 4, 5], "from": "06:00", "to": "16:00" },
+      { "days": [6, 7], "from": "00:00", "to": "24:00", "season": "winter" }
+    ],
+    "besonderheiten": "Winter-Wochenende 24h (GAME_DATA §6)"
+  },
+  {
+    "funkrufname": "5.61-302",
+    "typ": "KTW",
+    "homeStation": "stjohann",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "18:00" }]
+  },
+  {
+    "funkrufname": "5.61-303",
+    "typ": "KTW",
+    "homeStation": "stjohann",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true,
+    "besonderheiten": "VW T5; Dienstzeit in Quelle offen — geschätzt"
+  },
+  {
+    "funkrufname": "5.10-305",
+    "typ": "KTW",
+    "homeStation": "stjohann",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true,
+    "besonderheiten": "VW T6; Dienstzeit in Quelle offen — geschätzt"
+  },
+  {
+    "funkrufname": "5.10-506",
+    "typ": "BTW",
+    "homeStation": "stjohann",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "06:30", "to": "17:30" }],
+    "rollstuhlgeeignet": true,
+    "besonderheiten": "VW Crafter"
+  },
+  {
+    "funkrufname": "5.10-104",
+    "typ": "NEF",
+    "homeStation": "schwarzach",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "besonderheiten": "NEF Salzachpongau, Jeep Grand Cherokee"
+  },
+  {
+    "funkrufname": "5.62-201",
+    "typ": "RTW",
+    "homeStation": "schwarzach",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "MB Sprinter; Dienstzeit in Quelle offen — geschätzt 24h"
+  },
+  {
+    "funkrufname": "5.10-306",
+    "typ": "KTW",
+    "homeStation": "schwarzach",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true,
+    "besonderheiten": "VW T5; in Quellen doppelt (Schwarzach + Lammertal) — eindeutig Schwarzach zugeordnet (GAME_DATA §5 Anomalie ③)"
+  },
+  {
+    "funkrufname": "5.65-201",
+    "typ": "RTW",
+    "homeStation": "bischofshofen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "besonderheiten": "24h-Muster"
+  },
+  {
+    "funkrufname": "5.65-301",
+    "typ": "KTW",
+    "homeStation": "bischofshofen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.65-302",
+    "typ": "KTW",
+    "homeStation": "bischofshofen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "09:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.64-201",
+    "typ": "RTW",
+    "homeStation": "werfen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "19:00" }],
+    "estimated": true,
+    "besonderheiten": "Flotte Werfen geschätzt (GAME_DATA §12b)"
+  },
+  {
+    "funkrufname": "5.64-301",
+    "typ": "KTW",
+    "homeStation": "werfen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.10-110",
+    "typ": "NAW",
+    "homeStation": "gastein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "NAW Gasteinertal (Insider bestätigt, Funkcode geschätzt — ANNAHMEN.md M1)"
+  },
+  {
+    "funkrufname": "5.63-201",
+    "typ": "RTW",
+    "homeStation": "gastein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.63-301",
+    "typ": "KTW",
+    "homeStation": "gastein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "06:30", "to": "18:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.63-302",
+    "typ": "KTW",
+    "homeStation": "gastein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.63-303",
+    "typ": "KTW",
+    "homeStation": "gastein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "09:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.10-111",
+    "typ": "NAW",
+    "homeStation": "radstadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "NAW Ennspongau (Insider bestätigt, Funkcode geschätzt — ANNAHMEN.md M1)"
+  },
+  {
+    "funkrufname": "5.68-201",
+    "typ": "RTW",
+    "homeStation": "radstadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.68-202",
+    "typ": "RTW",
+    "homeStation": "radstadt",
+    "dienstzeiten": [
+      { "days": [1, 2, 3, 4, 5, 6, 7], "from": "08:00", "to": "20:00", "season": "winter" }
+    ],
+    "estimated": true,
+    "besonderheiten": "Winter-Verstärker (Obertauern/Ski amadé)"
+  },
+  {
+    "funkrufname": "5.68-301",
+    "typ": "KTW",
+    "homeStation": "radstadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "06:30", "to": "18:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.68-302",
+    "typ": "KTW",
+    "homeStation": "radstadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.68-303",
+    "typ": "KTW",
+    "homeStation": "radstadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "09:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.10-102",
+    "typ": "NEF",
+    "homeStation": "tamsweg",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "NEF/Notfalldienst Lungau (Funkcode geschätzt — ANNAHMEN.md M1)"
+  },
+  {
+    "funkrufname": "5.91-201",
+    "typ": "RTW",
+    "homeStation": "tamsweg",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.91-301",
+    "typ": "KTW",
+    "homeStation": "tamsweg",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "06:30", "to": "18:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.91-302",
+    "typ": "KTW",
+    "homeStation": "tamsweg",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.91-303",
+    "typ": "KTW",
+    "homeStation": "tamsweg",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "09:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.92-201",
+    "typ": "RTW",
+    "homeStation": "stmichael",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "A10 Tauerntunnel-Süd"
+  },
+  {
+    "funkrufname": "5.92-301",
+    "typ": "KTW",
+    "homeStation": "stmichael",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.93-301",
+    "typ": "KTW",
+    "homeStation": "mauterndorf",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "notfallKtw": true,
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.93-302",
+    "typ": "KTW",
+    "homeStation": "mauterndorf",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.10-106",
+    "typ": "NEF",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "vorhalteposition": "08",
+    "besonderheiten": "Haupt-NEF Stadt, dauerhaft am LKH (Insider, GAME_DATA §12b)"
+  },
+  {
+    "funkrufname": "5.10-101",
+    "typ": "NEF",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "specialRule": "nef101",
+    "besonderheiten": "Tags am Flughafen bei C6 (Boden-NEF bei Heli-Schlechtwetter); nachts 2. NEF am LKH, Besetzung durch KH-Personal → verlängerte Ausrückzeit (Insider, GAME_DATA §12b)"
+  },
+  {
+    "funkrufname": "5.20-201",
+    "typ": "RTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "Dienstzeit geschätzt (Rufname belegt)"
+  },
+  {
+    "funkrufname": "5.20-202",
+    "typ": "RTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "Dienstzeit geschätzt (Rufname belegt)"
+  },
+  {
+    "funkrufname": "5.20-203",
+    "typ": "RTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "Dienstzeit geschätzt (Rufname belegt)"
+  },
+  {
+    "funkrufname": "5.20-204",
+    "typ": "RTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "06:00", "to": "22:00" }],
+    "estimated": true,
+    "besonderheiten": "Dienstzeit geschätzt (Rufname belegt)"
+  },
+  {
+    "funkrufname": "5.20-205",
+    "typ": "RTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "06:00", "to": "22:00" }],
+    "estimated": true,
+    "besonderheiten": "Dienstzeit geschätzt (Rufname belegt)"
+  },
+  {
+    "funkrufname": "5.20-206",
+    "typ": "RTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "19:00" }],
+    "estimated": true,
+    "besonderheiten": "Dienstzeit geschätzt (Rufname belegt)"
+  },
+  {
+    "funkrufname": "5.20-207",
+    "typ": "RTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "19:00" }],
+    "estimated": true,
+    "besonderheiten": "Dienstzeit geschätzt (Rufname belegt)"
+  },
+  {
+    "funkrufname": "5.80-202",
+    "typ": "RTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [],
+    "reserve": true,
+    "besonderheiten": "Reserve-RTW, aktivierbar bei Status 94"
+  },
+  {
+    "funkrufname": "5.80-203",
+    "typ": "RTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [],
+    "reserve": true,
+    "besonderheiten": "Reserve-RTW, aktivierbar bei Status 94"
+  },
+  {
+    "funkrufname": "5.20-301",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-302",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-303",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:30", "to": "18:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-304",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:30", "to": "18:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-305",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-306",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-307",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-308",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "20:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-309",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "20:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-310",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6], "from": "08:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-311",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6], "from": "09:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-312",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "09:00", "to": "21:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-313",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "10:00", "to": "22:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.10-313",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:00", "to": "16:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.10-316",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.10-318",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.10-319",
+    "typ": "KTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "09:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-401",
+    "typ": "GKTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6], "from": "06:00", "to": "18:00" }],
+    "nickname": "Jumbo",
+    "rollstuhlgeeignet": true,
+    "estimated": true,
+    "besonderheiten": "G-KTW, 2 Tragsessel + 2 Tragen (GAME_DATA §10d)"
+  },
+  {
+    "funkrufname": "5.20-402",
+    "typ": "GKTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6], "from": "06:00", "to": "18:00" }],
+    "nickname": "Jumbo",
+    "rollstuhlgeeignet": true,
+    "estimated": true,
+    "besonderheiten": "G-KTW, 2 Tragsessel + 2 Tragen (GAME_DATA §10d)"
+  },
+  {
+    "funkrufname": "5.20-501",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-503",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-504",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:30", "to": "17:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-505",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:30", "to": "17:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-506",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-507",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-508",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-509",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-510",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:30", "to": "16:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-511",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:30", "to": "16:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-512",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "16:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-513",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "16:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-514",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "16:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-515",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:30", "to": "16:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-516",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:30", "to": "16:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.10-507",
+    "typ": "BTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:30", "to": "17:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-601",
+    "typ": "MTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-603",
+    "typ": "MTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-604",
+    "typ": "MTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-605",
+    "typ": "MTW",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.20-701",
+    "typ": "EL",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "Einsatzleitung Stadt"
+  },
+  {
+    "funkrufname": "5.10-108",
+    "typ": "EL",
+    "homeStation": "stadt",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "Einsatzleitung Land"
+  },
+  {
+    "funkrufname": "5.20-702",
+    "typ": "EL",
+    "homeStation": "stadt",
+    "dienstzeiten": [
+      { "days": [1, 2, 3, 4, 5], "from": "19:00", "to": "07:00" },
+      { "days": [6, 7], "from": "00:00", "to": "24:00" }
+    ],
+    "role": "AEND",
+    "estimated": true,
+    "besonderheiten": "Ärztenotdienst-Fahrzeug — Dienstzeit geschätzt (Nacht/Wochenende)"
+  },
+  {
+    "funkrufname": "5.20-703",
+    "typ": "EL",
+    "homeStation": "stadt",
+    "dienstzeiten": [
+      { "days": [1, 2, 3, 4, 5], "from": "19:00", "to": "07:00" },
+      { "days": [6, 7], "from": "00:00", "to": "24:00" }
+    ],
+    "role": "AEND",
+    "estimated": true,
+    "besonderheiten": "Ärztenotdienst-Fahrzeug — Dienstzeit geschätzt (Nacht/Wochenende)"
+  },
+  {
+    "funkrufname": "5.42-201",
+    "typ": "RTW",
+    "homeStation": "mattsee",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "Rufname belegt, Dienstzeit geschätzt"
+  },
+  {
+    "funkrufname": "5.42-202",
+    "typ": "RTW",
+    "homeStation": "mattsee",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "19:00" }],
+    "estimated": true,
+    "besonderheiten": "Rufname belegt, Dienstzeit geschätzt"
+  },
+  {
+    "funkrufname": "5.20-502",
+    "typ": "BTW",
+    "homeStation": "mattsee",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:30", "to": "17:30" }],
+    "estimated": true,
+    "besonderheiten": "Stadt-Leihe an DSt Mattsee (GAME_DATA §7)"
+  },
+  {
+    "funkrufname": "5.45-301",
+    "typ": "KTW",
+    "homeStation": "hof",
+    "dienstzeiten": [
+      { "days": [1, 2, 3, 4, 5], "from": "19:00", "to": "07:00" },
+      { "days": [6, 7], "from": "00:00", "to": "24:00" }
+    ],
+    "besonderheiten": "Hof-Regel: nur nachts + Wochenende besetzt — tagsüber Mo–Fr versorgt die Stadt (GAME_DATA §7)"
+  },
+  {
+    "funkrufname": "5.41-201",
+    "typ": "RTW",
+    "homeStation": "lamprechtshausen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.41-202",
+    "typ": "RTW",
+    "homeStation": "lamprechtshausen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.41-301",
+    "typ": "KTW",
+    "homeStation": "lamprechtshausen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:30", "to": "18:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.41-302",
+    "typ": "KTW",
+    "homeStation": "lamprechtshausen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.41-203",
+    "typ": "RTW",
+    "homeStation": "oberndorf",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "Stützpunkt Oberndorf"
+  },
+  {
+    "funkrufname": "5.41-303",
+    "typ": "KTW",
+    "homeStation": "oberndorf",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true,
+    "besonderheiten": "Stützpunkt Oberndorf"
+  },
+  {
+    "funkrufname": "5.43-201",
+    "typ": "RTW",
+    "homeStation": "strasswalchen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "24h freiwillig besetzt (belegt)"
+  },
+  {
+    "funkrufname": "5.43-202",
+    "typ": "RTW",
+    "homeStation": "strasswalchen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.43-301",
+    "typ": "KTW",
+    "homeStation": "strasswalchen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:30", "to": "18:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.43-302",
+    "typ": "KTW",
+    "homeStation": "strasswalchen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.44-201",
+    "typ": "RTW",
+    "homeStation": "seekirchen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.44-301",
+    "typ": "KTW",
+    "homeStation": "seekirchen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:30", "to": "18:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.44-302",
+    "typ": "KTW",
+    "homeStation": "seekirchen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.44-501",
+    "typ": "BTW",
+    "homeStation": "seekirchen",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:30", "to": "17:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.46-201",
+    "typ": "RTW",
+    "homeStation": "strobl",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.46-301",
+    "typ": "KTW",
+    "homeStation": "strobl",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.10-103",
+    "typ": "NEF",
+    "homeStation": "hallein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "NEF Tennengau (Funkcode 5.10-103 = Schätzung, GAME_DATA §12b)"
+  },
+  {
+    "funkrufname": "5.51-201",
+    "typ": "RTW",
+    "homeStation": "hallein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.51-202",
+    "typ": "RTW",
+    "homeStation": "hallein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.51-301",
+    "typ": "KTW",
+    "homeStation": "hallein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.51-302",
+    "typ": "KTW",
+    "homeStation": "hallein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.51-303",
+    "typ": "KTW",
+    "homeStation": "hallein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.51-304",
+    "typ": "KTW",
+    "homeStation": "hallein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "09:00", "to": "19:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.51-501",
+    "typ": "BTW",
+    "homeStation": "hallein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:30", "to": "17:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.51-701",
+    "typ": "EL",
+    "homeStation": "hallein",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.53-201",
+    "typ": "RTW",
+    "homeStation": "golling",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00" }],
+    "estimated": true,
+    "besonderheiten": "A10-Abschnitt Lueg"
+  },
+  {
+    "funkrufname": "5.53-301",
+    "typ": "KTW",
+    "homeStation": "golling",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "06:30", "to": "18:30" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.53-302",
+    "typ": "KTW",
+    "homeStation": "golling",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true
+  },
+  {
+    "funkrufname": "5.52-301",
+    "typ": "KTW",
+    "homeStation": "abtenau",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5, 6, 7], "from": "06:30", "to": "18:30" }],
+    "estimated": true,
+    "besonderheiten": "Rufname belegt, Dienstzeit geschätzt"
+  },
+  {
+    "funkrufname": "5.52-302",
+    "typ": "KTW",
+    "homeStation": "abtenau",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true,
+    "besonderheiten": "Rufname belegt, Dienstzeit geschätzt"
+  },
+  {
+    "funkrufname": "5.52-303",
+    "typ": "KTW",
+    "homeStation": "abtenau",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "07:00", "to": "17:00" }],
+    "estimated": true,
+    "besonderheiten": "Ersatz für doppelt gelisteten 5.10-306 (eindeutige Vergabe, ANNAHMEN.md M1)"
+  },
+  {
+    "funkrufname": "5.52-304",
+    "typ": "KTW",
+    "homeStation": "abtenau",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "09:00", "to": "19:00" }],
+    "estimated": true,
+    "besonderheiten": "Rufname belegt, Dienstzeit geschätzt"
+  },
+  {
+    "funkrufname": "5.52-701",
+    "typ": "EL",
+    "homeStation": "abtenau",
+    "dienstzeiten": [{ "days": [1, 2, 3, 4, 5], "from": "08:00", "to": "18:00" }],
+    "estimated": true,
+    "besonderheiten": "PKW (Rufname belegt)"
+  }
+]

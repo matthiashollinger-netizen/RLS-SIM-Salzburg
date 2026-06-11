@@ -1,0 +1,65 @@
+[
+  { "code": "A1", "class": "A", "label": "NA-Einsatz", "sosi": true },
+  { "code": "A2", "class": "A", "label": "NA-Einsatz Alpin", "sosi": true },
+  { "code": "A3", "class": "A", "label": "NA-Anforderung durch Fachpersonal", "sosi": true },
+  {
+    "code": "A4",
+    "class": "A",
+    "label": "NA-Nachforderung durch Einsatzmittel vor Ort",
+    "sosi": true
+  },
+  { "code": "B1", "class": "B", "label": "RTW", "sosi": true },
+  { "code": "B2", "class": "B", "label": "RTW Anforderung durch Fachpersonal", "sosi": true },
+  { "code": "B3", "class": "B", "label": "RTW", "sosi": false },
+  { "code": "B4", "class": "B", "label": "RTW Anforderung durch Fachpersonal", "sosi": false },
+  { "code": "C1", "class": "C", "label": "IHT mit NEF", "sosi": true },
+  { "code": "C2", "class": "C", "label": "IHT mit NAH (Hubschrauber)", "sosi": true },
+  { "code": "C3", "class": "C", "label": "IHT mit Arzt KH", "sosi": true },
+  { "code": "C4", "class": "C", "label": "IHT ohne Arzt", "sosi": true },
+  { "code": "C5", "class": "C", "label": "IHT mit Arzt KH", "sosi": false },
+  { "code": "C6", "class": "C", "label": "IHT ohne Arzt", "sosi": false },
+  { "code": "D1", "class": "D", "label": "Krankentransport liegend", "sosi": false },
+  { "code": "D2", "class": "D", "label": "Krankentransport Tragsessel", "sosi": false },
+  { "code": "D3", "class": "D", "label": "Krankentransport Rollstuhl", "sosi": false },
+  { "code": "D4", "class": "D", "label": "Krankentransport E-Rollstuhl", "sosi": false },
+  { "code": "D5", "class": "D", "label": "Krankentransport gehend", "sosi": false },
+  { "code": "D6", "class": "D", "label": "Krankentransport Rollstuhl hoch", "sosi": false },
+  { "code": "E1", "class": "E", "label": "KIT-Einsätze", "sosi": false },
+  { "code": "E2", "class": "E", "label": "Blut-/Proben-/Organtransporte", "sosi": false },
+  { "code": "E3", "class": "E", "label": "Arztvisiten", "sosi": false },
+  { "code": "E4", "class": "E", "label": "Sonstige Einsätze", "sosi": false },
+  { "code": "E5", "class": "E", "label": "Gesundheitsberatung 1450", "sosi": false },
+  { "code": "E6", "class": "E", "label": "Aufgaben Leitstelle", "sosi": false },
+  {
+    "code": "MANV1",
+    "class": "MANV",
+    "label": "Massenanfall an Verletzten Stufe 1",
+    "sosi": true,
+    "personsMin": 6,
+    "personsMax": 10
+  },
+  {
+    "code": "MANV2",
+    "class": "MANV",
+    "label": "Massenanfall an Verletzten Stufe 2",
+    "sosi": true,
+    "personsMin": 11,
+    "personsMax": 29
+  },
+  {
+    "code": "MANV3",
+    "class": "MANV",
+    "label": "Massenanfall an Verletzten Stufe 3",
+    "sosi": true,
+    "personsMin": 30,
+    "personsMax": 49
+  },
+  {
+    "code": "MANV4",
+    "class": "MANV",
+    "label": "Massenanfall an Verletzten Stufe 4",
+    "sosi": true,
+    "personsMin": 50,
+    "personsMax": 9999
+  }
+]

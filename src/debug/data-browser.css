@@ -1,0 +1,81 @@
+.data-browser {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--sp-3);
+  gap: var(--sp-2);
+  overflow: hidden;
+}
+
+.data-browser-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+}
+
+.data-browser-header h1 {
+  font-size: var(--fs-xl);
+  margin: 0;
+}
+
+.data-ok {
+  color: var(--ok);
+  font-size: var(--fs-sm);
+}
+
+.data-problems {
+  color: var(--danger);
+  font-size: var(--fs-sm);
+}
+
+.data-problem-list {
+  color: var(--danger);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  margin: 0;
+}
+
+.data-browser-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+
+.data-browser-tabs button.active {
+  background: var(--bg-active);
+  border-color: var(--border-strong-solid);
+}
+
+.data-browser-content {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-panel-inset);
+}
+
+.data-table {
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-dense);
+  white-space: nowrap;
+}
+
+.data-table th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-panel-raised);
+  text-align: left;
+  padding: var(--sp-1) var(--sp-2);
+  border-bottom: 1px solid var(--border-strong-solid);
+}
+
+.data-table td {
+  padding: var(--sp-1) var(--sp-2);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  max-width: 480px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

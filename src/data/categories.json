@@ -1,0 +1,662 @@
+[
+  {
+    "id": "STILL",
+    "label": "STILL",
+    "beschreibung": "Atem-/Kreislaufstillstand",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "ALLERGIE",
+    "label": "ALLERGIE",
+    "beschreibung": "Allergische Reaktionen",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "altCode": "B1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "ALPIN",
+    "label": "ALPIN",
+    "beschreibung": "Notfälle im alpinen Gelände",
+    "group": "emergency",
+    "defaultCode": "A2",
+    "partner": ["BR"],
+    "manvCheck": false,
+    "heliPreferred": true
+  },
+  {
+    "id": "BEREIT",
+    "label": "BEREIT",
+    "beschreibung": "Bereitstellung",
+    "group": "emergency",
+    "defaultCode": "B3",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "BRAND",
+    "label": "BRAND",
+    "beschreibung": "Brandeinsätze",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "altCode": "B1",
+    "partner": ["FW"],
+    "manvCheck": false
+  },
+  {
+    "id": "CHIR",
+    "label": "CHIR",
+    "beschreibung": "Allgemeinchirurgische Notfälle",
+    "group": "emergency",
+    "defaultCode": "B1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "COVID",
+    "label": "COVID",
+    "beschreibung": "COVID-19-Notarzteinsatz",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "EINGESCHLOSSEN",
+    "label": "EINGESCHLOSSEN",
+    "beschreibung": "Person eingeschlossen (Lift/Wohnung/Sonstiges)",
+    "group": "emergency",
+    "defaultCode": "B1",
+    "partner": ["FW"],
+    "manvCheck": false
+  },
+  {
+    "id": "EINSTURZ",
+    "label": "EINSTURZ",
+    "beschreibung": "Einsturz Gebäude/Gerüst",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "partner": ["FW"],
+    "manvCheck": true
+  },
+  {
+    "id": "EXPLOSION",
+    "label": "EXPLOSION",
+    "beschreibung": "Explosionen aller Art",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "partner": ["FW", "POL"],
+    "manvCheck": true
+  },
+  {
+    "id": "GEFAHRGUT",
+    "label": "GEFAHRGUT",
+    "beschreibung": "Unfälle mit Gefahrgut",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "partner": ["FW"],
+    "manvCheck": false,
+    "lagefreigabe": true
+  },
+  {
+    "id": "GEWALT",
+    "label": "GEWALT",
+    "beschreibung": "Körperverletzungen",
+    "group": "emergency",
+    "defaultCode": "B1",
+    "altCode": "A1",
+    "partner": ["POL"],
+    "manvCheck": false,
+    "lagefreigabe": true
+  },
+  {
+    "id": "GYN",
+    "label": "GYN",
+    "beschreibung": "Gynäkologische Notfälle",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "altCode": "B1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "HOEHLE_GRUBE",
+    "label": "HÖHLE_GRUBE",
+    "beschreibung": "Unfälle Höhle/Grube",
+    "group": "emergency",
+    "defaultCode": "A2",
+    "partner": ["BR"],
+    "manvCheck": false,
+    "heliPreferred": true
+  },
+  {
+    "id": "INTERN",
+    "label": "INTERN",
+    "beschreibung": "Internistische Notfälle",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "altCode": "B1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "INTOX",
+    "label": "INTOX",
+    "beschreibung": "Intoxikationen",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "altCode": "B1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "KRANK",
+    "label": "KRANK",
+    "beschreibung": "Sonstige Erkrankungen",
+    "group": "emergency",
+    "defaultCode": "B3",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "NEURO",
+    "label": "NEURO",
+    "beschreibung": "Neurologische Notfälle",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "altCode": "B1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "POLIZEI",
+    "label": "POLIZEI",
+    "beschreibung": "Polizeiliche Einsätze (Bereitstellung)",
+    "group": "emergency",
+    "defaultCode": "B1",
+    "partner": ["POL"],
+    "manvCheck": false,
+    "lagefreigabe": true
+  },
+  {
+    "id": "PSYCH",
+    "label": "PSYCH",
+    "beschreibung": "Psychiatrische Notfälle",
+    "group": "emergency",
+    "defaultCode": "B1",
+    "partner": ["POL"],
+    "manvCheck": false
+  },
+  {
+    "id": "RUFHILFE",
+    "label": "RUFHILFE",
+    "beschreibung": "Rufhilfeeinsätze",
+    "group": "emergency",
+    "defaultCode": "B1",
+    "altCode": "B3",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "SONST",
+    "label": "SONST",
+    "beschreibung": "Sonstige Notarzteinsätze",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "STROM",
+    "label": "STROM",
+    "beschreibung": "Stromunfälle",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "partner": ["FW"],
+    "manvCheck": false
+  },
+  {
+    "id": "TRAUMA",
+    "label": "TRAUMA",
+    "beschreibung": "Unfallchirurgische Notfälle",
+    "group": "emergency",
+    "defaultCode": "B1",
+    "altCode": "A1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "VERKEHR",
+    "label": "VERKEHR",
+    "beschreibung": "Unfälle Straßenverkehr",
+    "group": "emergency",
+    "defaultCode": "B1",
+    "altCode": "A1",
+    "partner": ["FW", "POL"],
+    "manvCheck": false
+  },
+  {
+    "id": "VERKEHR_LUFT",
+    "label": "VERKEHR_LUFT",
+    "beschreibung": "Unfälle Luftverkehr",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "partner": ["FW", "POL"],
+    "manvCheck": true
+  },
+  {
+    "id": "VERKEHR_SCHIENE",
+    "label": "VERKEHR_SCHIENE",
+    "beschreibung": "Unfälle Schienenverkehr",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "partner": ["FW", "POL"],
+    "manvCheck": true
+  },
+  {
+    "id": "VERSCHUETTUNG",
+    "label": "VERSCHÜTTUNG",
+    "beschreibung": "Gebäude/Person/Fahrzeug verschüttet",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "partner": ["FW"],
+    "manvCheck": true
+  },
+  {
+    "id": "WASSER",
+    "label": "WASSER",
+    "beschreibung": "Wassernotfälle",
+    "group": "emergency",
+    "defaultCode": "A1",
+    "partner": ["WR"],
+    "manvCheck": false
+  },
+  {
+    "id": "AMB",
+    "label": "AMB",
+    "beschreibung": "Ambulante Behandlung",
+    "group": "transport",
+    "defaultCode": "D5",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "AMBULANZ",
+    "label": "AMBULANZ",
+    "beschreibung": "Ambulanzeinsatz",
+    "group": "transport",
+    "defaultCode": "D5",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "STAT",
+    "label": "STAT",
+    "beschreibung": "Stationäre Aufnahme",
+    "group": "transport",
+    "defaultCode": "D1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "HEIM",
+    "label": "HEIM",
+    "beschreibung": "Heimtransport",
+    "group": "transport",
+    "defaultCode": "D1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "DIALYSE",
+    "label": "DIALYSE",
+    "beschreibung": "Dialysefahrten (Hin- und Rücktransport)",
+    "group": "transport",
+    "defaultCode": "D3",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "PRIO",
+    "label": "PRIO",
+    "beschreibung": "Terminlich priorisierter Transport",
+    "group": "transport",
+    "defaultCode": "D1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "FERN",
+    "label": "FERN",
+    "beschreibung": "Fernfahrten",
+    "group": "transport",
+    "defaultCode": "D1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "EINWEISUNG",
+    "label": "EINWEISUNG",
+    "beschreibung": "Einweisung durch Arzt",
+    "group": "transport",
+    "defaultCode": "D1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "SCHWER",
+    "label": "SCHWER",
+    "beschreibung": "Patient über 130 kg — G-KTW erforderlich",
+    "group": "transport",
+    "defaultCode": "D1",
+    "partner": [],
+    "manvCheck": false,
+    "requiresGktw": true
+  },
+  {
+    "id": "BEHINDERTENTRANSPORT",
+    "label": "Behindertentransport",
+    "beschreibung": "Behindertentransport",
+    "group": "transport",
+    "defaultCode": "D3",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "TAGESZENTRUM",
+    "label": "Tageszentrum/Schüler",
+    "beschreibung": "Tageszentrums-/Schülertransporte",
+    "group": "transport",
+    "defaultCode": "D5",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "INFEKTION",
+    "label": "INFEKTION",
+    "beschreibung": "Infektionstransport (< IRG III)",
+    "group": "transport",
+    "defaultCode": "D1",
+    "partner": [],
+    "manvCheck": false,
+    "blockzeitMin": 30,
+    "estimated": true
+  },
+  {
+    "id": "HITT",
+    "label": "HITT",
+    "beschreibung": "Hochinfektionstransport (≥ IRG III) — lange Blockzeit",
+    "group": "transport",
+    "defaultCode": "D1",
+    "partner": [],
+    "manvCheck": false,
+    "blockzeitMin": 120,
+    "estimated": true
+  },
+  {
+    "id": "BLUT_ORGAN",
+    "label": "BLUT_ORGAN",
+    "beschreibung": "Blut-/Proben-/Organtransport",
+    "group": "sonstige",
+    "defaultCode": "E2",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "MEDIKAMENTE",
+    "label": "MEDIKAMENTE",
+    "beschreibung": "Medikamententransport",
+    "group": "sonstige",
+    "defaultCode": "E2",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "GERAETE",
+    "label": "GERÄTE",
+    "beschreibung": "Gerätetransport",
+    "group": "sonstige",
+    "defaultCode": "E4",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "INSTRUMENTE",
+    "label": "INSTRUMENTE",
+    "beschreibung": "Instrumententransport",
+    "group": "sonstige",
+    "defaultCode": "E4",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "ARZT_PERSONAL",
+    "label": "ARZT/PERSONAL",
+    "beschreibung": "Arzt-/Personaltransport",
+    "group": "sonstige",
+    "defaultCode": "E4",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "SALK_INTERN",
+    "label": "CDK/LKH SALK intern",
+    "beschreibung": "SALK-interne Transporte CDK/LKH",
+    "group": "sonstige",
+    "defaultCode": "E4",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "KIT_RK",
+    "label": "KIT_RK",
+    "beschreibung": "Kriseninterventionsteam Rotes Kreuz (Anforderung durch Mannschaft/Polizei, ohne SoSi)",
+    "group": "sonstige",
+    "defaultCode": "E1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "KIT_VERTRAG",
+    "label": "KIT_VERTRAG",
+    "beschreibung": "Krisenintervention Vertragspartner",
+    "group": "sonstige",
+    "defaultCode": "E1",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "SUCHAKTION",
+    "label": "SUCHAKTION",
+    "beschreibung": "Suchaktion vermisste Person",
+    "group": "sonstige",
+    "defaultCode": "E4",
+    "partner": ["POL", "BR"],
+    "manvCheck": false
+  },
+  {
+    "id": "KOORDINATEN",
+    "label": "KOORDINATEN",
+    "beschreibung": "Einsatz nach Koordinaten",
+    "group": "sonstige",
+    "defaultCode": "E4",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "ALARMSYSTEM",
+    "label": "ALARMSYSTEM",
+    "beschreibung": "Automatischer Notruf ohne Sprechkontakt — Erkundung",
+    "group": "sonstige",
+    "defaultCode": "B1",
+    "partner": [],
+    "manvCheck": false,
+    "estimated": true
+  },
+  {
+    "id": "RUFHILFE_KT",
+    "label": "RUFHILFE (KT)",
+    "beschreibung": "Rufhilfe-Fälle ohne Notfallcharakter",
+    "group": "sonstige",
+    "defaultCode": "E4",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "SPRENGELARZT",
+    "label": "SPRENGELARZT",
+    "beschreibung": "Sprengelarzt-Einsatz",
+    "group": "sonstige",
+    "defaultCode": "E3",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "VISITENARZT",
+    "label": "VISITENARZT",
+    "beschreibung": "Visitenarzt-Einsatz",
+    "group": "sonstige",
+    "defaultCode": "E3",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "VERSTAENDIGUNG",
+    "label": "VERSTÄNDIGUNG",
+    "beschreibung": "Verständigung RLS → Krankenhaus",
+    "group": "sonstige",
+    "defaultCode": "E6",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "TELEMEDIZIN",
+    "label": "TELEMEDIZIN",
+    "beschreibung": "Telemedizinische Beratung",
+    "group": "sonstige",
+    "defaultCode": "E5",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "RUECKRUF",
+    "label": "RÜCKRUF",
+    "beschreibung": "Rückruf durch Leitstelle",
+    "group": "sonstige",
+    "defaultCode": "E6",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "E5_1450",
+    "label": "E5-1450",
+    "beschreibung": "Gesundheitsberatung 1450",
+    "group": "sonstige",
+    "defaultCode": "E5",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "DIENST",
+    "label": "DIENST",
+    "beschreibung": "Dienstfahrt",
+    "group": "sonstige",
+    "defaultCode": "E4",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "PAUSE",
+    "label": "PAUSE",
+    "beschreibung": "Pause Rettungsdienst (echte Kategorie!)",
+    "group": "sonstige",
+    "defaultCode": "E6",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "BEREITSTELLUNG",
+    "label": "BEREITSTELLUNG",
+    "beschreibung": "Bereitstellungsraum für Rettungsdienst",
+    "group": "sonstige",
+    "defaultCode": "E6",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "DOKUMENTATION",
+    "label": "DOKUMENTATION",
+    "beschreibung": "Dokumentationsaufgaben",
+    "group": "sonstige",
+    "defaultCode": "E6",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "INFORMATION",
+    "label": "INFORMATION",
+    "beschreibung": "Information",
+    "group": "sonstige",
+    "defaultCode": "E6",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "STOERUNG",
+    "label": "STÖRUNG",
+    "beschreibung": "Störung (RLS)",
+    "group": "sonstige",
+    "defaultCode": "E6",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "SONDERLEISTUNG",
+    "label": "SONDERLEISTUNG",
+    "beschreibung": "Sonderleistung",
+    "group": "sonstige",
+    "defaultCode": "E4",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "UEBERGABE_RD",
+    "label": "ÜBERGABE_RD",
+    "beschreibung": "Übergabe Rettungsdienst",
+    "group": "sonstige",
+    "defaultCode": "E6",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "UEBUNG",
+    "label": "ÜBUNG",
+    "beschreibung": "Übungseinsatz (Editor-Szenarien laufen als ÜBUNG)",
+    "group": "sonstige",
+    "defaultCode": "E4",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "TEST",
+    "label": "TEST",
+    "beschreibung": "Testeinsatz",
+    "group": "sonstige",
+    "defaultCode": "E6",
+    "partner": [],
+    "manvCheck": false
+  },
+  {
+    "id": "ABFRAGE",
+    "label": "ABFRAGE",
+    "beschreibung": "Abfrage via ECN",
+    "group": "sonstige",
+    "defaultCode": "E6",
+    "partner": [],
+    "manvCheck": false
+  }
+]

@@ -1,0 +1,129 @@
+[
+  {
+    "code": "00",
+    "label": "in Dienststelle (einsatzbereit)",
+    "colorToken": "--status-00",
+    "kind": "lifecycle",
+    "available": true
+  },
+  {
+    "code": "1",
+    "label": "Auftrag angenommen",
+    "colorToken": "--status-1",
+    "kind": "lifecycle",
+    "available": false
+  },
+  {
+    "code": "2",
+    "label": "unterwegs zum Einsatzort",
+    "colorToken": "--status-2",
+    "kind": "lifecycle",
+    "available": false
+  },
+  {
+    "code": "3",
+    "label": "eingetroffen am Einsatzort",
+    "colorToken": "--status-3",
+    "kind": "lifecycle",
+    "available": false
+  },
+  {
+    "code": "4",
+    "label": "Abfahrt zum Zielort (Patient an Bord)",
+    "colorToken": "--status-4",
+    "kind": "lifecycle",
+    "available": false
+  },
+  {
+    "code": "5",
+    "label": "eingetroffen am Zielort",
+    "colorToken": "--status-5",
+    "kind": "lifecycle",
+    "available": false
+  },
+  {
+    "code": "6",
+    "label": "Auftrag abgeschlossen",
+    "colorToken": "--status-6",
+    "kind": "lifecycle",
+    "available": true
+  },
+  {
+    "code": "7",
+    "label": "unterwegs zur Dienststelle",
+    "colorToken": "--status-7",
+    "kind": "lifecycle",
+    "available": true
+  },
+  {
+    "code": "88",
+    "label": "Anfahrt zur (Vorhalte-)Position",
+    "colorToken": "--status-88",
+    "kind": "position",
+    "available": true
+  },
+  {
+    "code": "08",
+    "label": "Position LKH",
+    "colorToken": "--status-pos",
+    "kind": "position",
+    "available": true,
+    "positionHospital": "lkh"
+  },
+  {
+    "code": "09",
+    "label": "Position UKH",
+    "colorToken": "--status-pos",
+    "kind": "position",
+    "available": true,
+    "positionHospital": "ukh"
+  },
+  {
+    "code": "10",
+    "label": "Position CDK",
+    "colorToken": "--status-pos",
+    "kind": "position",
+    "available": true,
+    "positionHospital": "cdk"
+  },
+  {
+    "code": "91",
+    "label": "Dienstfahrt",
+    "colorToken": "--status-oos",
+    "kind": "sonder",
+    "available": false,
+    "estimated": true
+  },
+  {
+    "code": "92",
+    "label": "Fahrzeugcheck",
+    "colorToken": "--status-oos",
+    "kind": "sonder",
+    "available": false,
+    "estimated": true
+  },
+  {
+    "code": "93",
+    "label": "Lenkerwechsel",
+    "colorToken": "--status-oos",
+    "kind": "sonder",
+    "available": false,
+    "estimated": true
+  },
+  {
+    "code": "94",
+    "label": "außer Betrieb (Defekt/Werkstatt)",
+    "colorToken": "--status-oos",
+    "kind": "sonder",
+    "available": false,
+    "estimated": true
+  },
+  {
+    "code": "95",
+    "label": "Dienststelle unbesetzt",
+    "colorToken": "--status-oos",
+    "kind": "sonder",
+    "available": false,
+    "estimated": true
+  }
+]

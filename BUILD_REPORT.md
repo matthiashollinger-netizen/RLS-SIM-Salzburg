@@ -22,3 +22,35 @@
 
 **Offene Punkte:** CI-Lauf auf GitHub erst nach Push auf main prüfbar; Pages-Source muss
 im Repo auf „GitHub Actions" stehen.
+
+## M1 — Datenbasis (2026-06-11)
+
+**Was:**
+- 8 Daten-JSONs unter `src/data/` mit Zod-Schemas (`schemas.ts`) + zentralem Loader:
+  - `codes.json`: 30 Einsatzcodes A1–E6 + MANV1–4 inkl. SoSi (offizielles PDF, §4)
+  - `categories.json`: 71 Kategorien (29 Notfall + 42 D/E) mit defaultCode/altCode,
+    Partnern (FW/POL/WR/BR), MANV-Check, Lagefreigabe, Heli-Präferenz, G-KTW-Pflicht,
+    Blockzeiten (HITT)
+  - `status.json`: 00–7, 88, 08/09/10 + Platzhalter 91–95 (`estimated`), Farb-Tokens
+  - `stations.json`: 10 DSt Nord (+Stützpunkt Oberndorf) + 16 DSt Süd + 2 Leitstellen,
+    Koordinaten manuell (estimated), Staffing-Modell
+  - `vehicles.json`: 156 Fahrzeuge (komplette belegte Flotte + §12b-Schätzflotten),
+    Dienstzeiten inkl. Hof-Regel, Winterfenster, Reserve (5.80), NEF-101-Spezialregel
+  - `hospitals.json`: 12 Kliniken inkl. Fähigkeiten + Positionscodes 08/09/10 + BKH
+    St. Johann i.T. (überregional)
+  - `helicopters.json`: 5 Helis, alle daylightOnly, Saisonmonate
+  - `balancing.json`: Anrufraten (Nord 800/160, Süd 430/85), Tagesganglinie, Wochentags-/
+    Saisonfaktoren, Routing-Parameter (1.35/60/35/+30 %/Heli 220+3 min), Ausrückzeiten,
+    Generator-Gewichte
+- `npm run validate-data` (tsx): Schema-Parse + Kreuzvalidierung (eindeutige Funkrufnamen,
+  Referenzen Station/Code/KH) — in CI integriert
+- Datenbrowser-Route `/#/debug/data` mit Tabellenansicht + Live-Kreuzvalidierung
+
+**Wie getestet:** `npm run validate-data` ✓ (156 Fahrzeuge, 0 Probleme) · `npm run lint` ✓ ·
+`npm test` ✓ (24 Tests: Parsen, Pflichtfelder, Funknamen-Eindeutigkeit, Typenkreis,
+SoSi-Flags, MANV-Schwellen, Hof-Regel, Anomalie-Fixes) · `npm run build` ✓ ·
+`npm run smoke` ✓ (2 E2E inkl. Datenbrowser).
+
+**Offene Punkte:** Echte Sonderstatus-Ziffern, NAW-Funkcodes, Flachgau-Kennungen-Reihenfolge
+bleiben Insider-offen (alle als estimated geflaggt). Ein Test fand die Quellen-Anomalie
+5.10-108 (EL im 1XX-Kreis) — quellentreu übernommen.
