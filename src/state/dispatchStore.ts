@@ -8,7 +8,8 @@ import {
   type AuftragOrt,
 } from '../engine/auftrag.ts'
 import { deriveCode, hospitalNeedsFor, type Severity } from '../engine/ao.ts'
-import { bestHospital } from '../engine/hospitalMatch.ts'
+import { bestHospital, matchHospitals } from '../engine/hospitalMatch.ts'
+import { computeOutcome } from '../engine/outcome.ts'
 import type { VehicleEvent } from '../engine/vehicleSim.ts'
 import { vehicleSim } from './simulation.ts'
 import { useGameStore } from './gameStore.ts'
@@ -25,12 +26,16 @@ export interface CreateAuftragInput {
   merkmalskette?: string[]
   code?: string
   uebung?: boolean
+  truthCategoryId?: string
+  truthSeverity?: Severity
+  tcpr?: boolean
 }
 
 interface DispatchState {
   auftraege: Record<string, Auftrag>
   order: string[]
   selectedId: string | null
+  reset: () => void
   select: (id: string | null) => void
   createAuftrag: (input: CreateAuftragInput) => string
   overrideCode: (id: string, code: string) => void
@@ -51,10 +56,46 @@ function log(kind: 'einsatz' | 'system', text: string, auftragId?: string) {
   })
 }
 
+/** Outcome + harsh debriefing on completion (GAME_MECHANICS decision #3/#8, M8). */
+function finalize(a: Auftrag): Auftrag {
+  if (a.outcome || a.uebung) return a
+  const isEmergency = !a.code.startsWith('D') && !a.code.startsWith('E')
+  if (!isEmergency) return a
+  const naRequired = a.severity === 'hoch'
+  const hospitalSuitable = a.hospitalSuitable ?? true
+  const outcome = computeOutcome({
+    auftragId: a.id,
+    categoryId: a.categoryId,
+    severity: a.severity,
+    createdAt: a.createdAt,
+    firstArrivalSec: a.firstArrivalSec,
+    naArrivalSec: a.naArrivedSec,
+    tcpr: a.tcpr,
+    hospitalSuitable,
+    naRequired,
+  })
+  // debriefing messages — hard and concrete (CLAUDE.md M8)
+  if (a.hilfsfristDeadline !== undefined) {
+    if (a.firstArrivalSec === undefined) {
+      log('system', `Debriefing ${a.id}: Es ist NIE ein Rettungsmittel eingetroffen.`, a.id)
+    } else if (a.firstArrivalSec > a.hilfsfristDeadline) {
+      const overMin = Math.round((a.firstArrivalSec - a.hilfsfristDeadline) / 60)
+      log('system', `Debriefing ${a.id}: Hilfsfrist um ${overMin} min überschritten.`, a.id)
+    }
+  }
+  for (const issue of outcome.issues) {
+    log('system', `Debriefing ${a.id}: ${issue}`, a.id)
+  }
+  log('system', `${a.id}: ${outcome.text}`, a.id)
+  return { ...a, outcome, hospitalSuitable }
+}
+
 export const useDispatchStore = create<DispatchState>((set, get) => ({
   auftraege: {},
   order: [],
   selectedId: null,
+
+  reset: () => set({ auftraege: {}, order: [], selectedId: null }),
 
   select: (id) => set({ selectedId: id }),
 
@@ -83,6 +124,9 @@ export const useDispatchStore = create<DispatchState>((set, get) => ({
       assigned: {},
       state: 'offen',
       uebung: input.uebung ?? false,
+      truthCategoryId: input.truthCategoryId,
+      truthSeverity: input.truthSeverity,
+      tcpr: input.tcpr,
     }
     set((s) => ({
       auftraege: { ...s.auftraege, [id]: auftrag },
@@ -168,8 +212,15 @@ export const useDispatchStore = create<DispatchState>((set, get) => ({
     const hospital = hospitalById.get(hospitalId)
     const a = get().auftraege[id]
     if (!hospital || !a) return
+    const needs = hospitalNeedsFor(a.categoryId, a.severity)
+    const suitable =
+      matchHospitals(needs, a.ort, a.sosi).find((c) => c.hospital.id === hospitalId)?.suitable ??
+      true
     set((s) => ({
-      auftraege: { ...s.auftraege, [id]: { ...s.auftraege[id]!, hospitalId } },
+      auftraege: {
+        ...s.auftraege,
+        [id]: { ...s.auftraege[id]!, hospitalId, hospitalSuitable: suitable },
+      },
     }))
     // re-target running transports
     for (const vehicleId of Object.keys(a.assigned)) {
@@ -200,7 +251,7 @@ export const useDispatchStore = create<DispatchState>((set, get) => ({
       if (!a) return s
       log('einsatz', `${id}: abgeschlossen`, id)
       return {
-        auftraege: { ...s.auftraege, [id]: { ...a, state: 'abgeschlossen' } },
+        auftraege: { ...s.auftraege, [id]: finalize({ ...a, state: 'abgeschlossen' }) },
         selectedId: s.selectedId === id ? null : s.selectedId,
       }
     }),
@@ -210,6 +261,8 @@ export const useDispatchStore = create<DispatchState>((set, get) => ({
     const a = get().auftraege[e.assignmentId]
     if (!a || a.assigned[e.vehicleId] === undefined) return
     if (e.to === '3') {
+      const unitTyp = vehicleSim.get(e.vehicleId)?.unit.typ
+      const isNa = unitTyp === 'NEF' || unitTyp === 'NAW' || unitTyp === 'HELI'
       set((s) => {
         const cur = s.auftraege[a.id]!
         return {
@@ -219,6 +272,7 @@ export const useDispatchStore = create<DispatchState>((set, get) => ({
               ...cur,
               assigned: { ...cur.assigned, [e.vehicleId]: 'vorort' },
               firstArrivalSec: cur.firstArrivalSec ?? e.simSec,
+              naArrivedSec: cur.naArrivedSec ?? (isNa ? e.simSec : undefined),
               state: 'laufend',
             },
           },
@@ -229,15 +283,10 @@ export const useDispatchStore = create<DispatchState>((set, get) => ({
         const cur = s.auftraege[a.id]!
         const assigned: Auftrag['assigned'] = { ...cur.assigned, [e.vehicleId]: 'fertig' }
         const allDone = Object.values(assigned).every((v) => v === 'fertig')
+        const done = allDone && cur.state !== 'offen'
+        const next: Auftrag = { ...cur, assigned, state: done ? 'abgeschlossen' : cur.state }
         return {
-          auftraege: {
-            ...s.auftraege,
-            [a.id]: {
-              ...cur,
-              assigned,
-              state: allDone && cur.state !== 'offen' ? 'abgeschlossen' : cur.state,
-            },
-          },
+          auftraege: { ...s.auftraege, [a.id]: done ? finalize(next) : next },
         }
       })
     }

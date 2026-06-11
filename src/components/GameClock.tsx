@@ -1,4 +1,6 @@
 import { useGameStore, type GameSpeed } from '../state/gameStore.ts'
+import { jumpToNextEvent } from '../state/simulation.ts'
+import { useShiftStore } from '../state/shiftStore.ts'
 import { formatGameTime } from '../lib/format.ts'
 import { weekdayAt } from '../engine/time.ts'
 import './game-clock.css'
@@ -30,6 +32,13 @@ export function GameClock() {
             {s === 0 ? '⏸' : `${s}×`}
           </button>
         ))}
+        <button
+          title="Sprung zum nächsten Ereignis"
+          aria-label="Sprung zum nächsten Ereignis"
+          onClick={() => void jumpToNextEvent()}
+        >
+          ⏭
+        </button>
       </div>
       <button
         className="weather-toggle"
@@ -38,6 +47,12 @@ export function GameClock() {
         onClick={() => useGameStore.getState().setWeather(weather === 'gut' ? 'schlecht' : 'gut')}
       >
         {weather === 'gut' ? '☀' : '⛈'}
+      </button>
+      <button
+        className="end-shift-btn"
+        onClick={() => useShiftStore.getState().finishShift()}
+      >
+        Schicht beenden
       </button>
     </div>
   )

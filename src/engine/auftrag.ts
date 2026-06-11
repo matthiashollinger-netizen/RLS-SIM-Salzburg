@@ -34,6 +34,16 @@ export interface Auftrag {
   assigned: Record<string, AssignedState>
   state: AuftragState
   uebung: boolean
+  /** scoring (M8): scenario truth reference + care tracking */
+  truthCategoryId?: string
+  truthSeverity?: 'hoch' | 'normal'
+  /** Telefonreanimation was instructed during the call */
+  tcpr?: boolean
+  /** first NA unit (NEF/NAW/Heli) arrival */
+  naArrivedSec?: number
+  /** chosen hospital was suitable (false ⇒ Fehldispo) */
+  hospitalSuitable?: boolean
+  outcome?: { survived: boolean; text: string; issues: string[]; quality: number }
 }
 
 /** Alarmtext format `CODE STADTTEIL STRASSE` — exactly as on pager/terminal (GAME_DATA §3a). */

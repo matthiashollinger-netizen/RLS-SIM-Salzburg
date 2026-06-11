@@ -1,0 +1,151 @@
+.report-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+}
+
+.report-dialog {
+  width: min(680px, 94vw);
+  max-height: 88vh;
+  overflow: auto;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong-solid);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-window-active);
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.report-header h2 {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+
+.report-note {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  font-family: var(--font-mono);
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-md);
+}
+
+.note-badge-1,
+.note-badge-2 {
+  background: var(--ok);
+  color: var(--text-inverse);
+}
+
+.note-badge-3 {
+  background: var(--warn);
+  color: var(--text-inverse);
+}
+
+.note-badge-4,
+.note-badge-5 {
+  background: var(--danger);
+  color: var(--text-inverse);
+}
+
+.report-note-text {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-2);
+}
+
+.report-stat {
+  background: var(--bg-panel-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--sp-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.report-stat-value {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xl);
+  color: var(--text-primary);
+}
+
+.report-stat-label {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.report-debrief h3,
+.report-history h3 {
+  margin: 0 0 var(--sp-1);
+  font-size: var(--fs-md);
+  color: var(--text-secondary);
+}
+
+.report-debrief ul {
+  margin: 0;
+  padding-left: var(--sp-4);
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+}
+
+.report-debrief em {
+  color: var(--warn);
+}
+
+.history-chart {
+  width: 100%;
+  max-width: 380px;
+}
+
+.history-bar {
+  fill: var(--info);
+}
+
+.history-bar.note-1,
+.history-bar.note-2 {
+  fill: var(--ok);
+}
+
+.history-bar.note-3 {
+  fill: var(--warn);
+}
+
+.history-bar.note-4,
+.history-bar.note-5 {
+  fill: var(--danger);
+}
+
+.history-label {
+  fill: var(--text-muted);
+  font-size: 10px;
+  font-family: var(--font-mono);
+}
+
+.report-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+}
+
+.report-primary {
+  background: var(--accent);
+  color: var(--text-inverse);
+  border: none;
+  font-weight: 600;
+}

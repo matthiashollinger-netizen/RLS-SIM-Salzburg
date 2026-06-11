@@ -235,3 +235,38 @@ protokollkonformer Status-Funkspruch ohne 5.-Präfix, Freitext-Template-Antwort,
 Anfunken-Vorauswahl aus dem Ressourcenmonitor).
 
 **Offene Punkte:** Stil-Bonus für Spieler-Funkdisziplin kommt mit dem Scoring (M8).
+
+## M8 — Spielfluss & Scoring (2026-06-12)
+
+**Was:**
+- **Hauptmenü**: Leitstelle Nord/Süd, 8h-Schicht/Endlos, Rolle (Vollbetrieb /
+  Calltaker mit KI-Disponent / Disponent mit KI-Calltaker), Schwierigkeit
+  (entspannt/realistisch/albtraum — Anrufrate & Queue-Limit), Jahreszeit (Monat),
+  Tag-/Nachtschicht-Beginn; Welt-Reset bei Schichtstart.
+- **Zeitsteuerung**: Pause/1×/2×/4× + „Sprung zum nächsten Ereignis" (⏭).
+- **KI-Partner**: KI-Calltaker verwandelt generierte Anrufe nach 30–90 s in
+  Aufträge mit realistischen Unschärfen (falsches Stichwort, unklare Adresse,
+  Duplikat-Zuordnung); KI-Disponent disponiert offene Aufträge konservativ nach
+  AO (alle Slots, Partner-Vorschläge, Retry bei Mittelmangel).
+- **Outcome-Engine**: Überleben = f(Kategorie-Schwere, Zeit-bis-Mittel,
+  NA-Verfügbarkeit, T-CPR-Bonus, Zielklinik-Eignung), deterministisch je Auftrag;
+  T-CPR-Flag kommt aus der EH-Anweisung bei REA-Anrufen.
+- **Debriefing**: harte, konkrete Protokoll-Nachrichten („Hilfsfrist um X min
+  überschritten", „Kein Notarzt am Einsatzort", „Patient verstorben…").
+- **Schichtreport**: Hilfsfristquote (95-%-Ziel), Stichwortgenauigkeit (Wahrheit aus
+  dem Szenario), Fehldispositionen, Outcomes, Anrufstatistik, Note 1–5 mit Klartext;
+  problematische Einsätze gelistet; **Historie** der letzten Schichten in IndexedDB
+  mit Token-gestyltem SVG-Balkendiagramm (Recharts-frei).
+- **Welt aktiv**: Tagesganglinie × Wochentag × Saison × Schwierigkeit steuert die
+  Anrufrate; stündliche Wetter-Drift (Heli-Sperre) mit Meldungen.
+- Schichtende (8h) öffnet den Report automatisch; „Schicht beenden" jederzeit.
+
+**Wie getestet:** `npm run lint` ✓ · `npm test` ✓ (137 Tests; neu: 9 Outcome-Tests
+über je 400 Seeds — Zeitzerfall, T-CPR-Differenz, NA-Effekt; 5 Scoring-Tests inkl.
+Notengrenzen und ÜBUNG-Ausschluss) · `npm run build` ✓ · `npm run smoke` ✓ (21 E2E;
+neu: Süd-Winterschicht-Start inkl. Heli-im-Dunkeln-Check, Zeitsprung,
+Report-Dimensionen + Rückkehr ins Menü, KI-Disponent disponiert in Calltaker-Rolle).
+
+**Gefunden & gefixt:** Ressourcen-Filter fand Helis nicht über den Anzeigenamen.
+
+**Offene Punkte:** Story-Arcs/Achievements (M10); Coop-Team-Score nutzt den Report (M9).

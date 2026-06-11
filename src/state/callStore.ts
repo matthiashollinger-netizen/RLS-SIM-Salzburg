@@ -63,6 +63,7 @@ interface CallStoreState {
   generating: boolean
   /** answered+ended call counters for the shift report (M8) */
   stats: { angenommen: number; aufgelegt: number; auftraege: number; zugeordnet: number }
+  reset: () => void
   incoming: (scenario: Scenario) => void
   answer: (id: string) => void
   hangup: () => void
@@ -208,6 +209,14 @@ export const useCallStore = create<CallStoreState>((set, get) => ({
   active: null,
   generating: false,
   stats: { angenommen: 0, aufgelegt: 0, auftraege: 0, zugeordnet: 0 },
+
+  reset: () =>
+    set({
+      queue: [],
+      active: null,
+      generating: false,
+      stats: { angenommen: 0, aufgelegt: 0, auftraege: 0, zugeordnet: 0 },
+    }),
 
   incoming: (scenario) => {
     const simSec = useGameStore.getState().simSec
@@ -361,12 +370,18 @@ export const useCallStore = create<CallStoreState>((set, get) => ({
       severity = derived.severity
     }
     const merkmalskette = buildMerkmalskette(a, isKt)
+    const isNotfall = call.scenario.callType === 'notfall'
+    const tcpr =
+      call.scenario.truth.atmet === false && call.callerState.asked.includes('eh_anweisung')
     const auftragId = useDispatchStore.getState().createAuftrag({
       categoryId,
       severity,
       personen: a.personen ?? 1,
       ort,
       merkmalskette,
+      truthCategoryId: isNotfall ? call.scenario.truth.categoryId : undefined,
+      truthSeverity: isNotfall ? call.scenario.truth.severity : undefined,
+      tcpr,
     })
     set((st) => ({
       active: st.active ? { ...st.active, auftragId } : null,

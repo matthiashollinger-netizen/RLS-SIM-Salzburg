@@ -173,6 +173,33 @@
 - Antwort derzeit rein informativ (deterministisch ~50 %); mechanische Freigabe
   des NA-Mittels folgt ggf. in Phase 2.
 
+## 2026-06-12 — M8
+
+### Outcome-Modell (alles tunebar, geschätzt)
+- Basis-Überleben: STILL 45 % bei Sofortversorgung, sonstige `hoch` 93 %,
+  `normal` 99,8 %. STILL-Zerfall 4,5 %/min (mit T-CPR 2 %/min + 12 % Bonus).
+  Schwere Notfälle: −2 %/min jenseits 10 min; kein NA −10 %; NA > 20 min −5 %;
+  falsches KH −5 % (hoch). Deterministisch je Auftrags-ID (seeded).
+
+### Note (Schichtreport)
+- Gewichtung: Hilfsfrist 40 % (normiert aufs 95-%-Ziel), Stichwort 30 %,
+  Fehldispo 15 %, Überleben 15 %. Notengrenzen 92/80/65/50 %.
+
+### KI-Partner
+- KI-Calltaker: Abfragedauer 30–90 s; Unschärfen: 10 % falsches Stichwort,
+  10 % Schwere unklar, 12 % Adresse ±~500 m („Anrufer aufgelegt"); Duplikate
+  ordnet er selbst zu. KI-Disponent: disponiert nach 20 s konservativ alle
+  AO-Slots mit den besten Kandidaten, alarmiert Partner-Vorschläge, retried
+  wenn kein Mittel frei.
+
+### Sprung-zu-Ereignis
+- Vorspulen in 5-s-Schritten bis zum nächsten Protokoll-Ereignis oder Anruf,
+  max. 15 Sim-Minuten pro Klick.
+
+### Wetter-Drift
+- Stündlich 15 % Umschlag gut↔schlecht mit Protokollmeldung; Heli-Sperre
+  wirkt auf neue Dispositionen.
+
 ### Playwright-Smoke gegen Production-Preview
 - **Entscheidung:** Smoke-Tests laufen gegen `vite build` + `vite preview` (Port 4173),
   nicht gegen den Dev-Server.

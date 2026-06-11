@@ -12,6 +12,7 @@ import { RessourcenPanel } from '../panels/RessourcenPanel.tsx'
 import { FunkPanel } from '../panels/FunkPanel.tsx'
 import { ProtokollPanel } from '../panels/FeedPanels.tsx'
 import { startGameLoop } from '../state/simulation.ts'
+import { ShiftReportDialog } from '../components/ShiftReportDialog.tsx'
 import './game-page.css'
 
 function defaultRects(): Record<WindowId, WindowRect> {
@@ -88,6 +89,7 @@ export function GamePage() {
         </WindowFrame>
       </div>
       <Taskbar defs={WINDOW_DEFS} />
+      <ShiftReportDialog />
     </div>
   )
 }

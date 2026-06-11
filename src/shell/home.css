@@ -1,0 +1,43 @@
+.menu-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+  padding: var(--sp-4);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  min-width: min(620px, 92vw);
+}
+
+.menu-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.menu-label {
+  width: 110px;
+  flex: none;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.menu-row button {
+  font-size: var(--fs-sm);
+}
+
+.menu-row button.menu-active {
+  background: var(--bg-active);
+  border-color: var(--border-focus);
+  color: var(--text-primary);
+}
+
+.menu-card .home-start {
+  margin-top: var(--sp-3);
+  align-self: center;
+  border: none;
+  cursor: pointer;
+  font-size: var(--fs-md);
+}

@@ -34,6 +34,7 @@ interface FunkState {
   sprueche: FunkSpruch[]
   /** vehicle selected for active calling (from Ressourcen/map) */
   targetVehicleId: string | null
+  reset: () => void
   setTarget: (id: string | null) => void
   append: (s: Omit<FunkSpruch, 'id'>) => void
   quittieren: (id: number) => void
@@ -57,6 +58,8 @@ function logFunk(text: string, vehicleId?: string, auftragId?: string) {
 export const useFunkStore = create<FunkState>((set, get) => ({
   sprueche: [],
   targetVehicleId: null,
+
+  reset: () => set({ sprueche: [], targetVehicleId: null }),
 
   setTarget: (targetVehicleId) => set({ targetVehicleId }),
 

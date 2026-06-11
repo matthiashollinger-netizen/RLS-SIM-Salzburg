@@ -30,6 +30,7 @@ export function RessourcenPanel() {
         (rt) =>
           !f ||
           rt.id.toLowerCase().includes(f) ||
+          unitDisplayName(rt.unit).toLowerCase().includes(f) ||
           rt.unit.typ.toLowerCase().includes(f) ||
           rt.unit.stationName.toLowerCase().includes(f),
       )

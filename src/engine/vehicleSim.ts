@@ -330,6 +330,22 @@ export class VehicleSim {
     return true
   }
 
+  /** Reset every unit to out-of-service (new shift). */
+  resetAll() {
+    for (const rt of this.runtimes.values()) {
+      rt.status = 'AUS'
+      rt.assignment = undefined
+      rt.basePos = { ...rt.unit.base }
+      rt.moveFrom = rt.moveTo = undefined
+      rt.moveStart = rt.moveArrive = undefined
+      rt.phaseUntil = undefined
+      rt.positionTargetCode = undefined
+      rt.positionTargetPos = undefined
+      rt.manualService = false
+    }
+    this.notify()
+  }
+
   isInService(rt: VehicleRuntime, simSec: number, ctx: DutyContext): boolean {
     if (rt.unit.reserve) return rt.manualService
     if (rt.unit.daylightOnly) {
