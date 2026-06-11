@@ -54,3 +54,26 @@ SoSi-Flags, MANV-Schwellen, Hof-Regel, Anomalie-Fixes) · `npm run build` ✓ ·
 **Offene Punkte:** Echte Sonderstatus-Ziffern, NAW-Funkcodes, Flachgau-Kennungen-Reihenfolge
 bleiben Insider-offen (alle als estimated geflaggt). Ein Test fand die Quellen-Anomalie
 5.10-108 (EL im 1XX-Kreis) — quellentreu übernommen.
+
+## M2 — Karte & Fenster-Manager (2026-06-11)
+
+**Was:**
+- **Fenster-Engine** (`src/windows/`): Zustand-Store (UI-frei, getestet) mit Drag,
+  Resize (Min-Größen), Snap-Raster 8 px, Minimieren, Schließen/Öffnen, Z-Order/Fokus;
+  `WindowFrame` mit minimalem Chrome nach DESIGN_SYSTEM (Pointer-Capture-Drag).
+- **Layout-Persistenz**: Autosave (debounced) in IndexedDB (`idb`, Store `layouts`) +
+  benannte Presets (speichern/laden) über Taskbar-UI.
+- **Lagekarte**: MapLibre GL, dunkler Vektorstil (OpenFreeMap, ohne Key) mit
+  Raster-Fallback (Carto dark) bei Stil-Ladefehler; DOM-Marker mit Token-Farben für
+  27 Wachen, 12 Kliniken, 5 Heli-Basen inkl. Popups; ResizeObserver für Fenster-Resize.
+- 5 Spielfenster: Lagekarte, Einsatzliste (Stub), Ressourcen (Flotte aus Daten),
+  Funkfeld (Stub), Protokoll (Stub) auf neuer Route `/#/spiel`.
+- GamePage + DataBrowser lazy geladen (MapLibre raus aus dem Initial-Bundle).
+
+**Wie getestet:** `npm run lint` ✓ · `npm test` ✓ (31 Tests, davon 7 Fenster-Store:
+Snap, Fokus/Z-Order, Min-Größen, Layout-Roundtrip, Minimize/Reopen) · `npm run build` ✓ ·
+`npm run smoke` ✓ (5 E2E: Fenster verschieben → Reload → Position erhalten;
+Minimieren/Schließen/Reopen via Taskbar; Preset speichern).
+
+**Offene Punkte:** Kartenstil-Feinschliff (eigener Dispatch-Stil) für den Design-Pass;
+Fahrzeug-Marker folgen in M3.

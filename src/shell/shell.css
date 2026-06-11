@@ -46,3 +46,25 @@
   color: var(--text-muted);
   font-size: var(--fs-sm);
 }
+
+.home-start {
+  margin-top: var(--sp-4);
+  padding: var(--sp-2) var(--sp-5);
+  background: var(--accent);
+  color: var(--text-inverse);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.home-start:hover {
+  background: var(--sosi-pulse);
+}
+
+.route-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+}

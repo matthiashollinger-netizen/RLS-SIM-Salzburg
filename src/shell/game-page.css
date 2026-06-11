@@ -1,0 +1,10 @@
+.game-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.game-page .window-workspace {
+  flex: 1;
+  min-height: 0;
+}

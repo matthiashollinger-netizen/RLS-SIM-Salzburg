@@ -1,0 +1,145 @@
+.window-workspace {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-app);
+}
+
+.window-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-window);
+  min-width: var(--window-min-w);
+  overflow: hidden;
+}
+
+.window-frame-active {
+  box-shadow: var(--shadow-window-active);
+}
+
+.window-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--window-titlebar-h);
+  padding: 0 var(--sp-2);
+  background: var(--bg-panel-raised);
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  flex: none;
+}
+
+.window-frame-active .window-titlebar {
+  border-bottom-color: var(--border-strong-solid);
+}
+
+.window-title {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.window-frame-active .window-title {
+  color: var(--text-primary);
+}
+
+.window-controls {
+  display: flex;
+  gap: var(--sp-1);
+}
+
+.window-controls button {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  line-height: 1;
+  font-size: var(--fs-sm);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+}
+
+.window-controls button:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.window-content {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  position: relative;
+}
+
+.window-resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  touch-action: none;
+  background: linear-gradient(135deg, transparent 50%, var(--border-strong-solid) 50%);
+  border-bottom-right-radius: var(--radius-md);
+}
+
+.window-frame-minimized {
+  height: var(--window-titlebar-h);
+}
+
+/* Taskbar */
+.taskbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-2);
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border-subtle);
+  z-index: var(--z-taskbar);
+  flex: none;
+  flex-wrap: wrap;
+}
+
+.taskbar-windows {
+  display: flex;
+  gap: var(--sp-1);
+  flex-wrap: wrap;
+}
+
+.taskbar button {
+  font-size: var(--fs-xs);
+  padding: 2px var(--sp-2);
+}
+
+.taskbar button.taskbar-win-open {
+  border-color: var(--border-strong-solid);
+  color: var(--text-primary);
+}
+
+.taskbar button.taskbar-win-closed {
+  color: var(--text-muted);
+}
+
+.taskbar-layouts {
+  display: flex;
+  gap: var(--sp-1);
+  margin-left: auto;
+  align-items: center;
+}
+
+.taskbar-layouts input,
+.taskbar-layouts select {
+  font-size: var(--fs-xs);
+  padding: 2px var(--sp-1);
+  width: 140px;
+}

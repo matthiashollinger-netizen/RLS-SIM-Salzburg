@@ -1,14 +1,36 @@
+import { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { AppShell } from './shell/AppShell.tsx'
 import { HomePage } from './shell/HomePage.tsx'
-import { DataBrowser } from './debug/DataBrowser.tsx'
+
+const GamePage = lazy(() =>
+  import('./shell/GamePage.tsx').then((m) => ({ default: m.GamePage })),
+)
+const DataBrowser = lazy(() =>
+  import('./debug/DataBrowser.tsx').then((m) => ({ default: m.DataBrowser })),
+)
 
 export default function App() {
   return (
     <Routes>
       <Route element={<AppShell />}>
         <Route index element={<HomePage />} />
-        <Route path="debug/data" element={<DataBrowser />} />
+        <Route
+          path="spiel"
+          element={
+            <Suspense fallback={<div className="route-loading">Leitstelle wird geladen…</div>}>
+              <GamePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="debug/data"
+          element={
+            <Suspense fallback={<div className="route-loading">Daten werden geladen…</div>}>
+              <DataBrowser />
+            </Suspense>
+          }
+        />
       </Route>
     </Routes>
   )
