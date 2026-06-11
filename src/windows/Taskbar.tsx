@@ -4,6 +4,8 @@ import { listPresets, restoreLayout, savePreset } from './layoutPersistence.ts'
 import type { WindowDef } from './windowDefs.ts'
 import { GameClock } from '../components/GameClock.tsx'
 import { SettingsDialog } from '../components/SettingsDialog.tsx'
+import { CoopDialog } from '../components/CoopDialog.tsx'
+import { useCoopStore } from '../state/coopStore.ts'
 import './windows.css'
 
 export function Taskbar({ defs }: { defs: WindowDef[] }) {
@@ -13,6 +15,9 @@ export function Taskbar({ defs }: { defs: WindowDef[] }) {
   const [presets, setPresets] = useState<string[]>([])
   const [presetName, setPresetName] = useState('')
   const [showSettings, setShowSettings] = useState(false)
+  const [showCoop, setShowCoop] = useState(false)
+  const coopMode = useCoopStore((s) => s.mode)
+  const coopConnected = useCoopStore((s) => s.connected)
 
   useEffect(() => {
     void listPresets().then(setPresets)
@@ -74,11 +79,20 @@ export function Taskbar({ defs }: { defs: WindowDef[] }) {
             </option>
           ))}
         </select>
+        <button
+          aria-label="Coop"
+          title="Coop (2 Spieler)"
+          className={coopMode !== 'off' ? (coopConnected ? 'coop-on' : 'coop-waiting') : ''}
+          onClick={() => setShowCoop(true)}
+        >
+          👥
+        </button>
         <button aria-label="Einstellungen" title="Einstellungen" onClick={() => setShowSettings(true)}>
           ⚙
         </button>
       </div>
       {showSettings && <SettingsDialog onClose={() => setShowSettings(false)} />}
+      {showCoop && <CoopDialog onClose={() => setShowCoop(false)} />}
     </div>
   )
 }

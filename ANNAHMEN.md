@@ -200,6 +200,25 @@
 - Stündlich 15 % Umschlag gut↔schlecht mit Protokollmeldung; Heli-Sperre
   wirkt auf neue Dispositionen.
 
+## 2026-06-12 — M9
+
+### Dritter Coop-Transport „Lokal (2 Fenster)"
+- Zusätzlich zu PeerJS-Cloud und manuellem WebRTC-Code gibt es einen
+  BroadcastChannel-Transport für zwei Fenster im selben Browser (Zwei-Monitor-
+  Selbstspiel, Demos). Grund: In der Build-Sandbox sind WebRTC-UDP-Verbindungen
+  generell blockiert (ICE bleibt in „checking", obwohl SDP/Kandidaten korrekt
+  ausgetauscht werden — per Debug-Test verifiziert). Der Playwright-Smoke
+  verbindet daher zwei Seiten über den lokalen Transport und testet den
+  manuellen WebRTC-Flow bis zum Offer/Answer-Code; echte P2P-Verbindungen
+  sind umgebungsabhängig manuell zu verifizieren.
+
+### Guest-Spiegelung
+- Gast spiegelt Snapshots mit 1 Hz (Aufträge, Status+Position aller Einheiten,
+  Anruf-Queue/-Gespräch, Funk, Protokoll-Auszug, Uhr). Fahrzeug-Marker beim Gast
+  springen sekündlich (keine Interpolation) — Phase-2-Optimierung.
+- Gast-Aktionen laufen über eine Whitelist (Store-Methoden) zum Host;
+  Rückgabewerte sind optimistisch (UI liest den nächsten Sync).
+
 ### Playwright-Smoke gegen Production-Preview
 - **Entscheidung:** Smoke-Tests laufen gegen `vite build` + `vite preview` (Port 4173),
   nicht gegen den Dev-Server.

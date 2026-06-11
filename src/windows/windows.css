@@ -143,3 +143,13 @@
   padding: 2px var(--sp-1);
   width: 140px;
 }
+
+.taskbar button.coop-on {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+.taskbar button.coop-waiting {
+  border-color: var(--warn);
+  color: var(--warn);
+}

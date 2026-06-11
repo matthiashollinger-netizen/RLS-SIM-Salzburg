@@ -330,6 +330,19 @@ export class VehicleSim {
     return true
   }
 
+  /** Mirror a host snapshot (coop guest — no local ticking, M9). */
+  applySnapshot(units: { id: string; status: VehiclePhase; lat: number; lon: number }[]) {
+    for (const u of units) {
+      const rt = this.runtimes.get(u.id)
+      if (!rt) continue
+      rt.status = u.status
+      rt.basePos = { lat: u.lat, lon: u.lon }
+      rt.moveFrom = rt.moveTo = undefined
+      rt.moveStart = rt.moveArrive = undefined
+    }
+    this.notify()
+  }
+
   /** Reset every unit to out-of-service (new shift). */
   resetAll() {
     for (const rt of this.runtimes.values()) {

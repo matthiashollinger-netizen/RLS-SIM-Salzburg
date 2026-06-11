@@ -1,0 +1,48 @@
+.coop-dialog textarea {
+  width: 100%;
+  min-height: 64px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  resize: vertical;
+}
+
+.coop-dialog label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+.coop-status {
+  font-size: var(--fs-sm);
+  color: var(--signal-amber);
+}
+
+.coop-tabs {
+  display: flex;
+  gap: var(--sp-1);
+  align-items: center;
+}
+
+.coop-spacer {
+  flex: 1;
+}
+
+.coop-tabs button.menu-active {
+  background: var(--bg-active);
+  border-color: var(--border-focus);
+}
+
+.coop-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.coop-code {
+  background: var(--bg-panel-inset);
+  padding: 2px var(--sp-2);
+  border-radius: var(--radius-sm);
+  user-select: all;
+}

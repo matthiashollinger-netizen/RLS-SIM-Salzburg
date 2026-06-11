@@ -11,6 +11,11 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:4173',
     trace: 'on-first-retry',
+    launchOptions: {
+      // WebRTC between two headless contexts (coop e2e): mDNS host candidates
+      // do not resolve in CI, so expose real local IPs for tests only.
+      args: ['--disable-features=WebRtcHideLocalIpsWithMdns'],
+    },
   },
   projects: [
     {

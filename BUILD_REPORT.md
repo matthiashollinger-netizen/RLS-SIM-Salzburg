@@ -270,3 +270,28 @@ Report-Dimensionen + Rückkehr ins Menü, KI-Disponent disponiert in Calltaker-R
 **Gefunden & gefixt:** Ressourcen-Filter fand Helis nicht über den Anzeigenamen.
 
 **Offene Punkte:** Story-Arcs/Achievements (M10); Coop-Team-Score nutzt den Report (M9).
+
+## M9 — Coop, 2 Spieler (2026-06-12)
+
+**Was:**
+- **Host-authoritative Architektur** (ARCHITECTURE.md): Der Host simuliert alles;
+  der Gast spiegelt per 1-Hz-Sync (Aufträge, Einheiten-Status+Positionen, Uhr,
+  Anrufe, Funk, Protokoll) und sendet Aktionen über eine Whitelist
+  (Store-Methoden-Override beim Gast — Panels bleiben unverändert).
+- **Rollensplit**: Host wählt Calltaker oder Disponent, Gast bekommt die andere
+  Rolle; Gast erzeugt keine eigenen Anrufe und tickt keine lokale Sim.
+- **Drei Transporte**: PeerJS-Cloud-ID (lazy geladen), manueller WebRTC-
+  Offer/Answer-Code (Copy-Paste, STUN, null Infrastruktur) und „Lokal (2 Fenster)"
+  via BroadcastChannel (Raum-Code) — letzterer auch der deterministische CI-Pfad,
+  weil die Sandbox WebRTC-UDP blockt (ANNAHMEN.md M9).
+- **Team-Score**: Schichtreport entsteht auf dem Host und wird dem Gast als
+  gemeinsames Ergebnis zugestellt.
+- Verbindungs-UI im Taskbar-Dialog (👥) mit Statusanzeige.
+
+**Wie getestet:** `npm run lint` ✓ · `npm test` ✓ (137) · `npm run build` ✓ ·
+`npm run smoke` ✓ (23 E2E; neu: zwei Seiten verbinden per Raum-Code →
+Host-Auftrag erscheint beim Gast → Gast disponiert ein Mittel → Host-Status
+wechselt auf „disponiert"; manueller WebRTC-Flow erzeugt Offer/Answer-Codes).
+
+**Offene Punkte:** Echte P2P-Verbindung (Cloud/manuell) ist umgebungsabhängig
+manuell zu testen; Gast-Marker ohne Interpolation (Phase 2).

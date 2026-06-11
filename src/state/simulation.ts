@@ -142,11 +142,19 @@ export function startGameLoop() {
   loopHandle = setInterval(() => {
     const g = useGameStore.getState()
     if (!g.running || g.speed === 0) return
+    // coop guests mirror the host instead of simulating (M9)
+    const coop = coopGuestCheck?.()
+    if (coop) return
     const dt = (REAL_TICK_MS / 1000) * g.speed
     g.advance(dt)
     void tickWorld(useGameStore.getState().simSec)
   }, REAL_TICK_MS)
 }
+
+let coopGuestCheck: (() => boolean) | null = null
+void import('./coopStore.ts').then((m) => {
+  coopGuestCheck = m.isCoopGuest
+})
 
 /**
  * Zeitsprung „bis zum nächsten Ereignis" (CLAUDE.md M8): fast-forwards the
