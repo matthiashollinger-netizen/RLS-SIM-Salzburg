@@ -164,3 +164,30 @@
 .feed-funk .feed-text {
   color: var(--text-primary);
 }
+
+/* Status-Lichterkette (Award-Polish): fleet at a glance, classic wall board */
+.lichterkette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: var(--sp-1) var(--sp-2);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.lichterkette-cell {
+  width: 18px;
+  height: 16px;
+  padding: 0;
+  border: 1px solid var(--bg-deep);
+  border-radius: 2px;
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-inverse);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lichterkette-cell:hover {
+  outline: 1px solid var(--text-primary);
+}

@@ -465,3 +465,36 @@
 .auftrag-infos-form button {
   font-size: var(--fs-xs);
 }
+
+/* Einsatztagebuch (Award-Polish) */
+.auftrag-verlauf {
+  margin-top: var(--sp-2);
+}
+
+.verlauf-toggle {
+  font-size: var(--fs-xs);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+}
+
+.verlauf-list {
+  max-height: 140px;
+  overflow-y: auto;
+  margin-top: var(--sp-1);
+  padding-left: var(--sp-2);
+  border-left: 2px solid var(--border-subtle);
+}
+
+.verlauf-row {
+  margin: 0 0 2px;
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  line-height: var(--lh-dense);
+}
+
+.verlauf-time {
+  color: var(--text-muted);
+}

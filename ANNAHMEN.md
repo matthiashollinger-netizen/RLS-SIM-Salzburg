@@ -315,3 +315,12 @@
 - Szenario-Fakten (Lagetext, Detailantworten, Rolle, Alter, Geschlecht) sind
   jetzt in EINER Variante gebunden statt unabhängig gewürfelt — keine
   Widersprüche („Lift" vs. „Badezimmer", 7-jährige „Mutter") mehr möglich.
+
+### KH-Kapazitäten (Kapazitätsnachweis, Award-Polish)
+- **Frage:** Wie viele gleichzeitige Notaufnahme-Zuweisungen verkraftet ein Haus?
+- **Entscheidung:** SCHÄTZUNG nach Versorgungsstufe — ZENTRAL 8, SCHWERPUNKT 5,
+  SONDER 3, STANDARD 3, PRIVAT 2 Plätze; ein übergebener Patient belegt 45 min.
+  Volle Häuser werden im Zielklinik-Selektor als „VOLL" markiert, die Übergabe
+  verzögert sich (Einsatzinfo) — keine harte Sperre, der Disponent entscheidet.
+- **Begründung:** Echte Kapazitätsnachweise schwanken je Schicht; spielbare
+  Näherung ohne Daten-Anspruch.

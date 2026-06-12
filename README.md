@@ -25,9 +25,13 @@ Rettungsdienst-Leitstellenalltags. Du arbeitest als **Calltaker** (Notrufabfrage
 - **KI-Anrufer in 3 Stufen:** Dialogbaum (sofort spielbar, offline) · **WebLLM**
   (lokales LLM im Browser, einmaliger Download, danach offline) · eigener
   OpenAI-kompatibler Endpoint (z. B. Ollama). Plus TTS-Sprachausgabe.
-- **Disposition:** AO-Vorschlag mit Übersteuern, nächstes-geeignetes-Mittel-Suche,
-  Partner (FW/Polizei/Wasser-/Bergrettung), MANV-Eskalation, Hilfsfrist-Timer,
-  Zielklinik-Wahl („nächstes ≠ richtiges KH").
+- **Disposition:** AO-Vorschlag mit Übersteuern, freie Mittelwahl + Umdisponieren,
+  Partner (FW/Polizei/Wasser-/Bergrettung) sichtbar auf der Karte, MANV-Eskalation,
+  Hilfsfrist-Timer, Zielklinik-Wahl mit **Kapazitätsnachweis**
+  („nächstes ≠ richtiges ≠ freies KH"), Einsatztagebuch je Auftrag.
+- **Straßen-Routing:** Bodenfahrzeuge folgen dem echten Salzburger Straßennetz
+  (OSM-Export + A*), Restrouten live auf der Karte — nur Hubschrauber fliegen
+  Luftlinie. **Bereitstellungsraum & Lagefreigabe** bei Polizei-Lagen.
 - **Bidirektionaler Funk:** statusgetriebene Meldungen, NA-Nachforderung → A4 per
   Klick, Sprechwünsche, aktives Anfunken mit Schnellphrasen & Freitext.
 - **Outcome & Scoring:** Überleben hängt an Reaktionszeit, Notarzt und
@@ -39,6 +43,9 @@ Rettungsdienst-Leitstellenalltags. Du arbeitest als **Calltaker** (Notrufabfrage
   lokal in zwei Fenstern — Host-authoritativ, gemeinsamer Schichtreport.
 - **Szenario-Editor** für eigene Übungen (JSON-Export/-Import, läuft als ÜBUNG),
   zwei dezente Story-Arcs, Achievements, Sound-Mixer, geführtes Tutorial.
+- **Leitstellen-Komfort:** Status-Lichterkette (gesamte Flotte auf einen Blick),
+  Tastaturkürzel (Leertaste Pause, 1/2/3 Tempo, N Ereignis-Sprung, A Anruf
+  annehmen, ? Übersicht).
 
 ## Schnellstart (Spielen)
 

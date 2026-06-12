@@ -12,7 +12,9 @@ import { searchAddress } from '../lib/fuzzy.ts'
 import { formatCountdown, formatGameTime } from '../lib/format.ts'
 import { unitDisplayName } from '../lib/format.ts'
 import { useDispatchStore } from '../state/dispatchStore.ts'
+import { useEventLog } from '../state/eventLog.ts'
 import { useGameStore } from '../state/gameStore.ts'
+import { hospitalFreeSlots } from '../state/hospitalLoadStore.ts'
 import { useMapStore } from '../state/mapStore.ts'
 import { vehicleSim } from '../state/simulation.ts'
 import { useVehicleVersion } from '../state/useVehicles.ts'
@@ -455,22 +457,60 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
             onChange={(e) => e.target.value && store.setHospital(auftrag.id, e.target.value)}
           >
             <option value="">automatisch (nächstes geeignetes)</option>
-            {hospitalCandidates.map((c) => (
-              <option key={c.hospital.id} value={c.hospital.id}>
-                {c.suitable ? '✓' : '⚠'} {c.hospital.short} ({Math.round(c.etaSec / 60)} min)
-                {c.suitable ? '' : ` — fehlt: ${c.missing.join(', ')}`}
-              </option>
-            ))}
+            {hospitalCandidates.map((c) => {
+              const frei = hospitalFreeSlots(c.hospital.id, simSecNow())
+              return (
+                <option key={c.hospital.id} value={c.hospital.id}>
+                  {c.suitable ? '✓' : '⚠'} {c.hospital.short} ({Math.round(c.etaSec / 60)} min ·{' '}
+                  {frei === 0 ? 'VOLL' : `${frei} frei`})
+                  {c.suitable ? '' : ` — fehlt: ${c.missing.join(', ')}`}
+                </option>
+              )
+            })}
           </select>
         </label>
         {auftrag.hospitalId && !hospitalCandidates.find((c) => c.hospital.id === auftrag.hospitalId)?.suitable && (
           <span className="hospital-warn">⚠ Zielklinik ohne benötigte Fähigkeit — Sekundärtransport droht</span>
         )}
+        {auftrag.hospitalId && hospitalFreeSlots(auftrag.hospitalId, simSecNow()) === 0 && (
+          <span className="hospital-warn">⚠ Notaufnahme VOLL — Übergabe wird sich verzögern</span>
+        )}
       </div>
+
+      <AuftragVerlauf id={auftrag.id} />
 
       <div className="auftrag-actions">
         <button onClick={() => store.closeAuftrag(auftrag.id)}>Auftrag abschließen</button>
       </div>
+    </div>
+  )
+}
+
+function simSecNow() {
+  return useGameStore.getState().simSec
+}
+
+/** Einsatztagebuch (Award-Polish): chronological per-Auftrag history. */
+function AuftragVerlauf({ id }: { id: string }) {
+  const [open, setOpen] = useState(false)
+  const entries = useEventLog((s) => s.entries)
+  const own = entries.filter((e) => e.auftragId === id)
+  return (
+    <div className="auftrag-verlauf">
+      <button className="verlauf-toggle" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        {open ? '▾' : '▸'} Einsatztagebuch ({own.length})
+      </button>
+      {open && (
+        <div className="verlauf-list" data-testid="auftrag-verlauf">
+          {own.length === 0 && <span className="panel-empty">Noch keine Einträge.</span>}
+          {own.map((e) => (
+            <p key={e.id} className="verlauf-row">
+              <span className="mono verlauf-time">{formatGameTime(e.simSec).slice(0, 5)}</span>{' '}
+              {e.text}
+            </p>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

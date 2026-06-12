@@ -215,15 +215,18 @@ export async function resetWorld() {
   vehicleSim.resetAll()
   nextCallAt = null
   lastWeatherCheckHour = -1
-  const [{ useDispatchStore }, { useCallStore }, { useFunkStore }, ai] = await Promise.all([
-    import('./dispatchStore.ts'),
-    import('./callStore.ts'),
-    import('./funkStore.ts'),
-    import('./aiPartners.ts'),
-  ])
+  const [{ useDispatchStore }, { useCallStore }, { useFunkStore }, { useHospitalLoad }, ai] =
+    await Promise.all([
+      import('./dispatchStore.ts'),
+      import('./callStore.ts'),
+      import('./funkStore.ts'),
+      import('./hospitalLoadStore.ts'),
+      import('./aiPartners.ts'),
+    ])
   useDispatchStore.getState().reset()
   useCallStore.getState().reset()
   useFunkStore.getState().reset()
+  useHospitalLoad.getState().reset()
   useEventLog.getState().clear()
   ai.aiCalltakerReset()
   ai.aiDispatcherReset()

@@ -445,3 +445,24 @@ A4-Aufwertungs-Semantik) · `npm run build` ✓ · `npm run smoke` ✓ (26 E2E,
 DoD-Flow mit Gespräch/Schema-Split und manuellem Notieren).
 
 **Offene Punkte:** Award-Polish (eigene Features) folgt als nächster Schritt.
+
+---
+
+## Award-Polish — eigene Features (2026-06-12)
+
+**Was (über das Feedback hinaus):**
+1. **Status-Lichterkette** im Ressourcenmonitor: gesamte diensthabende Flotte als
+   farbige Statuszellen (klassisches Leitstellen-Wandbrett) — Klick selektiert,
+   Doppelklick zentriert die Karte.
+2. **Einsatztagebuch** je Auftrag: chronologische Historie (Status, Funk, Infos,
+   Debriefing) aufklappbar im Auftrag-Detail.
+3. **Kapazitätsnachweis:** Kliniken haben begrenzte Notaufnahme-Plätze (je
+   Versorgungsstufe, 45 min Belegung pro Patient). Zielklinik-Selektor zeigt
+   „n frei"/„VOLL"; Übergabe an volle Häuser verzögert sich mit Einsatzinfo —
+   „nächstes ≠ richtiges ≠ freies".
+4. **Tastaturkürzel:** Leertaste Pause/Weiter, 1/2/3 Geschwindigkeit, N Sprung
+   zum Ereignis, A ältesten Anruf annehmen, ? Hilfe-Overlay.
+
+**Wie getestet:** `npm run lint` ✓ · `npm test` ✓ (167 Tests; neu:
+Kapazitäts-Staffelung + Slot-Verfall) · `npm run build` ✓ · `npm run smoke` ✓
+(26 E2E).

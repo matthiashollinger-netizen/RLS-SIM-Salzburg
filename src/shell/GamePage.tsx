@@ -15,6 +15,7 @@ import { ProtokollPanel } from '../panels/FeedPanels.tsx'
 import { startGameLoop } from '../state/simulation.ts'
 import { ShiftReportDialog } from '../components/ShiftReportDialog.tsx'
 import { TutorialOverlay } from '../components/TutorialOverlay.tsx'
+import { KeyboardShortcuts } from '../components/KeyboardShortcuts.tsx'
 import { AchievementToast } from '../components/AchievementToast.tsx'
 import './game-page.css'
 
@@ -109,6 +110,7 @@ export function GamePage() {
       <ShiftReportDialog />
       <TutorialOverlay />
       <AchievementToast />
+      <KeyboardShortcuts />
     </div>
   )
 }

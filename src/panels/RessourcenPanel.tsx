@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { hospitals } from '../data/index.ts'
+import { hospitals, statusByCode } from '../data/index.ts'
 import { isAvailable } from '../engine/status.ts'
 import { unitDisplayName } from '../lib/format.ts'
 import { useVehicleVersion } from '../state/useVehicles.ts'
@@ -25,6 +25,53 @@ const SORT_FNS: Record<SortKey, (a: VehicleRuntime, b: VehicleRuntime) => number
     String(a.status).localeCompare(String(b.status)) || a.id.localeCompare(b.id),
   wache: (a, b) =>
     a.unit.stationName.localeCompare(b.unit.stationName) || a.id.localeCompare(b.id),
+}
+
+/** order on the Lichterkette: emergency units first (classic status board) */
+const LICHTERKETTE_ORDER = ['NEF', 'NAW', 'HELI', 'RTW', 'ITW', 'KTW', 'GKTW', 'BTW', 'MTW', 'EL']
+
+/**
+ * Status-Lichterkette (Award-Polish): the whole on-duty fleet as one row of
+ * colored status cells — the classic dispatch-center wall board. Click selects
+ * the unit, double-click centers the map.
+ */
+function Lichterkette({
+  runtimes,
+  onPick,
+}: {
+  runtimes: VehicleRuntime[]
+  onPick: (id: string) => void
+}) {
+  const cells = [...runtimes]
+    .filter((rt) => rt.status !== 'AUS')
+    .sort(
+      (a, b) =>
+        LICHTERKETTE_ORDER.indexOf(a.unit.typ) - LICHTERKETTE_ORDER.indexOf(b.unit.typ) ||
+        a.id.localeCompare(b.id),
+    )
+  if (cells.length === 0) return null
+  return (
+    <div className="lichterkette" role="group" aria-label="Status-Lichterkette" data-testid="lichterkette">
+      {cells.map((rt) => {
+        const def = statusByCode.get(rt.status)
+        return (
+          <button
+            key={rt.id}
+            className="lichterkette-cell"
+            style={{ background: `var(${def?.colorToken ?? '--status-oos'})` }}
+            title={`${unitDisplayName(rt.unit)} (${rt.unit.typ}) — Status ${rt.status}${def ? ` ${def.label}` : ''}`}
+            onClick={() => onPick(rt.id)}
+            onDoubleClick={() => {
+              const pos = vehicleSim.posOf(rt, useGameStore.getState().simSec)
+              useMapStore.getState().focusOn(pos.lat, pos.lon, 13)
+            }}
+          >
+            {rt.status}
+          </button>
+        )
+      })}
+    </div>
+  )
 }
 
 export function RessourcenPanel() {
@@ -71,6 +118,7 @@ export function RessourcenPanel() {
 
   return (
     <div className="ressourcen-panel" data-testid="ressourcen-panel">
+      <Lichterkette runtimes={runtimes} onPick={(id) => setSelected(id === selected ? null : id)} />
       <div className="panel-toolbar">
         <input
           aria-label="Fahrzeuge filtern"
