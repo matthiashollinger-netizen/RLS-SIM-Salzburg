@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { helicopters, hospitals, stations } from '../data/index.ts'
+import { useMapStore, type MapLayers } from '../state/mapStore.ts'
 import { attachVehicleMarkers } from './vehicleMarkers.ts'
 import { attachIncidentMarkers } from './incidentMarkers.ts'
 import './map-panel.css'
@@ -72,11 +73,16 @@ export function MapPanel() {
       }
     })
 
-    const markers: maplibregl.Marker[] = []
+    // infrastructure markers grouped per layer for the toggle control
+    const infra: Record<'wachen' | 'kliniken' | 'helis', maplibregl.Marker[]> = {
+      wachen: [],
+      kliniken: [],
+      helis: [],
+    }
     for (const s of stations) {
       if (s.type === 'LST') continue
-      const el = makeMarkerEl('station', 'W', s.name)
-      markers.push(
+      const el = makeMarkerEl('station', 'W', `${s.name} (${s.funk ?? ''})`)
+      infra.wachen.push(
         new maplibregl.Marker({ element: el })
           .setLngLat([s.lon, s.lat])
           .setPopup(new maplibregl.Popup({ closeButton: false }).setText(`${s.name} (${s.funk ?? ''})`))
@@ -85,7 +91,7 @@ export function MapPanel() {
     }
     for (const h of hospitals) {
       const el = makeMarkerEl('hospital', 'H', h.name)
-      markers.push(
+      infra.kliniken.push(
         new maplibregl.Marker({ element: el })
           .setLngLat([h.lon, h.lat])
           .setPopup(new maplibregl.Popup({ closeButton: false }).setText(h.name))
@@ -93,8 +99,8 @@ export function MapPanel() {
       )
     }
     for (const heli of helicopters) {
-      const el = makeMarkerEl('heli', '✕', `${heli.rufname} — ${heli.basis}`)
-      markers.push(
+      const el = makeMarkerEl('heli', 'X', `${heli.rufname} — ${heli.basis}`)
+      infra.helis.push(
         new maplibregl.Marker({ element: el })
           .setLngLat([heli.lon, heli.lat])
           .setPopup(
@@ -106,6 +112,25 @@ export function MapPanel() {
       )
     }
 
+    const applyInfraLayers = (layers: MapLayers) => {
+      for (const key of ['wachen', 'kliniken', 'helis'] as const) {
+        for (const m of infra[key]) {
+          m.getElement().style.display = layers[key] ? '' : 'none'
+        }
+      }
+    }
+    applyInfraLayers(useMapStore.getState().layers)
+    const unsubLayers = useMapStore.subscribe((s, prev) => {
+      if (s.layers !== prev.layers) applyInfraLayers(s.layers)
+    })
+
+    // focus requests (double-click in lists, new incidents)
+    const unsubFocus = useMapStore.subscribe((s, prev) => {
+      if (s.focus && s.focus !== prev.focus) {
+        map.flyTo({ center: [s.focus.lon, s.focus.lat], zoom: s.focus.zoom, duration: 700 })
+      }
+    })
+
     const detachVehicles = attachVehicleMarkers(map)
     const detachIncidents = attachIncidentMarkers(map)
 
@@ -114,13 +139,41 @@ export function MapPanel() {
 
     return () => {
       ro.disconnect()
+      unsubLayers()
+      unsubFocus()
       detachVehicles()
       detachIncidents()
-      for (const m of markers) m.remove()
+      for (const list of Object.values(infra)) for (const m of list) m.remove()
       map.remove()
       mapRef.current = null
     }
   }, [])
 
-  return <div ref={containerRef} className="map-panel" data-testid="map-panel" />
+  const layers = useMapStore((s) => s.layers)
+  const toggleLayer = useMapStore((s) => s.toggleLayer)
+  const layerDefs: { key: keyof MapLayers; label: string }[] = [
+    { key: 'einsatzFzg', label: 'Einsatzfzg.' },
+    { key: 'sonstigeFzg', label: 'KTW/BTW/…' },
+    { key: 'wachen', label: 'Wachen' },
+    { key: 'kliniken', label: 'Kliniken' },
+    { key: 'helis', label: 'Heli-Basen' },
+  ]
+
+  return (
+    <div className="map-panel-wrap">
+      <div ref={containerRef} className="map-panel" data-testid="map-panel" />
+      <div className="map-layer-control" role="group" aria-label="Kartenebenen">
+        {layerDefs.map((l) => (
+          <label key={l.key}>
+            <input
+              type="checkbox"
+              checked={layers[l.key]}
+              onChange={() => toggleLayer(l.key)}
+            />
+            {l.label}
+          </label>
+        ))}
+      </div>
+    </div>
+  )
 }

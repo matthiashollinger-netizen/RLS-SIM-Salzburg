@@ -5,13 +5,26 @@ import { unitDisplayName } from '../lib/format.ts'
 import { useVehicleVersion } from '../state/useVehicles.ts'
 import { vehicleSim } from '../state/simulation.ts'
 import { useGameStore } from '../state/gameStore.ts'
+import { useMapStore } from '../state/mapStore.ts'
 import { probealarm } from '../state/debugActions.ts'
 import { useFunkStore } from '../state/funkStore.ts'
 import { useWindowStore } from '../windows/windowStore.ts'
 import { StatusBadge } from '../components/StatusBadge.tsx'
+import type { VehicleRuntime } from '../engine/vehicleSim.ts'
 import './panels.css'
 
 const positionHospitals = hospitals.filter((h) => h.positionsCode)
+
+type SortKey = 'rufname' | 'typ' | 'status' | 'wache'
+
+const SORT_FNS: Record<SortKey, (a: VehicleRuntime, b: VehicleRuntime) => number> = {
+  rufname: (a, b) => unitDisplayName(a.unit).localeCompare(unitDisplayName(b.unit)),
+  typ: (a, b) => a.unit.typ.localeCompare(b.unit.typ) || a.id.localeCompare(b.id),
+  status: (a, b) =>
+    String(a.status).localeCompare(String(b.status)) || a.id.localeCompare(b.id),
+  wache: (a, b) =>
+    a.unit.stationName.localeCompare(b.unit.stationName) || a.id.localeCompare(b.id),
+}
 
 export function RessourcenPanel() {
   useVehicleVersion()
@@ -19,6 +32,16 @@ export function RessourcenPanel() {
   const [region, setRegion] = useState<'ALLE' | 'NORD' | 'SUED'>('ALLE')
   const [showAus, setShowAus] = useState(false)
   const [selected, setSelected] = useState<string | null>(null)
+  const [sortKey, setSortKey] = useState<SortKey>('rufname')
+  const [sortDir, setSortDir] = useState<1 | -1>(1)
+
+  const toggleSort = (key: SortKey) => {
+    if (key === sortKey) setSortDir((d) => (d === 1 ? -1 : 1))
+    else {
+      setSortKey(key)
+      setSortDir(1)
+    }
+  }
 
   const runtimes = vehicleSim.all()
   const rows = useMemo(() => {
@@ -34,9 +57,9 @@ export function RessourcenPanel() {
           rt.unit.typ.toLowerCase().includes(f) ||
           rt.unit.stationName.toLowerCase().includes(f),
       )
-      .sort((a, b) => a.id.localeCompare(b.id))
+      .sort((a, b) => SORT_FNS[sortKey](a, b) * sortDir)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runtimes, filter, region, showAus, vehicleSim.version])
+  }, [runtimes, filter, region, showAus, sortKey, sortDir, vehicleSim.version])
 
   const sel = selected ? vehicleSim.get(selected) : undefined
   const simSec = useGameStore.getState().simSec
@@ -117,10 +140,24 @@ export function RessourcenPanel() {
         <table className="panel-table">
           <thead>
             <tr>
-              <th>Rufname</th>
-              <th>Typ</th>
-              <th>Status</th>
-              <th>Dienststelle</th>
+              {(
+                [
+                  ['rufname', 'Rufname'],
+                  ['typ', 'Typ'],
+                  ['status', 'Status'],
+                  ['wache', 'Dienststelle'],
+                ] as [SortKey, string][]
+              ).map(([key, label]) => (
+                <th
+                  key={key}
+                  className="sortable-th"
+                  aria-sort={sortKey === key ? (sortDir === 1 ? 'ascending' : 'descending') : 'none'}
+                  onClick={() => toggleSort(key)}
+                >
+                  {label}
+                  {sortKey === key ? (sortDir === 1 ? ' ▲' : ' ▼') : ''}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -129,6 +166,11 @@ export function RessourcenPanel() {
                 key={rt.id}
                 className={selected === rt.id ? 'row-selected' : ''}
                 onClick={() => setSelected(rt.id === selected ? null : rt.id)}
+                onDoubleClick={() => {
+                  const pos = vehicleSim.posOf(rt, useGameStore.getState().simSec)
+                  useMapStore.getState().focusOn(pos.lat, pos.lon, 13)
+                }}
+                title="Doppelklick: auf Karte zeigen"
               >
                 <td className="mono">{unitDisplayName(rt.unit)}</td>
                 <td>

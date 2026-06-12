@@ -24,8 +24,7 @@ test('calltaker flow: answer call, interview, create Auftrag in dispatch list', 
   await abfrage.getByRole('button', { name: 'Atmet die Person normal?' }).click()
   await expect(page.getByTestId('transcript')).toContainText('Brust')
 
-  // pick the Hauptbeschwerde
-  await abfrage.getByRole('button', { name: /Hauptbeschwerde:/ }).click()
+  // pick the Hauptbeschwerde (grid is inline in Schritt 2 of the wizard)
   await page.getByTestId('beschwerde-grid').getByRole('button', { name: 'Brustschmerz' }).click()
 
   // Merkmalskette preview shows interview facts

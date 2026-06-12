@@ -16,10 +16,11 @@
     "type": "LST",
     "region": "SUED",
     "bezirk": "Pinzgau",
-    "lat": 47.3275,
-    "lon": 12.7942,
+    "lat": 47.33922,
+    "lon": 12.81518,
     "staffing": "hauptamtlich",
-    "estimated": true
+    "estimated": true,
+    "notes": "Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "stadt",
@@ -29,11 +30,11 @@
     "type": "BST",
     "region": "NORD",
     "bezirk": "Salzburg Stadt",
-    "lat": 47.806,
-    "lon": 13.046,
+    "lat": 47.80875,
+    "lon": 13.05752,
     "staffing": "hauptamtlich",
     "estimated": true,
-    "notes": "Dr.-Karl-Renner-Straße 7; Koordinate aus Adresse geschätzt"
+    "notes": "Dr.-Karl-Renner-Straße 7; Koordinate aus Adresse geschätzt; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "mattsee",
@@ -43,11 +44,11 @@
     "type": "DST",
     "region": "NORD",
     "bezirk": "Flachgau",
-    "lat": 47.9667,
-    "lon": 13.1,
+    "lat": 47.97209,
+    "lon": 13.09986,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "Gebiet: Mattsee, Schleedorf, Obertrum, Seeham, Berndorf; Pager-Alarmierung"
+    "notes": "Gebiet: Mattsee, Schleedorf, Obertrum, Seeham, Berndorf; Pager-Alarmierung; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "hof",
@@ -57,11 +58,11 @@
     "type": "DST",
     "region": "NORD",
     "bezirk": "Flachgau",
-    "lat": 47.8167,
-    "lon": 13.2167,
+    "lat": 47.81134,
+    "lon": 13.23728,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "Nur nachts + Wochenende besetzt — tagsüber Mo–Fr versorgt die Stadt das Hofer Gebiet (GAME_DATA §7)"
+    "notes": "Nur nachts + Wochenende besetzt — tagsüber Mo–Fr versorgt die Stadt das Hofer Gebiet (GAME_DATA §7); Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "lamprechtshausen",
@@ -71,11 +72,11 @@
     "type": "DST",
     "region": "NORD",
     "bezirk": "Flachgau",
-    "lat": 47.9897,
-    "lon": 12.9608,
+    "lat": 47.9926,
+    "lon": 12.95675,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "Kennung 5.41 = Hypothese (GAME_DATA §5)"
+    "notes": "Kennung 5.41 = Hypothese (GAME_DATA §5); Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "oberndorf",
@@ -85,11 +86,11 @@
     "type": "STUETZPUNKT",
     "region": "NORD",
     "bezirk": "Flachgau",
-    "lat": 47.9408,
-    "lon": 12.9414,
+    "lat": 47.94396,
+    "lon": 12.94304,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "Stützpunkt der DSt Lamprechtshausen"
+    "notes": "Stützpunkt der DSt Lamprechtshausen; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "strasswalchen",
@@ -99,11 +100,11 @@
     "type": "DST",
     "region": "NORD",
     "bezirk": "Flachgau",
-    "lat": 47.9786,
-    "lon": 13.2553,
+    "lat": 47.97656,
+    "lon": 13.24458,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "24h freiwillig besetzt (belegt); Kennung 5.43 = Hypothese; Gebiet: Köstendorf, Neumarkt, Henndorf"
+    "notes": "24h freiwillig besetzt (belegt); Kennung 5.43 = Hypothese; Gebiet: Köstendorf, Neumarkt, Henndorf; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "seekirchen",
@@ -113,11 +114,11 @@
     "type": "DST",
     "region": "NORD",
     "bezirk": "Flachgau",
-    "lat": 47.9,
-    "lon": 13.1333,
+    "lat": 47.89586,
+    "lon": 13.11861,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "Kennung 5.44 = Hypothese; Gebiet: Seekirchen, Eugendorf + A1-Abschnitt"
+    "notes": "Kennung 5.44 = Hypothese; Gebiet: Seekirchen, Eugendorf + A1-Abschnitt; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "strobl",
@@ -127,11 +128,11 @@
     "type": "DST",
     "region": "NORD",
     "bezirk": "Flachgau",
-    "lat": 47.7167,
-    "lon": 13.4833,
+    "lat": 47.71356,
+    "lon": 13.49549,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "Kennung 5.46 = Hypothese; Wolfgangsee-Tourismus"
+    "notes": "Kennung 5.46 = Hypothese; Wolfgangsee-Tourismus; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "hallein",
@@ -141,11 +142,11 @@
     "type": "BST",
     "region": "NORD",
     "bezirk": "Tennengau",
-    "lat": 47.6831,
-    "lon": 13.0969,
+    "lat": 47.68515,
+    "lon": 13.10244,
     "staffing": "hauptamtlich",
     "estimated": true,
-    "notes": "Kennung 5.51 = Hypothese; Gebiet: Adnet, Bad Vigaun, Hallein/Bad Dürrnberg, Krispl/Gaißau, Oberalm, Puch"
+    "notes": "Kennung 5.51 = Hypothese; Gebiet: Adnet, Bad Vigaun, Hallein/Bad Dürrnberg, Krispl/Gaißau, Oberalm, Puch; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "golling",
@@ -155,11 +156,11 @@
     "type": "DST",
     "region": "NORD",
     "bezirk": "Tennengau",
-    "lat": 47.5997,
-    "lon": 13.1664,
+    "lat": 47.59659,
+    "lon": 13.16708,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "Kennung 5.53 = Hypothese; Gebiet: Golling, Kuchl, Scheffau, St. Koloman"
+    "notes": "Kennung 5.53 = Hypothese; Gebiet: Golling, Kuchl, Scheffau, St. Koloman; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "abtenau",
@@ -169,11 +170,11 @@
     "type": "BST",
     "region": "NORD",
     "bezirk": "Tennengau",
-    "lat": 47.5631,
-    "lon": 13.3456,
+    "lat": 47.56527,
+    "lon": 13.34742,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "Gebiet: Abtenau, Annaberg-Lungötz, Rußbach, Teile St. Martin/Tg + Scheffau"
+    "notes": "Gebiet: Abtenau, Annaberg-Lungötz, Rußbach, Teile St. Martin/Tg + Scheffau; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "zell",
@@ -183,11 +184,11 @@
     "type": "BST",
     "region": "SUED",
     "bezirk": "Pinzgau",
-    "lat": 47.3239,
-    "lon": 12.7981,
+    "lat": 47.33957,
+    "lon": 12.81594,
     "staffing": "hauptamtlich",
     "estimated": true,
-    "notes": "NEF Pinzgau + ITW-Standort"
+    "notes": "NEF Pinzgau + ITW-Standort; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "saalfelden",
@@ -197,10 +198,11 @@
     "type": "OST",
     "region": "SUED",
     "bezirk": "Pinzgau",
-    "lat": 47.4269,
-    "lon": 12.8483,
+    "lat": 47.42505,
+    "lon": 12.83357,
     "staffing": "gemischt",
-    "estimated": true
+    "estimated": true,
+    "notes": "Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "mittersill",
@@ -210,11 +212,11 @@
     "type": "OST",
     "region": "SUED",
     "bezirk": "Pinzgau",
-    "lat": 47.2825,
-    "lon": 12.4836,
+    "lat": 47.28088,
+    "lon": 12.48419,
     "staffing": "gemischt",
     "estimated": true,
-    "notes": "NEF Oberpinzgau"
+    "notes": "NEF Oberpinzgau; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "stmartin-lofer",
@@ -224,10 +226,11 @@
     "type": "OST",
     "region": "SUED",
     "bezirk": "Pinzgau",
-    "lat": 47.5667,
-    "lon": 12.7,
+    "lat": 47.56798,
+    "lon": 12.70463,
     "staffing": "ehrenamtlich",
-    "estimated": true
+    "estimated": true,
+    "notes": "Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "rauris",
@@ -237,10 +240,11 @@
     "type": "OST",
     "region": "SUED",
     "bezirk": "Pinzgau",
-    "lat": 47.2269,
-    "lon": 12.9947,
+    "lat": 47.22705,
+    "lon": 12.9934,
     "staffing": "ehrenamtlich",
-    "estimated": true
+    "estimated": true,
+    "notes": "Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "saalbach",
@@ -250,11 +254,11 @@
     "type": "OST",
     "region": "SUED",
     "bezirk": "Pinzgau",
-    "lat": 47.3903,
-    "lon": 12.6364,
+    "lat": 47.38874,
+    "lon": 12.64773,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "Wintersport-Hotspot"
+    "notes": "Wintersport-Hotspot; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "wald",
@@ -264,10 +268,11 @@
     "type": "OST",
     "region": "SUED",
     "bezirk": "Pinzgau",
-    "lat": 47.2667,
-    "lon": 12.2333,
+    "lat": 47.24607,
+    "lon": 12.2284,
     "staffing": "ehrenamtlich",
-    "estimated": true
+    "estimated": true,
+    "notes": "Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "stjohann",
@@ -277,11 +282,11 @@
     "type": "BST",
     "region": "SUED",
     "bezirk": "Pongau",
-    "lat": 47.35,
-    "lon": 13.2,
+    "lat": 47.34153,
+    "lon": 13.19055,
     "staffing": "hauptamtlich",
     "estimated": true,
-    "notes": "Versorgungsgebiet inkl. Großarl, Hüttschlag, Wagrain, Kleinarl"
+    "notes": "Versorgungsgebiet inkl. Großarl, Hüttschlag, Wagrain, Kleinarl; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "schwarzach",
@@ -291,11 +296,11 @@
     "type": "DST",
     "region": "SUED",
     "bezirk": "Pongau",
-    "lat": 47.3206,
-    "lon": 13.1508,
+    "lat": 47.32117,
+    "lon": 13.15644,
     "staffing": "hauptamtlich",
     "estimated": true,
-    "notes": "NEF Salzachpongau, am Kardinal-Schwarzenberg-Klinikum"
+    "notes": "NEF Salzachpongau, am Kardinal-Schwarzenberg-Klinikum; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "gastein",
@@ -305,11 +310,11 @@
     "type": "BST",
     "region": "SUED",
     "bezirk": "Gastein",
-    "lat": 47.1708,
-    "lon": 13.1058,
+    "lat": 47.14928,
+    "lon": 13.11353,
     "staffing": "gemischt",
     "estimated": true,
-    "notes": "NAW Gasteinertal (Insider bestätigt); Flotte geschätzt"
+    "notes": "NAW Gasteinertal (Insider bestätigt); Flotte geschätzt; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "werfen",
@@ -319,11 +324,11 @@
     "type": "DST",
     "region": "SUED",
     "bezirk": "Pongau",
-    "lat": 47.4756,
-    "lon": 13.19,
+    "lat": 47.47895,
+    "lon": 13.18695,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "Flotte geschätzt; A10-Abschnitt"
+    "notes": "Flotte geschätzt; A10-Abschnitt; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "bischofshofen",
@@ -333,10 +338,11 @@
     "type": "DST",
     "region": "SUED",
     "bezirk": "Pongau",
-    "lat": 47.4172,
-    "lon": 13.2194,
+    "lat": 47.40869,
+    "lon": 13.2158,
     "staffing": "gemischt",
-    "estimated": true
+    "estimated": true,
+    "notes": "Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "radstadt",
@@ -346,11 +352,11 @@
     "type": "BST",
     "region": "SUED",
     "bezirk": "Radstadt",
-    "lat": 47.3833,
-    "lon": 13.45,
+    "lat": 47.38218,
+    "lon": 13.47406,
     "staffing": "gemischt",
     "estimated": true,
-    "notes": "NAW Ennspongau (Insider bestätigt); Gebiet: Untertauern, Obertauern, Altenmarkt, Eben, Flachau, Filzmoos, Hüttau; Flotte geschätzt"
+    "notes": "NAW Ennspongau (Insider bestätigt); Gebiet: Untertauern, Obertauern, Altenmarkt, Eben, Flachau, Filzmoos, Hüttau; Flotte geschätzt; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "tamsweg",
@@ -360,11 +366,11 @@
     "type": "BST",
     "region": "SUED",
     "bezirk": "Lungau",
-    "lat": 47.1281,
-    "lon": 13.8114,
+    "lat": 47.13095,
+    "lon": 13.81038,
     "staffing": "gemischt",
     "estimated": true,
-    "notes": "Flotte geschätzt; Bezirksfunktion Lungau"
+    "notes": "Flotte geschätzt; Bezirksfunktion Lungau; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "stmichael",
@@ -374,11 +380,11 @@
     "type": "DST",
     "region": "SUED",
     "bezirk": "Lungau",
-    "lat": 47.0992,
-    "lon": 13.6383,
+    "lat": 47.09823,
+    "lon": 13.65452,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "Flotte geschätzt; A10 Tauerntunnel-Süd"
+    "notes": "Flotte geschätzt; A10 Tauerntunnel-Süd; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "mauterndorf",
@@ -388,10 +394,10 @@
     "type": "DST",
     "region": "SUED",
     "bezirk": "Lungau",
-    "lat": 47.1342,
-    "lon": 13.6781,
+    "lat": 47.13395,
+    "lon": 13.68212,
     "staffing": "ehrenamtlich",
     "estimated": true,
-    "notes": "Flotte geschätzt; Obertauern-Süd"
+    "notes": "Flotte geschätzt; Obertauern-Süd; Koordinate geocodiert (Nominatim, Buildzeit)"
   }
 ]

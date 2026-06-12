@@ -261,9 +261,34 @@ export class VehicleSim {
     const rt = this.runtimes.get(id)
     if (!rt?.assignment) return false
     if (rt.status === '4' || rt.status === '5') return false // already en route/at target
+    if (!rt.assignment.transport) return false // support units keep their role
     rt.assignment.zielort = zielort
     rt.assignment.zielName = zielName
-    rt.assignment.transport = true
+    return true
+  }
+
+  /** Set/unset the transport role (one transporter per patient, Rework #6). */
+  setTransportRole(id: string, transport: boolean, zielort?: LatLon, zielName?: string): boolean {
+    const rt = this.runtimes.get(id)
+    if (!rt?.assignment) return false
+    if (rt.status === '4' || rt.status === '5') return false // patient already aboard
+    rt.assignment.transport = transport && !!zielort
+    if (transport && zielort) {
+      rt.assignment.zielort = zielort
+      rt.assignment.zielName = zielName
+    }
+    return true
+  }
+
+  /** Move the Einsatzort while units are still approaching (Auftrag edit). */
+  updateEinsatzort(id: string, einsatzort: LatLon, simSec: number): boolean {
+    const rt = this.runtimes.get(id)
+    if (!rt?.assignment) return false
+    if (rt.status !== '1' && rt.status !== '2') return false
+    rt.assignment.einsatzort = einsatzort
+    if (rt.status === '2') {
+      this.startMove(rt, einsatzort, simSec, rt.assignment.sosi)
+    }
     return true
   }
 

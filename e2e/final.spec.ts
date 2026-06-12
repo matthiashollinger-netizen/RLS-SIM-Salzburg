@@ -28,22 +28,22 @@ test('definition of done: complete tutorial shift end-to-end', async ({ page }) 
   await abfrage.getByRole('button', { name: 'Was genau ist passiert?' }).click()
   await abfrage.getByRole('button', { name: 'Ist die Person ansprechbar?' }).click()
 
-  // step: Hauptbeschwerde
+  // step: Hauptbeschwerde (inline grid in Schritt 2)
   await expect(tutorial).toContainText('Hauptbeschwerde')
-  await abfrage.getByRole('button', { name: /Hauptbeschwerde:/ }).click()
   await page.getByTestId('beschwerde-grid').getByRole('button', { name: 'Brustschmerz' }).click()
 
   // step: create the Auftrag
   await expect(tutorial).toContainText('Auftrag anlegen')
   await page.getByTestId('auftrag-anlegen').click()
 
-  // step: dispatch — assign the two proposed units (NA + RTW)
+  // step: dispatch — stage the two proposed units (NA + RTW), then ALARMIEREN
   await expect(tutorial).toContainText('disponieren')
   const detail = page.getByTestId('auftrag-detail')
   const slots = detail.locator('.unit-slot')
   await expect(slots.first()).toBeVisible()
   await slots.nth(0).locator('.unit-candidate').first().click()
   await slots.nth(1).locator('.unit-candidate').first().click()
+  await detail.getByTestId('alarmieren').click()
 
   // step: watch status flow — fast-forward via jump-to-event until arrival
   await expect(tutorial).toContainText('Beobachte Karte und Funkfeld')
@@ -54,9 +54,14 @@ test('definition of done: complete tutorial shift end-to-end', async ({ page }) 
   }
   await expect(tutorial).toContainText('Eintreffen gemeldet', { timeout: 30_000 })
 
-  // radio feed carries the protocol-conform arrival report
-  await expect(page.getByTestId('funkfeld-panel')).toContainText('von', { timeout: 10_000 })
-  await expect(page.getByTestId('funkfeld-panel')).toContainText('Verstanden')
+  // interactive radio (Rework #4): the first unit CALLS — the player must
+  // answer „kommen" and close with „Verstanden"
+  const funk = page.getByTestId('funkfeld-panel')
+  await expect(funk).toContainText(/von (Christophorus 6|[0-9]+-[0-9]+)/, { timeout: 10_000 })
+  await funk.getByRole('button', { name: '„kommen"' }).first().click()
+  await expect(funk.locator('.funk-spruch').first()).toContainText('kommen')
+  await funk.getByRole('button', { name: '„Verstanden"' }).first().click()
+  await expect(funk.locator('.funk-spruch').first()).toContainText('Verstanden')
 
   // finish tutorial + shift → report with grade
   await tutorial.getByRole('button', { name: 'Tutorial abschließen' }).click()

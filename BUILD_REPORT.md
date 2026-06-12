@@ -367,3 +367,43 @@ API aktiviert (`build_type: workflow`); das Repo wurde GitHub-seitig zu
 **Live:** <https://matthiashollinger-netizen.github.io/RLS-SIM-Salzburg/>
 
 **STOP** — alle Meilensteine M0–M10 abgeschlossen.
+
+## Großer Rework nach User-Feedback (2026-06-12)
+
+Feedback von Matthias (11 Punkte, „derzeit kaum spielbar") — alle adressiert:
+
+1. **Karte übersichtlicher**: Layer-Steuerung auf der Karte (Einsatzfzg./KTW-Familie/
+   Wachen/Kliniken/Heli-Basen — KTW-Clutter standardmäßig aus, im Einsatz befindliche
+   Fahrzeuge immer sichtbar), Infrastruktur-Marker klein & dezent, Fahrzeug-Marker mit
+   Statusfarbe+Ziffer+Typform und Rufnamen-Label ab Zoom 11, Einsatz-Glow.
+2. **Standorte korrekt**: Einmaliges Nominatim-Geocoding (Buildzeit) — echte
+   RK-Dienststellen-Gebäude und Klinik-Adressen statt Ortszentren (`scripts/geocode.ts`).
+3. **Standardisiertes Abfrage-Schema**: Abfragemaske als geführtes 5-Schritte-Schema
+   (Notfallort → Geschehen/Hauptbeschwerde → Personen&Rückruf → Vitalfragen →
+   Detailfragen) mit Fortschritts-Häkchen und Hervorhebung des aktuellen Schritts.
+4. **Selbst funken**: Eingehende Funkrufe verlangen „kommen" und „Verstanden" vom
+   Spieler; Aktionen (A4/Polizei) erst nach Annahme des Rufs.
+5. **Kein Funk-Spam**: Nur Erstmeldung des ersten Mittels, Nachforderungen und
+   Sprechwünsche; Transport-/Folge-Status laufen still ins Protokoll.
+6. **Ein Patient = ein Transport**: Transport-Allokation je Auftrag (Heli-Priorität);
+   Heli fliegt, RTW unterstützt; Wechsel bei Abbruch; T-Badge im UI.
+7. **Sortierung + Karten-Fokus**: Ressourcen-Tabelle nach Rufname/Typ/Status/Wache
+   sortierbar; Doppelklick (Fahrzeuge & Einsätze) zentriert die Karte; neuer Auftrag
+   fokussiert automatisch.
+8. **ELS-Alarmierung**: Zweistufig zuteilen → ALARMIEREN (gesammelt, Pager-Gong),
+   Zuteilungen entfernbar — KI-Disponent nutzt denselben Flow.
+9. **Reaktiverer Anrufer**: Antwortbanken für alle 24 Beschwerden, Wiederholungs-
+   Gedächtnis, In-Character-Unbekannt-Antworten, Freitext-Matching der Detailfragen,
+   sichtbarer Skript/KI-Indikator mit Hinweis auf WebLLM-Aktivierung.
+10. **Aufträge editierbar**: Inline-Editor (Kategorie, Schwere, Personen, Einsatzort-
+    Korrektur mit Re-Routing der anfahrenden Mittel, Notizen); Code-Neuableitung
+    respektiert manuelle Übersteuerung.
+11. **Gesamt**: Tutorial an neuen Flow angepasst, Coop-Whitelist erweitert,
+    alle Tests aktualisiert.
+
+**Wie getestet:** `npm run lint` ✓ · `npm run validate-data` ✓ · `npm test` ✓
+(158 Tests; neu: Transport-Allokation, 2-Stufen-Dispo-Integration gegen die echte Sim
+inkl. Heli-transportiert/RTW-unterstützt, Auftrag-Edit/Re-Routing, interaktiver
+Funk-Flow inkl. Funkdisziplin-Sperre, Anrufer-Wiederholungen/Unbekannt/Detail-Matching)
+· `npm run build` ✓ · `npm run smoke` ✓ (26 E2E, DoD-Test bedient jetzt den
+interaktiven Funk selbst).

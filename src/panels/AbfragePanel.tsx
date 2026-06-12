@@ -14,6 +14,7 @@ import { formatCountdown } from '../lib/format.ts'
 import { useCallStore } from '../state/callStore.ts'
 import { useDispatchStore } from '../state/dispatchStore.ts'
 import { useGameStore } from '../state/gameStore.ts'
+import { useLlmStore } from '../state/llmStore.ts'
 import { alarmtext } from '../engine/auftrag.ts'
 import './panels.css'
 import './call-panels.css'
@@ -161,6 +162,34 @@ function DuplikatBlock() {
   )
 }
 
+/** One numbered step of the standardized questionnaire (Rework #3). */
+function Schritt({
+  nr,
+  title,
+  done,
+  current,
+  children,
+}: {
+  nr: number
+  title: string
+  done: boolean
+  current: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <section
+      className={`abfrage-schritt${done ? ' schritt-done' : ''}${current ? ' schritt-current' : ''}`}
+      aria-label={`Schritt ${nr}: ${title}`}
+    >
+      <header className="schritt-header">
+        <span className="schritt-nr mono">{done ? '✓' : nr}</span>
+        <span className="schritt-title">{title}</span>
+      </header>
+      <div className="schritt-body">{children}</div>
+    </section>
+  )
+}
+
 export function AbfragePanel() {
   const active = useCallStore((s) => s.active)
   const ask = useCallStore((s) => s.ask)
@@ -171,7 +200,7 @@ export function AbfragePanel() {
   const setAnswer = useCallStore((s) => s.setAnswer)
   const createAuftrag = useCallStore((s) => s.createAuftrag)
   const simSec = useGameStore((s) => s.simSec)
-  const [showBeschwerden, setShowBeschwerden] = useState(false)
+  const llmStatus = useLlmStore((s) => s.status)
   const [freeText, setFreeText] = useState('')
 
   if (!active) {
@@ -184,6 +213,7 @@ export function AbfragePanel() {
   }
 
   const a = active.answers
+  const asked = active.callerState.asked
   const hb = a.hauptbeschwerdeId ? hauptbeschwerdeById.get(a.hauptbeschwerdeId) : undefined
   const derived = categoryFromAnswers(a)
   const codePreview = deriveCode(derived.categoryId, {
@@ -193,6 +223,17 @@ export function AbfragePanel() {
   const merkmalskette = buildMerkmalskette(a)
   const canCreate = !!a.adresse || !!active.amlPoint
 
+  // standardized phases (GAME_DATA §3) with completion state
+  const ortDone = !!a.adresse
+  const geschehenDone = !!a.hauptbeschwerdeId || !!a.categoryId
+  const personenDone = a.personen !== undefined && a.rueckrufOk === true
+  const vitalDone = a.ansprechbar !== undefined && a.atmet !== undefined
+  const detailDone = asked.includes('detail1') || asked.includes('detail2')
+  const steps = [ortDone, geschehenDone, personenDone, vitalDone, detailDone]
+  const currentStep = steps.findIndex((d) => !d) + 1 || 6
+
+  const frage = (id: string) => FRAGEN.find((f) => f.id === id)!
+
   return (
     <div className="abfrage-panel" data-testid="abfrage-panel">
       <div className="abfrage-header">
@@ -201,6 +242,19 @@ export function AbfragePanel() {
         <span className="mono">
           ⏱ {active.answeredAt !== undefined ? formatCountdown(simSec - active.answeredAt) : ''}
         </span>
+        <span
+          className={`llm-indicator ${llmStatus === 'ready' ? 'llm-on' : ''}`}
+          title={
+            llmStatus === 'ready'
+              ? 'KI-Anrufer aktiv (freie Antworten)'
+              : 'Dialogbaum aktiv — KI-Anrufer in ⚙ Einstellungen aktivierbar'
+          }
+        >
+          {llmStatus === 'ready' ? 'KI' : 'Skript'}
+        </span>
+        <button onClick={() => ask('beruhigen')} title="Anrufer beruhigen">
+          Beruhigen
+        </button>
         <button className="hangup-btn" onClick={hangup}>
           Auflegen
         </button>
@@ -231,90 +285,97 @@ export function AbfragePanel() {
         </button>
       </form>
 
-      <div className="frage-buttons">
-        {FRAGEN.filter((f) => f.phase === 1).map((f) => (
-          <button key={f.id} onClick={() => ask(f.id)}>
-            {f.text}
-          </button>
-        ))}
-        {FRAGEN.filter((f) => f.phase === 2).map((f) => (
-          <button key={f.id} onClick={() => ask(f.id)}>
-            {f.text}
-          </button>
-        ))}
-        {hb && (
-          <>
-            <button onClick={() => ask('detail1')}>{hb.detailFragen[0]}</button>
-            <button onClick={() => ask('detail2')}>{hb.detailFragen[1]}</button>
-          </>
-        )}
-        <button onClick={() => ask('beruhigen')}>Beruhigen</button>
-        <button onClick={() => ask('eh_anweisung')}>EH-Anweisung geben</button>
-      </div>
+      <div className="abfrage-schritte" data-testid="abfrage-schritte">
+        <Schritt nr={1} title="Notfallort" done={ortDone} current={currentStep === 1}>
+          <div className="schritt-buttons">
+            <button onClick={() => ask('ort')}>{frage('ort').text}</button>
+          </div>
+          <AdresseBlock />
+        </Schritt>
 
-      <div className="beschwerde-section">
-        <button
-          className="beschwerde-toggle"
-          aria-expanded={showBeschwerden}
-          onClick={() => setShowBeschwerden(!showBeschwerden)}
-        >
-          Hauptbeschwerde: {hb ? hb.label : '— wählen —'} ▾
-        </button>
-        {showBeschwerden && (
+        <Schritt nr={2} title="Was ist passiert?" done={geschehenDone} current={currentStep === 2}>
+          <div className="schritt-buttons">
+            <button onClick={() => ask('geschehen')}>{frage('geschehen').text}</button>
+          </div>
           <div className="beschwerde-grid" data-testid="beschwerde-grid">
             {HAUPTBESCHWERDEN.map((h) => (
               <button
                 key={h.id}
                 className={a.hauptbeschwerdeId === h.id ? 'beschwerde-active' : ''}
-                onClick={() => {
-                  chooseHauptbeschwerde(h.id)
-                  setShowBeschwerden(false)
-                }}
+                onClick={() => chooseHauptbeschwerde(h.id)}
               >
                 {h.label}
               </button>
             ))}
-            <div className="kt-row">
-              KT-Anmeldung:
-              {KT_KATEGORIEN.map((kt) => (
-                <button
-                  key={kt}
-                  className={a.categoryId === kt ? 'beschwerde-active' : ''}
-                  onClick={() => {
-                    setAnswer({ categoryId: kt })
-                    setShowBeschwerden(false)
-                  }}
-                >
-                  {kt}
-                </button>
-              ))}
-            </div>
           </div>
-        )}
+          <div className="kt-row">
+            KT-Anmeldung:
+            {KT_KATEGORIEN.map((kt) => (
+              <button
+                key={kt}
+                className={a.categoryId === kt ? 'beschwerde-active' : ''}
+                onClick={() => setAnswer({ categoryId: kt })}
+              >
+                {kt}
+              </button>
+            ))}
+          </div>
+        </Schritt>
+
+        <Schritt nr={3} title="Personen & Rückruf" done={personenDone} current={currentStep === 3}>
+          <div className="schritt-buttons">
+            <button onClick={() => ask('personen')}>{frage('personen').text}</button>
+            <button onClick={() => ask('rueckruf')}>{frage('rueckruf').text}</button>
+          </div>
+          <div className="anrufer-rolle-row">
+            <span>Anrufer:</span>
+            {(['selbst', 'angehoeriger', 'passant', 'fachpersonal', 'kind'] as const).map((r) => (
+              <button
+                key={r}
+                className={a.rolle === r ? 'beschwerde-active' : ''}
+                onClick={() => setAnswer({ rolle: r })}
+              >
+                {r === 'selbst'
+                  ? 'Selbst'
+                  : r === 'angehoeriger'
+                    ? 'Angehörige/r'
+                    : r === 'passant'
+                      ? 'Passant'
+                      : r === 'fachpersonal'
+                        ? 'Fachpersonal'
+                        : 'Kind'}
+              </button>
+            ))}
+          </div>
+        </Schritt>
+
+        <Schritt nr={4} title="Vitalfragen" done={vitalDone} current={currentStep === 4}>
+          <div className="schritt-buttons">
+            <button onClick={() => ask('bewusstsein')}>{frage('bewusstsein').text}</button>
+            <button onClick={() => ask('atmung')}>{frage('atmung').text}</button>
+            <button onClick={() => ask('alter')}>{frage('alter').text}</button>
+            <button onClick={() => ask('zugang')}>{frage('zugang').text}</button>
+          </div>
+        </Schritt>
+
+        <Schritt
+          nr={5}
+          title={hb ? `Detailfragen (${hb.label})` : 'Detailfragen'}
+          done={detailDone}
+          current={currentStep === 5}
+        >
+          {hb ? (
+            <div className="schritt-buttons">
+              <button onClick={() => ask('detail1')}>{hb.detailFragen[0]}</button>
+              <button onClick={() => ask('detail2')}>{hb.detailFragen[1]}</button>
+              <button onClick={() => ask('eh_anweisung')}>EH-Anweisung geben</button>
+            </div>
+          ) : (
+            <p className="schritt-hint">Zuerst in Schritt 2 die Hauptbeschwerde wählen.</p>
+          )}
+        </Schritt>
       </div>
 
-      <div className="anrufer-rolle-row">
-        <span>Anrufer:</span>
-        {(['selbst', 'angehoeriger', 'passant', 'fachpersonal', 'kind'] as const).map((r) => (
-          <button
-            key={r}
-            className={a.rolle === r ? 'beschwerde-active' : ''}
-            onClick={() => setAnswer({ rolle: r })}
-          >
-            {r === 'selbst'
-              ? 'Selbst'
-              : r === 'angehoeriger'
-                ? 'Angehörige/r'
-                : r === 'passant'
-                  ? 'Passant'
-                  : r === 'fachpersonal'
-                    ? 'Fachpersonal'
-                    : 'Kind'}
-          </button>
-        ))}
-      </div>
-
-      <AdresseBlock />
       <DuplikatBlock />
 
       <div className="merkmalskette-preview">

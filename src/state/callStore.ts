@@ -12,12 +12,13 @@ import {
   answerFor,
   greeting,
   initialCallerState,
+  unknownReply,
   type CallerState,
 } from '../engine/callerScript.ts'
 import type { Scenario } from '../engine/scenario.ts'
 import { haversineKm } from '../engine/geo.ts'
 import { buildSystemPrompt } from '../llm/prompt.ts'
-import { classifyFreeText } from '../llm/classify.ts'
+import { classifyWithDetails } from '../llm/classify.ts'
 import { speakCaller } from '../llm/tts.ts'
 import type { ChatMessage } from '../llm/types.ts'
 import { useGameStore } from './gameStore.ts'
@@ -162,7 +163,7 @@ function sendQuestion(set: SetFn, get: GetFn, text: string, frageId: string | nu
     // Tier 1: scripted dialogue tree (answerFor tracks asked/calmed itself)
     const antwort = frageId
       ? answerFor(updated.scenario, frageId, updated.callerState)
-      : 'Ich versteh die Frage nicht ganz… was meinen Sie?'
+      : unknownReply(updated.scenario, updated.callerState)
     say(updated, 'anrufer', antwort, simSec)
     maybeEarlyHangup(updated, simSec)
     set({ active: updated })
@@ -289,7 +290,10 @@ export const useCallStore = create<CallStoreState>((set, get) => ({
   },
 
   askFreeText: (text) => {
-    sendQuestion(set, get, text, classifyFreeText(text))
+    // typed follow-ups also match the chosen Hauptbeschwerde's detail questions
+    const hb = get().active?.answers.hauptbeschwerdeId
+    const detailFragen = hb ? hauptbeschwerdeById.get(hb)?.detailFragen : undefined
+    sendQuestion(set, get, text, classifyWithDetails(text, detailFragen))
   },
 
   setAnswer: (patch) =>

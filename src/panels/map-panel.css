@@ -1,42 +1,142 @@
+.map-panel-wrap {
+  position: absolute;
+  inset: 0;
+}
+
 .map-panel {
   position: absolute;
   inset: 0;
   background: var(--bg-panel-inset);
 }
 
+.map-layer-control {
+  position: absolute;
+  top: var(--sp-2);
+  left: var(--sp-2);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--bg-overlay);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-1) var(--sp-2);
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+}
+
+.map-layer-control label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ---- Infrastruktur: dezent, klein — Fahrzeuge & Einsätze dominieren ---- */
 .map-marker {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  font-size: 10px;
+  cursor: pointer;
   font-family: var(--font-mono);
   font-weight: 700;
-  cursor: pointer;
-  border: 1.5px solid var(--bg-app);
-  color: var(--text-inverse);
 }
 
 .map-marker-station {
-  background: var(--info);
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  background: var(--bg-panel-raised);
+  border: 1px solid var(--text-muted);
+  color: var(--text-muted);
+  font-size: 7px;
 }
 
 .map-marker-hospital {
-  background: var(--warn);
-  border-radius: var(--radius-sm);
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  background: var(--bg-panel-raised);
+  border: 1.5px solid var(--warn);
+  color: var(--warn);
+  font-size: 9px;
 }
 
 .map-marker-heli {
-  background: var(--status-6);
-  transform: rotate(45deg);
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--bg-panel-raised);
+  border: 1px solid var(--status-6);
+  color: var(--status-6);
+  font-size: 7px;
 }
 
-.map-marker-heli:hover,
-.map-marker-station:hover,
-.map-marker-hospital:hover {
+.map-marker:hover {
   outline: 2px solid var(--border-focus);
+}
+
+/* ---- Fahrzeuge: Statusfarbe + Statusziffer, Rufname-Label ab Zoom ---- */
+.map-marker-vehicle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  cursor: pointer;
+}
+
+.map-marker-vehicle-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 7px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-inverse);
+  border: 1px solid var(--bg-app);
+}
+
+/* type shapes (color-blind redundancy) */
+.map-marker-vehicle[data-typ='NEF'] .map-marker-vehicle-status,
+.map-marker-vehicle[data-typ='NAW'] .map-marker-vehicle-status {
+  border-radius: 3px;
+  border-width: 2px;
+}
+
+.map-marker-vehicle[data-typ='HELI'] .map-marker-vehicle-status {
+  border-radius: 2px 7px 2px 7px;
+  border-width: 2px;
+}
+
+.map-marker-vehicle.vehicle-layer-sonstigeFzg .map-marker-vehicle-status {
+  min-width: 14px;
+  height: 10px;
+  font-size: 7px;
+  opacity: 0.85;
+}
+
+.map-marker-vehicle.vehicle-engaged .map-marker-vehicle-status {
+  box-shadow: 0 0 6px 1px rgba(239, 67, 82, 0.6);
+}
+
+.map-marker-vehicle-label {
+  font-size: 9px;
+  line-height: 1;
+  color: var(--text-primary);
+  background: var(--bg-overlay);
+  padding: 1px 3px;
+  border-radius: 2px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.map-marker-vehicle.vehicle-layer-sonstigeFzg .map-marker-vehicle-label {
+  color: var(--text-muted);
 }
 
 .maplibregl-popup-content {
@@ -51,41 +151,6 @@
 
 .maplibregl-popup-tip {
   border-top-color: var(--bg-panel-raised) !important;
-}
-
-/* Vehicle markers: status color + status digit; shape varies by type
-   (color-blind redundancy per DESIGN_SYSTEM) */
-.map-marker-vehicle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 22px;
-  height: 16px;
-  padding: 0 2px;
-  border-radius: 8px;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--text-inverse);
-  border: 1px solid var(--bg-app);
-  cursor: pointer;
-}
-
-.map-marker-vehicle[data-typ='NEF'],
-.map-marker-vehicle[data-typ='NAW'] {
-  border-radius: 3px;
-  border-width: 2px;
-}
-
-.map-marker-vehicle[data-typ='RTW'],
-.map-marker-vehicle[data-typ='ITW'] {
-  border-radius: 8px;
-}
-
-.map-marker-vehicle[data-typ='KTW'],
-.map-marker-vehicle[data-typ='GKTW'],
-.map-marker-vehicle[data-typ='BTW'] {
-  border-radius: 2px;
 }
 
 .vehicle-popup {
@@ -125,8 +190,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--signal-red);
   color: var(--text-inverse);

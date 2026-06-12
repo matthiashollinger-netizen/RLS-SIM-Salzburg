@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { resolveSprechwunsch, useFunkStore } from '../state/funkStore.ts'
+import { useFunkStore } from '../state/funkStore.ts'
 import { vehicleSim } from '../state/simulation.ts'
 import { useVehicleVersion } from '../state/useVehicles.ts'
 import { QUICK_PHRASES } from '../engine/funk.ts'
@@ -68,19 +68,24 @@ function FunkCompose() {
 
 export function FunkPanel() {
   const sprueche = useFunkStore((s) => s.sprueche)
+  const kommen = useFunkStore((s) => s.kommen)
+  const verstanden = useFunkStore((s) => s.verstanden)
   const executeAction = useFunkStore((s) => s.executeAction)
   const endRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: 'end' })
-  }, [sprueche.length])
+  }, [sprueche])
 
   return (
     <div className="funk-panel" data-testid="funkfeld-panel">
       <div className="funk-feed" role="log" aria-live="polite" aria-label="Funkverkehr">
         {sprueche.length === 0 && <div className="panel-empty">Kein Funkverkehr.</div>}
         {sprueche.map((s) => (
-          <div key={s.id} className={`funk-spruch funk-${s.kind}${s.requiresAck && !s.acked ? ' funk-pending' : ''}`}>
+          <div
+            key={s.id}
+            className={`funk-spruch funk-${s.kind}${s.stage !== 'quittiert' ? ' funk-pending' : ''}${s.stage === 'ruf' ? ' funk-ruf' : ''}`}
+          >
             <span className="funk-time mono">{formatGameTime(s.simSec).slice(0, 5)}</span>
             <div className="funk-lines">
               {s.lines.map((l, i) => (
@@ -88,20 +93,27 @@ export function FunkPanel() {
                   <span className="funk-speaker mono">{l.speaker}:</span> {l.text}
                 </p>
               ))}
-              {s.requiresAck && !s.acked && s.kind === 'sprechwunsch' && (
-                <button className="funk-action" onClick={() => resolveSprechwunsch(s.id)}>
-                  Sprechwunsch quittieren
+              {s.stage === 'ruf' && (
+                <button className="funk-action funk-kommen" onClick={() => kommen(s.id)}>
+                  „kommen"
                 </button>
               )}
-              {s.requiresAck && !s.acked && s.action?.type === 'a4' && (
-                <button className="funk-action" onClick={() => executeAction(s.id)}>
-                  A4-Nachforderung anlegen
-                </button>
-              )}
-              {s.requiresAck && !s.acked && s.action?.type === 'polizei' && (
-                <button className="funk-action" onClick={() => executeAction(s.id)}>
-                  Polizei alarmieren
-                </button>
+              {s.stage === 'offen' && (
+                <div className="funk-offen-actions">
+                  {s.action?.type === 'a4' && (
+                    <button className="funk-action funk-action-a4" onClick={() => executeAction(s.id)}>
+                      A4-Nachforderung anlegen
+                    </button>
+                  )}
+                  {s.action?.type === 'polizei' && (
+                    <button className="funk-action" onClick={() => executeAction(s.id)}>
+                      Polizei alarmieren
+                    </button>
+                  )}
+                  <button className="funk-action funk-verstanden" onClick={() => verstanden(s.id)}>
+                    „Verstanden"
+                  </button>
+                </div>
               )}
             </div>
           </div>

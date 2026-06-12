@@ -22,6 +22,13 @@ export type FunkKind =
   | 'anfrage'
   | 'antwort'
 
+/**
+ * Interactive radio stages (Rework #4): the unit CALLS ('ruf'), the player
+ * answers „kommen" → the message is spoken ('offen'), the player closes with
+ * „Verstanden" ('quittiert'). Player-initiated calls start complete.
+ */
+export type FunkStage = 'ruf' | 'offen' | 'quittiert'
+
 export interface FunkSpruch {
   id: number
   simSec: number
@@ -29,10 +36,10 @@ export interface FunkSpruch {
   vehicleId?: string
   auftragId?: string
   lines: FunkLine[]
-  /** Sprechwunsch must be acknowledged by the dispatcher */
-  requiresAck?: boolean
-  acked?: boolean
-  /** suggested dispatcher action */
+  stage: FunkStage
+  /** revealed when the player answers „kommen" */
+  pendingMessage?: string
+  /** suggested dispatcher action (available once the message is heard) */
   action?: { type: 'a4' | 'polizei'; auftragId: string }
 }
 
@@ -65,18 +72,14 @@ export function leitstelleCallsVehicle(
 
 // ---- status-driven crew reports (Tier-1 templates) ----
 
+/** Erstmeldung of the FIRST unit on scene (later arrivals stay silent, Rework #5). */
 export function eintreffMeldung(rt: VehicleRuntime): string {
   const variants = [
-    'Status 3, sind am Einsatzort.',
-    'Status 3 — beginnen mit der Versorgung.',
-    'Eingetroffen, verschaffen uns einen Überblick.',
+    'Sind als erstes Mittel am Einsatzort, verschaffen uns einen Überblick.',
+    'Am Einsatzort eingetroffen — Erstmeldung folgt nach Sichtung.',
+    'Status 3, Lage entspricht bisher der Meldung. Beginnen mit der Versorgung.',
   ]
   return variants[rt.id.length % variants.length]!
-}
-
-export function transportMeldung(rt: VehicleRuntime): string {
-  const ziel = rt.assignment?.zielName ?? 'Zielklinik'
-  return `Status 4, transportieren in Richtung ${ziel}.`
 }
 
 /**

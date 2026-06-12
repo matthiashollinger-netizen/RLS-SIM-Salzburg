@@ -6,10 +6,11 @@ import {
   hauptbeschwerdeById,
 } from './abfrage.ts'
 import { categoryById } from '../data/index.ts'
-import { answerFor, greeting, initialCallerState } from './callerScript.ts'
+import { answerFor, greeting, initialCallerState, unknownReply } from './callerScript.ts'
 import { generateScenario } from './scenario.ts'
 import { mulberry32 } from './rng.ts'
 import { searchAddress } from '../lib/fuzzy.ts'
+import { classifyWithDetails } from '../llm/classify.ts'
 
 describe('Merkmalskette → Kategorie mapping', () => {
   it('every Hauptbeschwerde maps to an existing emergency category', () => {
@@ -107,6 +108,51 @@ describe('Tier-1 caller script', () => {
   it('Hauptbeschwerde detail questions come from the catalog', () => {
     const hb = hauptbeschwerdeById.get('verkehrsunfall')!
     expect(hb.detailFragen[0]).toContain('eingeklemmt')
+  })
+
+  it('repeated questions get an annoyed shortened repeat (Rework #9)', () => {
+    const s = demoScenario()
+    s.anrufer.kenntAdresse = true
+    s.stoerungen = []
+    s.anrufer.emotion = 'ruhig'
+    const state = initialCallerState()
+    answerFor(s, 'alter', state)
+    const repeat = answerFor(s, 'alter', state)
+    expect(repeat).toContain('Wie gesagt')
+    expect(repeat).toContain(String(s.truth.alter))
+  })
+
+  it('unknown questions are answered in character (Rework #9)', () => {
+    const s = demoScenario()
+    const state = initialCallerState()
+    s.anrufer.emotion = 'panisch'
+    expect(unknownReply(s, state)).toContain('ICH WEISS ES NICHT')
+    s.anrufer.emotion = 'ruhig'
+    s.anrufer.rolle = 'passant'
+    expect(unknownReply(s, state)).toContain('kenn die Person')
+  })
+
+  it('every Hauptbeschwerde has scripted detail answers (no generic fallback)', () => {
+    const rng = mulberry32(99)
+    for (const hb of HAUPTBESCHWERDEN) {
+      const s = generateScenario(rng, {
+        region: 'NORD',
+        forceType: 'notfall',
+        forceHauptbeschwerde: hb.id,
+      })
+      expect(s.truth.detail1, hb.id).not.toBe('Ich weiß es nicht genau.')
+    }
+  })
+
+  it('free text matches category detail questions (Rework #9)', () => {
+    const hb = hauptbeschwerdeById.get('verkehrsunfall')!
+    expect(classifyWithDetails('Ist da jemand eingeklemmt im Auto?', hb.detailFragen)).toBe(
+      'detail1',
+    )
+    expect(classifyWithDetails('Wieviele Fahrzeuge sind denn beteiligt?', hb.detailFragen)).toBe(
+      'detail2',
+    )
+    expect(classifyWithDetails('Mögen Sie Pizza?', hb.detailFragen)).toBeNull()
   })
 })
 

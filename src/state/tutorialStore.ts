@@ -47,10 +47,10 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     id: 'dispo',
-    text: 'Jetzt disponieren: Wähle den Einsatz in der Einsatzliste und alarmiere die vorgeschlagenen Mittel (NA-Mittel + RTW) per Klick auf die Kandidaten.',
+    text: 'Jetzt disponieren wie im echten ELS: Mittel per Klick ZUTEILEN (NA-Mittel + RTW), dann gemeinsam mit dem roten ALARMIEREN-Knopf alarmieren.',
     done: () => {
       const a = Object.values(useDispatchStore.getState().auftraege)[0]
-      return !!a && Object.keys(a.assigned).length >= 1
+      return !!a && Object.values(a.assigned).some((s) => s !== 'zugeteilt')
     },
   },
   {

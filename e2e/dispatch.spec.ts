@@ -23,12 +23,17 @@ test('dispatch core: create incident, AO proposal, assign unit, timer visible', 
   // partner toggles exist
   await expect(detail.getByRole('button', { name: 'FW', exact: true })).toBeVisible()
 
-  // assign the best proposed unit
+  // ELS flow (Rework #8): stage the best proposed unit, then ALARMIEREN
   const candidate = detail.locator('.unit-candidate').first()
   await expect(candidate).toBeVisible()
   await candidate.click()
   await expect(detail.locator('.assigned-unit').first()).toBeVisible()
+  await expect(detail.locator('.staged-chip').first()).toHaveText('zugeteilt')
+  await expect(row).toContainText('offen') // not dispatched yet!
+
+  await detail.getByTestId('alarmieren').click()
   await expect(row).toContainText('disponiert')
+  await expect(detail.locator('.staged-chip')).toHaveCount(0)
 
   // hospital select offers ranked candidates with suitability markers
   const hospitalSelect = detail.getByLabel('Zielklinik')

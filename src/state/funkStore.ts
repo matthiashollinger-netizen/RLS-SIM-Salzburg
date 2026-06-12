@@ -11,8 +11,6 @@ import {
   needsPolizeiNachforderung,
   quickReply,
   sprechwunschText,
-  transportMeldung,
-  vehicleCallsLeitstelle,
   type FunkSpruch,
   type QuickPhraseId,
 } from '../engine/funk.ts'
@@ -25,7 +23,12 @@ import { useGameStore } from './gameStore.ts'
 import { useEventLog } from './eventLog.ts'
 import { useLlmStore } from './llmStore.ts'
 
-/** Bidirectional radio (M7): status-driven crew reports + active calling. */
+/**
+ * Bidirectional radio (M7, reworked #4/#5): incoming crew calls are
+ * INTERACTIVE — the player must answer „kommen" and close with „Verstanden".
+ * Only the first unit on scene reports; Nachforderungen and Sprechwünsche
+ * call in; everything else is silent status traffic (MDT).
+ */
 
 let nextSpruchId = 1
 const MAX_SPRUECHE = 150
@@ -37,8 +40,11 @@ interface FunkState {
   reset: () => void
   setTarget: (id: string | null) => void
   append: (s: Omit<FunkSpruch, 'id'>) => void
-  quittieren: (id: number) => void
-  /** dispatcher action from a Nachforderung */
+  /** player answers an incoming call — the unit then speaks its message */
+  kommen: (id: number) => void
+  /** player closes the dialog */
+  verstanden: (id: number) => void
+  /** dispatcher action from a Nachforderung (A4 / Polizei) */
   executeAction: (spruchId: number) => void
   callVehicle: (vehicleId: string, phraseId: QuickPhraseId) => void
   callVehicleFreeText: (vehicleId: string, text: string) => void
@@ -55,11 +61,17 @@ function logFunk(text: string, vehicleId?: string, auftragId?: string) {
   })
 }
 
+/** which auftraege already produced their Erstmeldung */
+const erstmeldungDone = new Set<string>()
+
 export const useFunkStore = create<FunkState>((set, get) => ({
   sprueche: [],
   targetVehicleId: null,
 
-  reset: () => set({ sprueche: [], targetVehicleId: null }),
+  reset: () => {
+    erstmeldungDone.clear()
+    set({ sprueche: [], targetVehicleId: null })
+  },
 
   setTarget: (targetVehicleId) => set({ targetVehicleId }),
 
@@ -70,18 +82,59 @@ export const useFunkStore = create<FunkState>((set, get) => ({
       return { sprueche: sprueche.length > MAX_SPRUECHE ? sprueche.slice(-MAX_SPRUECHE) : sprueche }
     })
     funkQuittung()
-    const main = spruch.lines.find((l) => l.speaker !== LEITSTELLE && l.text !== 'kommen')
-    if (main) logFunk(`${main.speaker}: „${main.text}"`, spruch.vehicleId, spruch.auftragId)
+    if (spruch.stage === 'quittiert') {
+      const main = spruch.lines.find((l) => l.speaker !== LEITSTELLE && l.text !== 'kommen')
+      if (main) logFunk(`${main.speaker}: „${main.text}"`, spruch.vehicleId, spruch.auftragId)
+    }
   },
 
-  quittieren: (id) =>
+  kommen: (id) => {
+    const spruch = get().sprueche.find((s) => s.id === id)
+    if (!spruch || spruch.stage !== 'ruf' || !spruch.vehicleId) return
+    const rt = vehicleSim.get(spruch.vehicleId)
+    const name = rt ? unitDisplayName(rt.unit) : spruch.vehicleId
+    const message =
+      spruch.pendingMessage ?? (rt ? sprechwunschText(rt) : '… Meldung nicht mehr aktuell.')
+    funkQuittung()
+    logFunk(`${name}: „${message}"`, spruch.vehicleId, spruch.auftragId)
     set((st) => ({
-      sprueche: st.sprueche.map((s) => (s.id === id ? { ...s, acked: true } : s)),
-    })),
+      sprueche: st.sprueche.map((s) =>
+        s.id === id
+          ? {
+              ...s,
+              stage: 'offen' as const,
+              pendingMessage: undefined,
+              lines: [
+                ...s.lines,
+                { speaker: LEITSTELLE, text: 'kommen' },
+                { speaker: name, text: message },
+              ],
+            }
+          : s,
+      ),
+    }))
+  },
+
+  verstanden: (id) => {
+    const spruch = get().sprueche.find((s) => s.id === id)
+    if (!spruch || spruch.stage !== 'offen') return
+    funkQuittung()
+    set((st) => ({
+      sprueche: st.sprueche.map((s) =>
+        s.id === id
+          ? {
+              ...s,
+              stage: 'quittiert' as const,
+              lines: [...s.lines, { speaker: LEITSTELLE, text: 'Verstanden' }],
+            }
+          : s,
+      ),
+    }))
+  },
 
   executeAction: (spruchId) => {
     const spruch = get().sprueche.find((s) => s.id === spruchId)
-    if (!spruch?.action) return
+    if (!spruch?.action || spruch.stage === 'ruf') return
     const dispatch = useDispatchStore.getState()
     const auftrag = dispatch.auftraege[spruch.action.auftragId]
     if (!auftrag) return
@@ -98,9 +151,7 @@ export const useFunkStore = create<FunkState>((set, get) => ({
     } else if (spruch.action.type === 'polizei') {
       if (!auftrag.partnersAlarmed.includes('POL')) dispatch.togglePartner(auftrag.id, 'POL')
     }
-    set((st) => ({
-      sprueche: st.sprueche.map((s) => (s.id === spruchId ? { ...s, acked: true } : s)),
-    }))
+    get().verstanden(spruchId)
   },
 
   callVehicle: (vehicleId, phraseId) => {
@@ -129,6 +180,7 @@ export const useFunkStore = create<FunkState>((set, get) => ({
       kind: 'anfrage',
       vehicleId,
       auftragId: rt.assignment?.id,
+      stage: 'quittiert',
       lines: leitstelleCallsVehicle(name, phrase.question, reply),
     })
   },
@@ -146,6 +198,7 @@ export const useFunkStore = create<FunkState>((set, get) => ({
         kind: 'anfrage',
         vehicleId,
         auftragId: rt.assignment?.id,
+        stage: 'quittiert',
         lines: leitstelleCallsVehicle(name, text, reply),
       })
     }
@@ -184,15 +237,29 @@ export const useFunkStore = create<FunkState>((set, get) => ({
 
     if (!auftrag) return
 
-    if (e.to === '3') {
-      // arrival report
+    /** incoming interactive call: only the call line — message follows on „kommen" */
+    const incomingCall = (
+      kind: FunkSpruch['kind'],
+      message: string,
+      action?: FunkSpruch['action'],
+    ) =>
       get().append({
         simSec: e.simSec,
-        kind: 'eintreffen',
+        kind,
         vehicleId: e.vehicleId,
         auftragId: auftrag.id,
-        lines: vehicleCallsLeitstelle(name, eintreffMeldung(rt)),
+        stage: 'ruf',
+        pendingMessage: message,
+        lines: [{ speaker: name, text: `${LEITSTELLE} von ${name}` }],
+        action,
       })
+
+    if (e.to === '3') {
+      // Erstmeldung: only the FIRST unit on scene calls in (Rework #5)
+      if (!erstmeldungDone.has(auftrag.id)) {
+        erstmeldungDone.add(auftrag.id)
+        incomingCall('eintreffen', eintreffMeldung(rt))
+      }
       // NA-Nachforderung (GAME_DATA §10c) — transport unit arrives, no NA assigned
       const assignedTypes = Object.keys(auftrag.assigned)
         .map((id) => vehicleSim.get(id)?.unit.typ ?? '')
@@ -201,50 +268,23 @@ export const useFunkStore = create<FunkState>((set, get) => ({
         (rt.unit.typ === 'RTW' || rt.unit.typ === 'KTW') &&
         needsNaNachforderung(auftrag, assignedTypes)
       ) {
-        get().append({
-          simSec: e.simSec,
-          kind: 'nachforderung-na',
-          vehicleId: e.vehicleId,
+        incomingCall('nachforderung-na', naNachforderungText(auftrag), {
+          type: 'a4',
           auftragId: auftrag.id,
-          lines: vehicleCallsLeitstelle(name, naNachforderungText(auftrag)),
-          requiresAck: true,
-          action: { type: 'a4', auftragId: auftrag.id },
         })
       }
       // Polizei nach (category suggests POL, not alarmed)
       const cat = categoryById.get(auftrag.categoryId)
       if (cat && needsPolizeiNachforderung(auftrag, cat.partner.includes('POL'))) {
-        get().append({
-          simSec: e.simSec,
-          kind: 'nachforderung-polizei',
-          vehicleId: e.vehicleId,
+        incomingCall('nachforderung-polizei', POLIZEI_NACHFORDERUNG_TEXT, {
+          type: 'polizei',
           auftragId: auftrag.id,
-          lines: vehicleCallsLeitstelle(name, POLIZEI_NACHFORDERUNG_TEXT),
-          requiresAck: true,
-          action: { type: 'polizei', auftragId: auftrag.id },
         })
       }
-    } else if (e.to === '4') {
-      get().append({
-        simSec: e.simSec,
-        kind: 'transport',
-        vehicleId: e.vehicleId,
-        auftragId: auftrag.id,
-        lines: vehicleCallsLeitstelle(name, transportMeldung(rt)),
-      })
     } else if (e.to === '5') {
       // Sprechwunsch (~every third unit, deterministic per id)
       if (rt.id.charCodeAt(rt.id.length - 1) % 3 === 0) {
-        get().append({
-          simSec: e.simSec,
-          kind: 'sprechwunsch',
-          vehicleId: e.vehicleId,
-          auftragId: auftrag.id,
-          lines: [
-            { speaker: name, text: `${LEITSTELLE} von ${name} — Sprechwunsch!` },
-          ],
-          requiresAck: true,
-        })
+        incomingCall('sprechwunsch', sprechwunschText(rt))
       }
     }
   },
@@ -252,21 +292,3 @@ export const useFunkStore = create<FunkState>((set, get) => ({
 
 // wire vehicle events
 vehicleSim.addEventListener((e) => useFunkStore.getState().handleVehicleEvent(e))
-
-/** Resolve an acknowledged Sprechwunsch into its message. */
-export function resolveSprechwunsch(spruchId: number) {
-  const st = useFunkStore.getState()
-  const spruch = st.sprueche.find((s) => s.id === spruchId)
-  if (!spruch || spruch.acked || spruch.kind !== 'sprechwunsch' || !spruch.vehicleId) return
-  const rt = vehicleSim.get(spruch.vehicleId)
-  if (!rt) return
-  const name = unitDisplayName(rt.unit)
-  st.quittieren(spruchId)
-  st.append({
-    simSec: useGameStore.getState().simSec,
-    kind: 'antwort',
-    vehicleId: spruch.vehicleId,
-    auftragId: spruch.auftragId,
-    lines: vehicleCallsLeitstelle(name, sprechwunschText(rt)),
-  })
-}

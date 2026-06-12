@@ -293,3 +293,99 @@
 .auftrag-actions button {
   font-size: var(--fs-xs);
 }
+
+/* ELS-Alarmierungsflow (Rework #8) */
+.alarmieren-btn {
+  background: var(--signal-red);
+  color: var(--text-inverse);
+  border: none;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  padding: var(--sp-2);
+  letter-spacing: 0.04em;
+}
+
+.alarmieren-btn:hover {
+  background: var(--sosi-pulse);
+}
+
+.assigned-staged {
+  border-style: dashed;
+  border-color: var(--signal-amber);
+}
+
+.staged-chip {
+  color: var(--signal-amber);
+  font-size: var(--fs-xs);
+}
+
+.transport-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--info);
+  color: var(--text-inverse);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Auftrag-Editor (Rework #10) */
+.auftrag-edit-toggle {
+  margin-left: auto;
+  font-size: var(--fs-xs);
+}
+
+.auftrag-edit {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  background: var(--bg-panel-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-1);
+  margin-top: var(--sp-1);
+}
+
+.auftrag-edit-row {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: flex-end;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.auftrag-edit-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.auftrag-edit-row input,
+.auftrag-edit-row select {
+  font-size: var(--fs-xs);
+}
+
+.auftrag-edit-row input[type='number'] {
+  width: 64px;
+}
+
+.auftrag-edit-row > input:not([type='number']) {
+  flex: 1;
+  min-width: 180px;
+}
+
+.auftrag-edit-hits {
+  width: 100%;
+}
+
+.auftrag-notiz {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--signal-amber);
+}

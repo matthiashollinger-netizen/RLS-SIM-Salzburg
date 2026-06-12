@@ -1,15 +1,17 @@
 import { useMemo, useState } from 'react'
-import { categoryById, codes } from '../data/index.ts'
+import { categories, categoryById, codes } from '../data/index.ts'
 import type { Partner } from '../data/schemas.ts'
 import { alarmtext, type Auftrag } from '../engine/auftrag.ts'
 import { hospitalNeedsFor, proposeAo, unitsForCode } from '../engine/ao.ts'
 import { findUnits } from '../engine/dispatchSearch.ts'
 import { matchHospitals } from '../engine/hospitalMatch.ts'
 import { isDaylight } from '../engine/time.ts'
+import { searchAddress } from '../lib/fuzzy.ts'
 import { formatCountdown } from '../lib/format.ts'
 import { unitDisplayName } from '../lib/format.ts'
 import { useDispatchStore } from '../state/dispatchStore.ts'
 import { useGameStore } from '../state/gameStore.ts'
+import { useMapStore } from '../state/mapStore.ts'
 import { vehicleSim } from '../state/simulation.ts'
 import { useVehicleVersion } from '../state/useVehicles.ts'
 import { createRandomAuftrag } from '../state/debugActions.ts'
@@ -31,6 +33,106 @@ function HilfsfristTimer({ auftrag }: { auftrag: Auftrag }) {
     <span className={`mono ${remaining < 0 ? 'timer-over' : remaining < 240 ? 'timer-warn' : 'timer-run'}`}>
       {formatCountdown(remaining)}
     </span>
+  )
+}
+
+/** Inline editor (Rework #10): Ort, Kategorie, Schwere, Personen, Notiz. */
+function AuftragEdit({ auftrag }: { auftrag: Auftrag }) {
+  const [open, setOpen] = useState(false)
+  const [ortQuery, setOrtQuery] = useState('')
+  const region = useGameStore((s) => s.region)
+  const update = useDispatchStore((s) => s.updateAuftrag)
+  const hits = useMemo(() => searchAddress(ortQuery, region), [ortQuery, region])
+  const emergencyCats = useMemo(() => categories.filter((c) => c.group === 'emergency'), [])
+
+  if (!open) {
+    return (
+      <button className="auftrag-edit-toggle" onClick={() => setOpen(true)}>
+        Bearbeiten
+      </button>
+    )
+  }
+  return (
+    <div className="auftrag-edit" data-testid="auftrag-edit">
+      <div className="auftrag-edit-row">
+        <label>
+          Kategorie
+          <select
+            aria-label="Kategorie ändern"
+            value={auftrag.categoryId}
+            onChange={(e) => update(auftrag.id, { categoryId: e.target.value })}
+          >
+            {emergencyCats.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Schwere
+          <select
+            aria-label="Schwere ändern"
+            value={auftrag.severity}
+            onChange={(e) => update(auftrag.id, { severity: e.target.value as 'hoch' | 'normal' })}
+          >
+            <option value="hoch">hoch</option>
+            <option value="normal">normal</option>
+          </select>
+        </label>
+        <label>
+          Personen
+          <input
+            aria-label="Personenzahl ändern"
+            type="number"
+            min={1}
+            max={200}
+            value={auftrag.personen}
+            onChange={(e) => update(auftrag.id, { personen: Number(e.target.value) || 1 })}
+          />
+        </label>
+        <button onClick={() => setOpen(false)}>Fertig</button>
+      </div>
+      <div className="auftrag-edit-row">
+        <input
+          aria-label="Einsatzort korrigieren"
+          placeholder="Einsatzort korrigieren (Suche)…"
+          value={ortQuery}
+          onChange={(e) => setOrtQuery(e.target.value)}
+        />
+        {ortQuery.length >= 2 && hits.length > 0 && (
+          <ul className="adresse-hits auftrag-edit-hits">
+            {hits.slice(0, 5).map((h) => (
+              <li key={`${h.place.id}-${h.strasse}`}>
+                <button
+                  onClick={() => {
+                    update(auftrag.id, {
+                      ort: {
+                        lat: h.place.lat,
+                        lon: h.place.lon,
+                        stadtteil: h.place.name,
+                        strasse: h.strasse,
+                      },
+                    })
+                    setOrtQuery('')
+                  }}
+                >
+                  {h.strasse}, {h.place.name}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <div className="auftrag-edit-row">
+        <input
+          aria-label="Notiz"
+          placeholder="Notiz zum Auftrag…"
+          defaultValue={auftrag.notiz ?? ''}
+          onBlur={(e) => update(auftrag.id, { notiz: e.target.value })}
+        />
+      </div>
+    </div>
   )
 }
 
@@ -67,6 +169,7 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
   )
 
   const assignedIds = Object.keys(auftrag.assigned)
+  const stagedCount = Object.values(auftrag.assigned).filter((s) => s === 'zugeteilt').length
   const daylight = isDaylight(simSec, gameCtx)
 
   return (
@@ -75,10 +178,12 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
         <span className={`code-chip ${auftrag.sosi ? 'code-sosi' : ''}`}>{auftrag.code}</span>
         <span className="auftrag-alarmtext mono">{alarmtext(auftrag)}</span>
         {auftrag.uebung && <span className="uebung-chip">ÜBUNG</span>}
+        <AuftragEdit auftrag={auftrag} />
       </div>
       {auftrag.merkmalskette.length > 0 && (
         <p className="merkmalskette">{auftrag.merkmalskette.join(', ')}</p>
       )}
+      {auftrag.notiz && <p className="auftrag-notiz">📝 {auftrag.notiz}</p>}
 
       <div className="auftrag-row">
         <label>
@@ -138,10 +243,11 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
                   <button
                     key={c.id}
                     className="unit-candidate"
+                    title="Zuteilen (Alarmierung erfolgt gesammelt)"
                     onClick={() => store.assignVehicle(auftrag.id, c.id)}
                     disabled={assignedIds.includes(c.id)}
                   >
-                    <span className="mono">{unitDisplayName(c.runtime.unit)}</span>
+                    <span className="mono">+ {unitDisplayName(c.runtime.unit)}</span>
                     <span className="eta">{Math.round(c.etaSec / 60)} min</span>
                   </button>
                 ))}
@@ -153,14 +259,36 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
 
       {assignedIds.length > 0 && (
         <div className="assigned-units">
-          <span>Disponiert:</span>
+          <span>Mittel:</span>
           {assignedIds.map((id) => {
             const rt = vehicleSim.get(id)
+            const stateOf = auftrag.assigned[id]
+            const isTransporter = auftrag.transporters?.includes(id)
             return (
-              <span key={id} className="assigned-unit">
+              <span
+                key={id}
+                className={`assigned-unit ${stateOf === 'zugeteilt' ? 'assigned-staged' : ''}`}
+              >
                 <span className="mono">{rt ? unitDisplayName(rt.unit) : id}</span>
-                {rt && <StatusBadge status={rt.status} />}
-                {rt && (rt.status === '1' || rt.status === '2' || rt.status === '3') && (
+                {stateOf === 'zugeteilt' ? (
+                  <span className="staged-chip">zugeteilt</span>
+                ) : (
+                  rt && <StatusBadge status={rt.status} />
+                )}
+                {isTransporter && stateOf !== 'zugeteilt' && (
+                  <span className="transport-chip" title="Transportiert den Patienten">
+                    T
+                  </span>
+                )}
+                {stateOf === 'zugeteilt' && (
+                  <button
+                    title="Zuteilung entfernen"
+                    onClick={() => store.removeStagedVehicle(auftrag.id, id)}
+                  >
+                    ✕
+                  </button>
+                )}
+                {rt && stateOf !== 'zugeteilt' && (rt.status === '1' || rt.status === '2' || rt.status === '3') && (
                   <button
                     title="Einsatzabbruch"
                     onClick={() => store.cancelVehicle(auftrag.id, id)}
@@ -172,6 +300,16 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
             )
           })}
         </div>
+      )}
+
+      {stagedCount > 0 && (
+        <button
+          className="alarmieren-btn"
+          data-testid="alarmieren"
+          onClick={() => store.alarmieren(auftrag.id)}
+        >
+          🔔 ALARMIEREN ({stagedCount} Mittel)
+        </button>
       )}
 
       <div className="auftrag-row">
@@ -236,6 +374,8 @@ export function EinsatzPanel() {
             key={a.id}
             className={`einsatz-row ${selectedId === a.id ? 'einsatz-row-selected' : ''} state-${a.state}`}
             onClick={() => select(selectedId === a.id ? null : a.id)}
+            onDoubleClick={() => useMapStore.getState().focusOn(a.ort.lat, a.ort.lon, 13)}
+            title="Doppelklick: auf Karte zeigen"
           >
             <HilfsfristTimer auftrag={a} />
             <span className={`code-chip ${a.sosi ? 'code-sosi' : ''}`}>{a.code}</span>

@@ -109,6 +109,19 @@
   font-size: var(--fs-xs);
 }
 
+.llm-indicator {
+  font-size: var(--fs-xs);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.llm-indicator.llm-on {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
 .transcript {
   flex: none;
   max-height: 180px;
@@ -171,6 +184,87 @@
 .frage-buttons button {
   font-size: var(--fs-xs);
   padding: 2px var(--sp-2);
+}
+
+/* Standardisiertes Abfrage-Schema (Rework #3) */
+.abfrage-schritte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  flex: none;
+}
+
+.abfrage-schritt {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel-inset);
+}
+
+.abfrage-schritt.schritt-current {
+  border-color: var(--info);
+}
+
+.abfrage-schritt.schritt-done {
+  opacity: 0.75;
+}
+
+.schritt-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 3px var(--sp-2);
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.schritt-nr {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--bg-panel-raised);
+  border: 1px solid var(--border-strong-solid);
+  font-size: 10px;
+  color: var(--text-primary);
+}
+
+.schritt-done .schritt-nr {
+  background: var(--ok);
+  color: var(--text-inverse);
+  border-color: var(--ok);
+}
+
+.schritt-current .schritt-nr {
+  border-color: var(--info);
+  color: var(--info);
+}
+
+.schritt-body {
+  padding: 0 var(--sp-2) var(--sp-1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.schritt-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.schritt-buttons button {
+  font-size: var(--fs-xs);
+  padding: 2px var(--sp-2);
+}
+
+.schritt-hint {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 .beschwerde-section {

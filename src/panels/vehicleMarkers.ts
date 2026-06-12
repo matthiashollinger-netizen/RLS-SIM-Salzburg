@@ -2,6 +2,7 @@ import maplibregl from 'maplibre-gl'
 import { statusByCode, hospitals } from '../data/index.ts'
 import { vehicleSim } from '../state/simulation.ts'
 import { useGameStore } from '../state/gameStore.ts'
+import { useMapStore, vehicleLayerOf } from '../state/mapStore.ts'
 import { probealarm } from '../state/debugActions.ts'
 import { unitDisplayName } from '../lib/format.ts'
 import { isAvailable } from '../engine/status.ts'
@@ -60,14 +61,24 @@ function popupHtml(rt: VehicleRuntime): HTMLElement {
 }
 
 export function attachVehicleMarkers(map: maplibregl.Map): () => void {
-  const markers = new Map<string, { marker: maplibregl.Marker; el: HTMLDivElement }>()
+  const markers = new Map<
+    string,
+    { marker: maplibregl.Marker; el: HTMLDivElement; status: HTMLSpanElement; label: HTMLSpanElement }
+  >()
   let raf = 0
 
   const frame = () => {
     const simSec = useGameStore.getState().simSec
+    const layers = useMapStore.getState().layers
+    const zoom = map.getZoom()
+    const showLabels = zoom >= 11
     for (const rt of vehicleSim.all()) {
       let entry = markers.get(rt.id)
-      if (rt.status === 'AUS') {
+      const layer = vehicleLayerOf(rt.unit)
+      const engaged = rt.assignment !== undefined
+      // engaged units stay visible regardless of layer toggles
+      const visible = rt.status !== 'AUS' && (engaged || layers[layer])
+      if (!visible) {
         if (entry) {
           entry.marker.remove()
           markers.delete(rt.id)
@@ -76,28 +87,34 @@ export function attachVehicleMarkers(map: maplibregl.Map): () => void {
       }
       if (!entry) {
         const el = document.createElement('div')
-        el.className = 'map-marker-vehicle'
+        el.className = `map-marker-vehicle vehicle-layer-${layer}`
         el.dataset.typ = rt.unit.typ
+        const status = document.createElement('span')
+        status.className = 'map-marker-vehicle-status'
+        const label = document.createElement('span')
+        label.className = 'map-marker-vehicle-label mono'
+        label.textContent = unitDisplayName(rt.unit)
+        el.append(status, label)
         const marker = new maplibregl.Marker({ element: el })
           .setLngLat([rt.basePos.lon, rt.basePos.lat])
           .setPopup(new maplibregl.Popup({ closeButton: false, maxWidth: '280px' }))
           .addTo(map)
-        el.addEventListener('mouseenter', () => {
-          el.title = `${unitDisplayName(rt.unit)} ${rt.unit.typ}`
-        })
+        el.title = `${unitDisplayName(rt.unit)} ${rt.unit.typ}`
         marker.getPopup().on('open', () => {
           const current = vehicleSim.get(rt.id)
           if (current) marker.getPopup().setDOMContent(popupHtml(current))
         })
-        entry = { marker, el }
+        entry = { marker, el, status, label }
         markers.set(rt.id, entry)
       }
       const { dLat, dLon } = jitterOf(rt.id)
       const pos = vehicleSim.posOf(rt, simSec)
       entry.marker.setLngLat([pos.lon + dLon, pos.lat + dLat])
       const def = statusByCode.get(rt.status)
-      entry.el.style.background = `var(${def?.colorToken ?? '--status-oos'})`
-      entry.el.textContent = rt.status
+      entry.status.style.background = `var(${def?.colorToken ?? '--status-oos'})`
+      entry.status.textContent = rt.status
+      entry.el.classList.toggle('vehicle-engaged', engaged)
+      entry.label.style.display = showLabels ? '' : 'none'
     }
     raf = requestAnimationFrame(frame)
   }

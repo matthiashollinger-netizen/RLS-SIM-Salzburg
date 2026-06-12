@@ -56,11 +56,13 @@ test('two pages connect (local transport) and sync Aufträge + Uhr', async ({ br
   await expect(guestRow).toBeVisible({ timeout: 10_000 })
   await expect(guestRow.locator('.einsatz-text')).toHaveText(hostText!, { timeout: 10_000 })
 
-  // guest acts: assign a unit — the action is executed on the HOST
+  // guest acts: stage a unit + ALARMIEREN — actions are executed on the HOST
   await guestRow.click()
   const guestDetail = guest.getByTestId('auftrag-detail')
   await expect(guestDetail).toBeVisible()
   await guestDetail.locator('.unit-candidate').first().click()
+  await expect(guestDetail.getByTestId('alarmieren')).toBeVisible({ timeout: 10_000 })
+  await guestDetail.getByTestId('alarmieren').click()
   await expect(hostRow).toContainText('disponiert', { timeout: 10_000 })
 
   // guest clock mirrors host

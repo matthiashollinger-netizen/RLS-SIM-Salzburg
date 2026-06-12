@@ -101,7 +101,7 @@ const AI_DISPATCH_DELAY_SEC = 20
 
 export function aiDispatcherTick(simSec: number) {
   const g = useGameStore.getState()
-  const { auftraege, assignVehicle, togglePartner } = useDispatchStore.getState()
+  const { auftraege, assignVehicle, alarmieren, togglePartner } = useDispatchStore.getState()
   for (const a of Object.values(auftraege)) {
     if (a.state !== 'offen' || dispatchedByAi.has(a.id)) continue
     if (simSec - a.createdAt < AI_DISPATCH_DELAY_SEC) continue
@@ -117,7 +117,7 @@ export function aiDispatcherTick(simSec: number) {
       season: g.season,
     }
     const used = new Set<string>()
-    let assignedCount = 0
+    let stagedCount = 0
     for (const slot of slots) {
       const candidates = findUnits(vehicleSim, slot.types, a.ort, a.sosi, ctx, 6).filter(
         (c) => !used.has(c.id),
@@ -125,24 +125,20 @@ export function aiDispatcherTick(simSec: number) {
       const pick = candidates[0]
       if (pick && assignVehicle(a.id, pick.id)) {
         used.add(pick.id)
-        assignedCount++
+        stagedCount++
       }
     }
     for (const partner of proposal.partners) {
       togglePartner(a.id, partner)
     }
-    // conservative hospital: the automatic best match is applied at dispatch;
-    // explicitly record it so the report sees a deliberate (correct) choice
-    if (assignedCount > 0) {
-      const auto = useDispatchStore.getState().auftraege[a.id]
-      if (auto && !auto.hospitalId) {
-        // leave hospitalId empty = automatic suitable choice
-      }
+    // ELS flow (Rework #8): staged units are alarmed together
+    const alarmed = stagedCount > 0 && alarmieren(a.id)
+    if (alarmed) {
       useEventLog.getState().append({
         simSec,
         kind: 'system',
         auftragId: a.id,
-        text: `KI-Disponent: ${assignedCount} Mittel zu ${a.id} disponiert.`,
+        text: `KI-Disponent: ${stagedCount} Mittel zu ${a.id} alarmiert.`,
       })
     } else {
       useEventLog.getState().append({

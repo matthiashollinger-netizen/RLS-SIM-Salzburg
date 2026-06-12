@@ -12,7 +12,8 @@ export interface AuftragOrt extends LatLon {
 
 export type AuftragState = 'offen' | 'disponiert' | 'laufend' | 'abgeschlossen'
 
-export type AssignedState = 'alarmiert' | 'vorort' | 'fertig'
+/** ELS flow (Rework #8): Mittel werden erst ZUGETEILT, dann gemeinsam ALARMIERT. */
+export type AssignedState = 'zugeteilt' | 'alarmiert' | 'vorort' | 'fertig'
 
 export interface Auftrag {
   id: string
@@ -44,6 +45,12 @@ export interface Auftrag {
   /** chosen hospital was suitable (false ⇒ Fehldispo) */
   hospitalSuitable?: boolean
   outcome?: { survived: boolean; text: string; issues: string[]; quality: number }
+  /** dispatcher notes (editable, Rework #10) */
+  notiz?: string
+  /** code was manually overridden — edits must not re-derive it */
+  codeManuell?: boolean
+  /** units currently allocated as patient transporters (Rework #6) */
+  transporters?: string[]
 }
 
 /** Alarmtext format `CODE STADTTEIL STRASSE` — exactly as on pager/terminal (GAME_DATA §3a). */

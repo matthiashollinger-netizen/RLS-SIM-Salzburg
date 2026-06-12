@@ -50,8 +50,34 @@ export function greeting(s: Scenario): string {
   }
 }
 
+/** In-character reply to a question the caller cannot answer (Rework #9). */
+export function unknownReply(s: Scenario, state: CallerState): string {
+  if (s.anrufer.emotion === 'panisch' && !state.calmed)
+    return 'ICH WEISS ES NICHT! Bitte, kommen Sie einfach schnell!'
+  if (s.anrufer.emotion === 'betrunken')
+    return 'Pfff… keine Ahnung, ehrlich gesagt. Is das wichtig?'
+  if (s.anrufer.rolle === 'passant')
+    return 'Das kann ich Ihnen nicht sagen, ich kenn die Person ja gar nicht.'
+  if (s.anrufer.rolle === 'kind') return 'Ich weiß nicht… soll ich die Mama fragen?'
+  return 'Das weiß ich leider nicht.'
+}
+
+/** Repeated questions annoy the caller — and get a shortened repeat (Rework #9). */
+const REPEATABLE = new Set([
+  'ort',
+  'personen',
+  'alter',
+  'bewusstsein',
+  'atmung',
+  'zugang',
+  'detail1',
+  'detail2',
+  'geschehen',
+])
+
 /** Answer to a question id from the Abfragemaske. */
 export function answerFor(s: Scenario, frageId: string, state: CallerState): string {
+  const isRepeat = REPEATABLE.has(frageId) && state.asked.includes(frageId)
   state.asked.push(frageId)
   const t = s.truth
   const pre = panicPrefix(s, state)
@@ -61,6 +87,14 @@ export function answerFor(s: Scenario, frageId: string, state: CallerState): str
     return 'Apotheke! Ach so, da bin ich falsch? Entschuldigung… (legt auf)'
   if (s.callType === 'rueckfrage')
     return 'Vor zehn Minuten hab ich angerufen, Huber mein Name. Es geht um meine Mutter.'
+
+  if (isRepeat) {
+    const kern = coreAnswer(s, frageId, state)
+    if (s.anrufer.emotion === 'panisch' && !state.calmed)
+      return `Das hab ich doch schon gesagt!! ${kern}`
+    if (s.anrufer.emotion === 'betrunken') return `Hab ich das nicht eh schon…? Also: ${kern}`
+    return `Wie gesagt: ${kern}`
+  }
 
   switch (frageId) {
     case 'ort': {
@@ -90,8 +124,6 @@ export function answerFor(s: Scenario, frageId: string, state: CallerState): str
         ? 'Ja, atmen tut er/sie.'
         : pre + 'Nein!! Ich glaub nicht… da kommt nichts!'
     case 'alter':
-      if (s.anrufer.verschweigtBisGefragt.includes('alter') === false && state.asked.filter((a) => a === 'alter').length > 1)
-        return `Wie gesagt, ungefähr ${t.alter}.`
       return `So ungefähr ${t.alter} Jahre.`
     case 'zugang':
       switch (t.zugang) {
@@ -122,7 +154,40 @@ export function answerFor(s: Scenario, frageId: string, state: CallerState): str
         ? 'Eine SMS?! Ich kann jetzt nicht aufs Handy schauen!!'
         : 'Okay, ich schau aufs Handy und drück auf den Link.'
   }
-  return 'Ich weiß es nicht!'
+  return unknownReply(s, state)
+}
+
+/** Short factual core for repeated questions. */
+function coreAnswer(s: Scenario, frageId: string, state: CallerState): string {
+  const t = s.truth
+  switch (frageId) {
+    case 'ort':
+      return s.anrufer.kenntAdresse
+        ? `${t.ort.strasse}, ${t.ort.stadtteil}.`
+        : `Irgendwo in ${t.ort.stadtteil}, genauer weiß ich es nicht!`
+    case 'geschehen':
+      return t.lageText
+    case 'personen':
+      return t.personen === 1 ? 'Eine Person.' : `${t.personen} Personen.`
+    case 'alter':
+      return `ungefähr ${t.alter}.`
+    case 'bewusstsein':
+      return t.ansprechbar ? 'Ansprechbar ist er/sie.' : 'Keine Reaktion!'
+    case 'atmung':
+      return t.atmet ? 'Atmen tut er/sie.' : 'Da kommt keine Atmung!'
+    case 'zugang':
+      return t.zugang === 'frei'
+        ? 'Die Tür ist offen.'
+        : t.zugang === 'versperrt'
+          ? 'Es ist zugesperrt!'
+          : 'Schwer hinzukommen.'
+    case 'detail1':
+      return t.detail1
+    case 'detail2':
+      return t.detail2
+    default:
+      return unknownReply(s, state)
+  }
 }
 
 /** Will the caller tap the Ortungs-SMS link? (GAME_DATA §3b SMS-Link-Ortung) */

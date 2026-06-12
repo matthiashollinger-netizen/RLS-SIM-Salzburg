@@ -243,6 +243,38 @@
 - `docs/screenshots/` wird von `e2e/screenshots.spec.ts` erzeugt (nur mit
   `SCREENSHOTS=1`, in CI übersprungen).
 
+## 2026-06-12 — Großer Rework (User-Feedback)
+
+### Koordinaten jetzt geocodiert
+- Alle Wachen/Kliniken/Heli-Basen wurden einmalig zur Buildzeit über Nominatim
+  geocodiert (`scripts/geocode.ts`, 1 req/s) — fast alle echten RK-Dienststellen-
+  Gebäude wurden gefunden. LK St. Veit blieb Schätzung (Ortszentrum), Oberndorf
+  über Straßen-Fallback. Keine Live-API zur Laufzeit (CLAUDE.md §2 erlaubt
+  Nominatim-Export zur Buildzeit explizit).
+
+### Transport-Priorität (ein Patient = ein Transportmittel)
+- HELI > ITW > NAW > RTW > N-KTW > KTW > G-KTW > BTW. Bei Heli+RTW am selben
+  Einsatz fliegt der Heli den Patienten, der RTW unterstützt (Alpin-Realität).
+  Bei mehr Patienten als Transportmitteln transportieren alle verfügbaren.
+
+### ELS-Alarmierungsflow
+- Nach ELSSA-Vorbild zweistufig: Mittel ZUTEILEN (Vorschlagsliste) → gesammelt
+  ALARMIEREN (Pager-Gong, Status 1). Zuteilungen sind vor der Alarmierung
+  entfernbar; nicht mehr verfügbare Mittel fallen bei der Alarmierung heraus.
+
+### Interaktiver Funk
+- Eingehende Meldungen sind jetzt echte Rufe: Spieler antwortet „kommen",
+  erst dann kommt die Meldung, Abschluss mit „Verstanden". Nur noch die
+  Erstmeldung des ERSTEN Mittels, Nachforderungen und Sprechwünsche gehen über
+  Funk; alle weiteren Statuswechsel laufen still über das MDT/Protokoll.
+
+### Tier-1-Anrufer
+- Antwortbanken für alle 24 Hauptbeschwerden (je 2 Varianten), Wiederholungs-
+  Gedächtnis („Wie gesagt: …"), In-Character-Antworten auf unbekannte Fragen
+  je Emotion/Rolle, Freitext matcht zusätzlich die kategoriespezifischen
+  Detailfragen (Token-Overlap). Echte freie Dialoge weiterhin via WebLLM/Endpoint
+  (Indikator „Skript/KI" im Abfrage-Header).
+
 ### Playwright-Smoke gegen Production-Preview
 - **Entscheidung:** Smoke-Tests laufen gegen `vite build` + `vite preview` (Port 4173),
   nicht gegen den Dev-Server.

@@ -5,8 +5,8 @@
     "short": "LKH",
     "ort": "Salzburg",
     "stufe": "ZENTRAL",
-    "lat": 47.8128,
-    "lon": 13.0353,
+    "lat": 47.80623,
+    "lon": 13.03041,
     "capabilities": {
       "stroke": false,
       "trauma": true,
@@ -20,7 +20,7 @@
     "positionsCode": "08",
     "heliport": true,
     "estimated": true,
-    "notes": "Maximalversorger, Kinderzentrum, Dachlandeplatz; Stroke läuft über CDK (GAME_DATA §9)"
+    "notes": "Maximalversorger, Kinderzentrum, Dachlandeplatz; Stroke läuft über CDK (GAME_DATA §9); Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "cdk",
@@ -28,8 +28,8 @@
     "short": "CDK",
     "ort": "Salzburg",
     "stufe": "ZENTRAL",
-    "lat": 47.8161,
-    "lon": 13.0186,
+    "lat": 47.81352,
+    "lon": 13.01784,
     "capabilities": {
       "stroke": true,
       "trauma": false,
@@ -43,7 +43,7 @@
     "positionsCode": "10",
     "heliport": false,
     "estimated": true,
-    "notes": "Neurologie, Psychiatrie, Stroke-Unit (GAME_DATA §9)"
+    "notes": "Neurologie, Psychiatrie, Stroke-Unit (GAME_DATA §9); Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "ukh",
@@ -51,8 +51,8 @@
     "short": "UKH",
     "ort": "Salzburg",
     "stufe": "SONDER",
-    "lat": 47.7986,
-    "lon": 13.0608,
+    "lat": 47.79932,
+    "lon": 13.05609,
     "capabilities": {
       "stroke": false,
       "trauma": true,
@@ -66,7 +66,7 @@
     "positionsCode": "09",
     "heliport": true,
     "estimated": true,
-    "notes": "Unfall/Trauma, Dachlandeplatz (GAME_DATA §9)"
+    "notes": "Unfall/Trauma, Dachlandeplatz (GAME_DATA §9); Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "ksk",
@@ -74,8 +74,8 @@
     "short": "KSK Schwarzach",
     "ort": "Schwarzach im Pongau",
     "stufe": "SCHWERPUNKT",
-    "lat": 47.3211,
-    "lon": 13.1494,
+    "lat": 47.32165,
+    "lon": 13.154,
     "capabilities": {
       "stroke": true,
       "trauma": true,
@@ -88,7 +88,7 @@
     },
     "heliport": true,
     "estimated": true,
-    "notes": "Süd-Anker, Heli-Stützpunkt-Nähe (Martin 10); Stroke/Herzkatheter/Psych/Päd für den Süden (GAME_DATA §9)"
+    "notes": "Süd-Anker, Heli-Stützpunkt-Nähe (Martin 10); Stroke/Herzkatheter/Psych/Päd für den Süden (GAME_DATA §9); Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "hallein",
@@ -96,8 +96,8 @@
     "short": "LK Hallein",
     "ort": "Hallein",
     "stufe": "STANDARD",
-    "lat": 47.685,
-    "lon": 13.0928,
+    "lat": 47.68531,
+    "lon": 13.11268,
     "capabilities": {
       "stroke": false,
       "trauma": false,
@@ -110,7 +110,7 @@
     },
     "heliport": false,
     "estimated": true,
-    "notes": "SALK"
+    "notes": "SALK; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "zell",
@@ -118,8 +118,8 @@
     "short": "TK Zell",
     "ort": "Zell am See",
     "stufe": "STANDARD",
-    "lat": 47.3275,
-    "lon": 12.7942,
+    "lat": 47.33922,
+    "lon": 12.81518,
     "capabilities": {
       "stroke": false,
       "trauma": true,
@@ -132,7 +132,7 @@
     },
     "heliport": true,
     "estimated": true,
-    "notes": "293 Betten; Psychiatrie/Pädiatrie/Kieferchirurgie NICHT hier (GAME_DATA §9 Pinzgau-Spiellogik)"
+    "notes": "293 Betten; Psychiatrie/Pädiatrie/Kieferchirurgie NICHT hier (GAME_DATA §9 Pinzgau-Spiellogik); Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "mittersill",
@@ -140,8 +140,8 @@
     "short": "TK Mittersill",
     "ort": "Mittersill",
     "stufe": "STANDARD",
-    "lat": 47.2828,
-    "lon": 12.4842,
+    "lat": 47.28107,
+    "lon": 12.48409,
     "capabilities": {
       "stroke": false,
       "trauma": false,
@@ -154,7 +154,7 @@
     },
     "heliport": false,
     "estimated": true,
-    "notes": "Erstversorgung, Weiterverlegung üblich"
+    "notes": "Erstversorgung, Weiterverlegung üblich; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "stveit",
@@ -162,8 +162,8 @@
     "short": "LK St. Veit",
     "ort": "St. Veit im Pongau",
     "stufe": "STANDARD",
-    "lat": 47.3306,
-    "lon": 13.1547,
+    "lat": 47.329,
+    "lon": 13.155,
     "capabilities": {
       "stroke": false,
       "trauma": false,
@@ -176,7 +176,7 @@
     },
     "heliport": false,
     "estimated": true,
-    "notes": "SALK"
+    "notes": "SALK; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "tamsweg",
@@ -184,8 +184,8 @@
     "short": "LK Tamsweg",
     "ort": "Tamsweg",
     "stufe": "STANDARD",
-    "lat": 47.1267,
-    "lon": 13.8092,
+    "lat": 47.12917,
+    "lon": 13.80924,
     "capabilities": {
       "stroke": false,
       "trauma": false,
@@ -198,7 +198,7 @@
     },
     "heliport": false,
     "estimated": true,
-    "notes": "84 Betten, CT, SALK"
+    "notes": "84 Betten, CT, SALK; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "oberndorf",
@@ -206,8 +206,8 @@
     "short": "KH Oberndorf",
     "ort": "Oberndorf",
     "stufe": "STANDARD",
-    "lat": 47.9389,
-    "lon": 12.9417,
+    "lat": 47.93641,
+    "lon": 12.94752,
     "capabilities": {
       "stroke": false,
       "trauma": false,
@@ -220,7 +220,7 @@
     },
     "heliport": false,
     "estimated": true,
-    "notes": "Nordflachgau"
+    "notes": "Nordflachgau; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "bbr",
@@ -228,8 +228,8 @@
     "short": "KH BBR",
     "ort": "Salzburg",
     "stufe": "PRIVAT",
-    "lat": 47.7967,
-    "lon": 13.0517,
+    "lat": 47.79734,
+    "lon": 13.05148,
     "capabilities": {
       "stroke": false,
       "trauma": false,
@@ -241,7 +241,8 @@
       "basic": true
     },
     "heliport": false,
-    "estimated": true
+    "estimated": true,
+    "notes": "Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "bkh-stjohann-tirol",
@@ -249,8 +250,8 @@
     "short": "BKH St. Johann i.T.",
     "ort": "St. Johann in Tirol",
     "stufe": "STANDARD",
-    "lat": 47.5256,
-    "lon": 12.4253,
+    "lat": 47.52072,
+    "lon": 12.42984,
     "capabilities": {
       "stroke": false,
       "trauma": false,
@@ -264,6 +265,6 @@
     "heliport": false,
     "external": true,
     "estimated": true,
-    "notes": "Überregionales Ziel für Pinzgau (Pädiatrie u.a., GAME_DATA §9)"
+    "notes": "Überregionales Ziel für Pinzgau (Pädiatrie u.a., GAME_DATA §9); Koordinate geocodiert (Nominatim, Buildzeit)"
   }
 ]

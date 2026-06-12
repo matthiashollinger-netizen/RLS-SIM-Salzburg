@@ -179,13 +179,93 @@ const DETAIL_ANTWORTEN: Record<string, [string[], string[]]> = {
     ['Ja, in den linken Arm.', 'Bis in den Kiefer hinauf.'],
     ['Ja, ganz nass und grau im Gesicht.', 'Nein, aber er zittert.'],
   ],
+  atemnot: [
+    ['Kaum — nur einzelne Wörter.', 'Nein, sie ringt nur nach Luft!'],
+    ['Ja, COPD seit Jahren.', 'Nein, nie Probleme gehabt.'],
+  ],
+  bewusstlos: [
+    ['Jetzt atmet sie wieder normal, glaub ich.', 'Ja, atmet — aber ganz flach.'],
+    ['Nein, keine Zuckungen.', 'Ja, kurz gezuckt hat es.'],
+  ],
+  schlaganfall: [
+    ['Ja! Der rechte Mundwinkel hängt ganz runter.', 'Ich glaub schon… ja, das Gesicht ist schief.'],
+    ['Vor circa einer halben Stunde hat es angefangen.', 'Seit heute Früh schon.'],
+  ],
+  krampfanfall: [
+    ['Nein, jetzt liegt er still da und schnauft.', 'Ja! Es hört nicht auf!'],
+    ['Ja, Epilepsie seit der Kindheit.', 'Nein, so etwas hatte sie noch nie.'],
+  ],
+  sturz: [
+    ['Von der Leiter, circa drei Meter.', 'Nur über die Teppichkante, aber sie kommt nicht mehr hoch.'],
+    ['Ja, Marcoumar!', 'Nein, keine Blutverdünner, soweit ich weiß.'],
+  ],
   verkehrsunfall: [
     ['Ich glaub der Fahrer ist eingeklemmt, die Tür geht nicht auf!', 'Nein, alle sind draußen.'],
     ['Zwei.', 'Nur eines, aber es liegt am Dach.'],
   ],
+  blutung: [
+    ['Ja, es spritzt richtig!', 'Es rinnt stark, aber spritzen tut nichts.'],
+    ['Wir drücken mit einem Tuch drauf, es wird weniger.', 'Nein! Es geht durch alles durch!'],
+  ],
+  bauchschmerz: [
+    ['Rechts unten, ganz stark beim Drücken.', 'So um den Nabel herum, wellenartig.'],
+    ['Erbrochen ja, Blut nein.', 'Nein, nichts dergleichen.'],
+  ],
+  allergie: [
+    ['Ja! Die Lippen und die Zunge schwellen an!', 'Nein, nur der Ausschlag am Körper.'],
+    ['Ja, gegen Wespen — aber das Notfallset ist abgelaufen!', 'Nein, das ist das erste Mal.'],
+  ],
+  vergiftung: [
+    ['Schlaftabletten von der Oma — die Schachtel ist leer!', 'Irgendwas Gemischtes, mit Alkohol.'],
+    ['Vor circa einer Stunde, glaub ich.', 'Ich weiß es nicht, wir haben sie erst jetzt gefunden.'],
+  ],
   geburt: [
     ['Alle zwei Minuten!', 'So alle zehn Minuten.'],
     ['38. Woche.', 'Die 36. glaub ich.'],
+  ],
+  psychisch: [
+    ['Er hat es ganz konkret angekündigt, ja!', 'Ich weiß nicht — er ist völlig durcheinander.'],
+    ['Nein, aggressiv nicht. Nur verzweifelt.', 'Ja, er hat schon einen Sessel geworfen!'],
+  ],
+  gewalt: [
+    ['Ich glaub er ist weg… ich seh ihn nicht mehr.', 'ER STEHT NOCH DA DRÜBEN!'],
+    ['Am Bauch — da ist viel Blut!', 'Am Kopf, eine große Platzwunde.'],
+  ],
+  wasser: [
+    ['Nein, sie haben ihn schon rausgezogen!', 'JA, ich seh ihn noch treiben!'],
+    ['Vielleicht zwei, drei Minuten.', 'Keine Ahnung — wir haben ihn erst jetzt gesehen.'],
+  ],
+  alpin: [
+    ['Nein, das ist steiles Schottergelände, da kommt keiner zu Fuß hin.', 'Ja, über den Wanderweg kommt man hin.'],
+    ['Sonnig, gute Sicht.', 'Es zieht gerade Nebel auf!'],
+  ],
+  brand: [
+    ['Nein, alle sind draußen!', 'Ich weiß nicht — die Nachbarin ist vielleicht noch drin!'],
+    ['Ja, sie hustet ganz stark.', 'Nein, allen geht es soweit gut.'],
+  ],
+  strom: [
+    ['Ja, der FI-Schalter ist gefallen.', 'Ich weiß es nicht, da hängt alles voller Kabel!'],
+    ['Normale Steckdose, 230 Volt.', 'Das war die große Leitung am Dach!'],
+  ],
+  eingeklemmt: [
+    ['Eine Betonplatte liegt auf seinem Bein.', 'Der Traktor liegt auf ihm drauf!'],
+    ['Ja, er redet noch mit uns.', 'Er antwortet nicht mehr!'],
+  ],
+  eingeschlossen: [
+    ['Im Badezimmer, erster Stock.', 'Im Lift, zwischen zwei Stockwerken.'],
+    ['Ja, sie hat ein Herzleiden!', 'Nein, nur eingesperrt — aber sie ist 92.'],
+  ],
+  krank: [
+    ['Seit drei Tagen wird es immer schlimmer.', 'Seit heute Morgen.'],
+    ['38,9 Fieber, und erbrochen hat sie auch.', 'Kein Fieber, aber sie ist ganz schwach.'],
+  ],
+  rufhilfe: [
+    ['Keine Reaktion auf die Gegensprechanlage.', 'Sie hat kurz gestöhnt, mehr kam nicht.'],
+    ['Ja, ein Schlüsselsafe ist hinterlegt, den Code haben wir.', 'Nein, kein Schlüssel deponiert.'],
+  ],
+  unklar: [
+    ['Eine Person liegt am Boden und bewegt sich nicht.', 'Ich höre nur Schreie aus der Wohnung.'],
+    ['Nein… Moment… doch, der Arm hat sich gerade bewegt!', 'Ich trau mich nicht näher hin.'],
   ],
 }
 

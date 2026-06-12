@@ -3,68 +3,116 @@
     "id": "c6",
     "rufname": "Christophorus 6",
     "basis": "Flughafen Salzburg",
-    "lat": 47.7933,
-    "lon": 13.0033,
+    "lat": 47.7938,
+    "lon": 12.9977,
     "maschine": "H135/EC135",
     "betreiber": "ÖAMTC",
-    "saisonMonate": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    "saisonMonate": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
     "daylightOnly": true,
     "region": "NORD",
-    "notes": "Ganzjährig; fliegt auch Bayern (Koordination ILS Traunstein)"
+    "notes": "Ganzjährig; fliegt auch Bayern (Koordination ILS Traunstein); Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "martin1",
     "rufname": "Martin 1",
     "basis": "St. Johann im Pongau (Heli Austria FRZ)",
-    "lat": 47.3458,
-    "lon": 13.1936,
+    "lat": 47.39356,
+    "lon": 13.22219,
     "maschine": "EC135 T3H",
     "betreiber": "Heli Austria/Knaus",
-    "saisonMonate": [1, 2, 3, 4, 6, 7, 8, 9, 10, 12],
+    "saisonMonate": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      10,
+      12
+    ],
     "daylightOnly": true,
     "region": "SUED",
     "estimated": true,
-    "notes": "10 Monate Betrieb — Pausenmonate (Mai/Nov) geschätzt (ANNAHMEN.md M1)"
+    "notes": "10 Monate Betrieb — Pausenmonate (Mai/Nov) geschätzt (ANNAHMEN.md M1); Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "martin10",
     "rufname": "Martin 10",
     "basis": "St. Johann im Pongau",
-    "lat": 47.3458,
-    "lon": 13.1936,
+    "lat": 47.39356,
+    "lon": 13.22219,
     "maschine": "MD 902",
     "betreiber": "Knaus, KH Schwarzach",
-    "saisonMonate": [12, 1, 2, 3],
+    "saisonMonate": [
+      12,
+      1,
+      2,
+      3
+    ],
     "daylightOnly": true,
     "region": "SUED",
     "estimated": true,
-    "notes": "Nur Winter — Monate Dez–März geschätzt"
+    "notes": "Nur Winter — Monate Dez–März geschätzt; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "alpinheli6",
     "rufname": "Alpin Heli 6",
     "basis": "Flugplatz Zell am See (LOWZ)",
-    "lat": 47.2939,
-    "lon": 12.7878,
+    "lat": 47.29107,
+    "lon": 12.79087,
     "maschine": "EC135 T3",
     "betreiber": "Schider + ÖAMTC",
-    "saisonMonate": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    "saisonMonate": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
     "daylightOnly": true,
     "region": "SUED",
-    "notes": "Ganzjährig"
+    "notes": "Ganzjährig; Koordinate geocodiert (Nominatim, Buildzeit)"
   },
   {
     "id": "martin6",
     "rufname": "Martin 6",
     "basis": "Hinterglemm",
-    "lat": 47.3786,
-    "lon": 12.5536,
+    "lat": 47.37897,
+    "lon": 12.5972,
     "maschine": "EC135 T3",
     "betreiber": "Heli Austria (Fa. Wolf)",
-    "saisonMonate": [12, 1, 2, 3, 4],
+    "saisonMonate": [
+      12,
+      1,
+      2,
+      3,
+      4
+    ],
     "daylightOnly": true,
     "region": "SUED",
     "estimated": true,
-    "notes": "Saisonal (Wintersaison) — Monate Dez–Apr geschätzt"
+    "notes": "Saisonal (Wintersaison) — Monate Dez–Apr geschätzt; Koordinate geocodiert (Nominatim, Buildzeit)"
   }
 ]
