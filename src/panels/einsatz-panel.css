@@ -25,6 +25,8 @@
   padding: var(--sp-1) var(--sp-2);
   font-size: var(--fs-xs);
   cursor: pointer;
+  /* entrance flash for new Aufträge (rows are stably keyed) */
+  animation: row-in 500ms ease-out;
 }
 
 .einsatz-row:hover {
@@ -331,10 +333,38 @@
   font-size: var(--fs-sm);
   padding: var(--sp-2);
   letter-spacing: 0.04em;
+  /* persistent subtle glow while staged units await the alarm
+     (the button only renders when stagedCount > 0) */
+  animation: alarm-staged-glow 1.6s ease-in-out infinite;
 }
 
 .alarmieren-btn:hover {
   background: var(--sosi-pulse);
+}
+
+@keyframes alarm-staged-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 0 14px 1px var(--sosi-pulse);
+  }
+}
+
+/* 600ms red edge flash on the detail container right after ALARMIEREN */
+.auftrag-detail.alarm-flash {
+  animation: alarm-flash 600ms ease-out;
+}
+
+@keyframes alarm-flash {
+  0% {
+    box-shadow: inset 0 0 0 3px var(--signal-red);
+    background: var(--bg-active);
+  }
+  100% {
+    box-shadow: inset 0 0 0 0 transparent;
+  }
 }
 
 .assigned-staged {

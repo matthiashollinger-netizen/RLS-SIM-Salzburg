@@ -17,7 +17,9 @@ export function StatusBadge({ status }: { status: VehiclePhase }) {
   const def = statusByCode.get(status)
   const kind = def?.kind ?? 'lifecycle'
   return (
+    // key={status}: a status change remounts the node → badge-pop replays
     <span
+      key={status}
       className={`status-badge status-badge-${kind}`}
       style={{ background: `var(${def?.colorToken ?? '--status-oos'})` }}
       title={def?.label ?? status}

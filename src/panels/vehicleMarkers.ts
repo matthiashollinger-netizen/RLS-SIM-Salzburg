@@ -12,7 +12,16 @@ import type { VehicleRuntime } from '../engine/vehicleSim.ts'
  * Vehicle markers as DOM markers driven by an rAF loop reading the simulation
  * directly — no React re-render per movement frame (CLAUDE.md §5 performance).
  * Light position jitter per vehicle avoids perfectly stacked markers (§3).
+ *
+ * Atmosphere pass: smooth 60 fps motion via render-time extrapolation between
+ * the 250 ms sim ticks, dirty-checked DOM writes, and a Blaulicht strobe class
+ * while units respond/transport with Sondersignal.
  */
+
+/** must match REAL_TICK_MS / 1000 in state/simulation.ts (extrapolation clamp) */
+const SIM_TICK_SEC = 0.25
+/** DOM update cadence while the clock is paused (~2 fps) */
+const PAUSED_FRAME_MS = 500
 
 function jitterOf(id: string): { dLat: number; dLon: number } {
   let h = 0
@@ -60,18 +69,49 @@ function popupHtml(rt: VehicleRuntime): HTMLElement {
   return el
 }
 
+interface MarkerEntry {
+  marker: maplibregl.Marker
+  el: HTMLDivElement
+  status: HTMLSpanElement
+  label: HTMLSpanElement
+  /** dirty-check caches — only touch the DOM when a value actually changed */
+  lastLon: number
+  lastLat: number
+  lastStatus: string
+  lastEngaged: boolean
+  lastSosi: boolean
+  lastLabelShown: boolean
+}
+
 export function attachVehicleMarkers(map: maplibregl.Map): () => void {
-  const markers = new Map<
-    string,
-    { marker: maplibregl.Marker; el: HTMLDivElement; status: HTMLSpanElement; label: HTMLSpanElement }
-  >()
+  const markers = new Map<string, MarkerEntry>()
   let raf = 0
+  // render-clock extrapolation state (UI code — performance.now allowed here)
+  let lastSimSec = Number.NaN
+  let lastRealMs = 0
+  let lastWorkMs = 0
 
   const frame = () => {
-    const simSec = useGameStore.getState().simSec
+    raf = requestAnimationFrame(frame)
+    if (document.hidden) return
+    const now = performance.now()
+    const g = useGameStore.getState()
+    const paused = !g.running || g.speed === 0
+    if (paused && now - lastWorkMs < PAUSED_FRAME_MS) return
+    lastWorkMs = now
+    if (g.simSec !== lastSimSec) {
+      lastSimSec = g.simSec
+      lastRealMs = now
+    }
+    // smooth motion: extrapolate the render clock between 250 ms sim ticks,
+    // clamped to +1.5 ticks so a stalled sim loop cannot run ahead
+    let renderSimSec = g.simSec
+    if (!paused) {
+      const extra = ((now - lastRealMs) / 1000) * g.speed
+      renderSimSec = g.simSec + Math.min(extra, SIM_TICK_SEC * g.speed * 1.5)
+    }
     const layers = useMapStore.getState().layers
-    const zoom = map.getZoom()
-    const showLabels = zoom >= 11
+    const showLabels = map.getZoom() >= 11
     for (const rt of vehicleSim.all()) {
       let entry = markers.get(rt.id)
       const layer = vehicleLayerOf(rt.unit)
@@ -104,19 +144,50 @@ export function attachVehicleMarkers(map: maplibregl.Map): () => void {
           const current = vehicleSim.get(rt.id)
           if (current) marker.getPopup().setDOMContent(popupHtml(current))
         })
-        entry = { marker, el, status, label }
+        entry = {
+          marker,
+          el,
+          status,
+          label,
+          lastLon: Number.NaN,
+          lastLat: Number.NaN,
+          lastStatus: '',
+          lastEngaged: false,
+          lastSosi: false,
+          lastLabelShown: true,
+        }
         markers.set(rt.id, entry)
       }
       const { dLat, dLon } = jitterOf(rt.id)
-      const pos = vehicleSim.posOf(rt, simSec)
-      entry.marker.setLngLat([pos.lon + dLon, pos.lat + dLat])
-      const def = statusByCode.get(rt.status)
-      entry.status.style.background = `var(${def?.colorToken ?? '--status-oos'})`
-      entry.status.textContent = rt.status
-      entry.el.classList.toggle('vehicle-engaged', engaged)
-      entry.label.style.display = showLabels ? '' : 'none'
+      const pos = vehicleSim.posOf(rt, renderSimSec)
+      const lon = pos.lon + dLon
+      const lat = pos.lat + dLat
+      if (lon !== entry.lastLon || lat !== entry.lastLat) {
+        entry.marker.setLngLat([lon, lat])
+        entry.lastLon = lon
+        entry.lastLat = lat
+      }
+      if (rt.status !== entry.lastStatus) {
+        const def = statusByCode.get(rt.status)
+        entry.status.style.background = `var(${def?.colorToken ?? '--status-oos'})`
+        entry.status.textContent = rt.status
+        entry.lastStatus = rt.status
+      }
+      if (engaged !== entry.lastEngaged) {
+        entry.el.classList.toggle('vehicle-engaged', engaged)
+        entry.lastEngaged = engaged
+      }
+      // Blaulicht while responding (2) or transporting (4) with Sondersignal
+      const sosi = (rt.assignment?.sosi ?? false) && (rt.status === '2' || rt.status === '4')
+      if (sosi !== entry.lastSosi) {
+        entry.el.classList.toggle('vehicle-sosi', sosi)
+        entry.lastSosi = sosi
+      }
+      if (showLabels !== entry.lastLabelShown) {
+        entry.label.style.display = showLabels ? '' : 'none'
+        entry.lastLabelShown = showLabels
+      }
     }
-    raf = requestAnimationFrame(frame)
   }
   raf = requestAnimationFrame(frame)
 

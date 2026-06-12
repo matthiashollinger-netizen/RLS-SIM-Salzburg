@@ -146,6 +146,8 @@
   padding: 1px var(--sp-2);
   font-size: var(--fs-xs);
   line-height: var(--lh-dense);
+  /* entrance flash for fresh protocol lines (stably keyed by entry id) */
+  animation: row-in 500ms ease-out;
 }
 
 .feed-time {

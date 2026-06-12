@@ -1,0 +1,219 @@
+/* Live-Lagebild window (AAA pass) — tokens only, reduced-motion safe. */
+
+.lagebild-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  height: 100%;
+  overflow: auto;
+  padding: var(--sp-2);
+}
+
+/* ---- Sonderlage banner ---- */
+
+.lagebild-sonderlage {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+  background: var(--bg-panel-inset);
+  border: 1px solid var(--signal-amber);
+  border-left-width: 3px;
+  border-radius: var(--radius-md);
+  flex: none;
+}
+
+.lagebild-sonderlage-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--signal-amber);
+  margin-top: 4px;
+  flex: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lagebild-sonderlage-dot {
+    animation: lagebild-pulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes lagebild-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.35;
+    }
+  }
+}
+
+.lagebild-sonderlage-text {
+  min-width: 0;
+}
+
+.lagebild-sonderlage-text strong {
+  display: block;
+  font-size: var(--fs-sm);
+  color: var(--signal-amber);
+  letter-spacing: 0.04em;
+}
+
+.lagebild-sonderlage-text p {
+  margin: 2px 0 0;
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  line-height: var(--lh-dense);
+}
+
+.lagebild-sonderlage-rest {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex: none;
+}
+
+/* ---- KPI tiles + sparklines ---- */
+
+.lagebild-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-2);
+  flex: none;
+}
+
+.lagebild-tile {
+  background: var(--bg-panel-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--sp-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lagebild-value {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xl);
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.lagebild-label {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lagebild-spark {
+  width: 100%;
+  height: 28px;
+  margin-top: var(--sp-1);
+}
+
+.lagebild-spark polyline {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.spark-offene {
+  stroke: var(--warn);
+}
+
+.spark-hilfsfrist {
+  stroke: var(--ok);
+}
+
+.spark-flotte {
+  stroke: var(--info);
+}
+
+.spark-queue {
+  stroke: var(--signal-red);
+}
+
+/* ---- Urgent incident mini list ---- */
+
+.lagebild-urgent h3 {
+  margin: 0 0 var(--sp-1);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.lagebild-urgent ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lagebild-urgent-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-1) var(--sp-2);
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+}
+
+.lagebild-urgent-row:hover {
+  background: var(--bg-hover);
+}
+
+.lagebild-urgent-row.is-selected {
+  background: var(--bg-active);
+  color: var(--text-primary);
+}
+
+.lagebild-urgent-id {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  flex: none;
+}
+
+.lagebild-urgent-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lagebild-urgent-rest {
+  font-family: var(--font-mono);
+  color: var(--ok);
+  flex: none;
+}
+
+.lagebild-urgent-rest.is-critical {
+  color: var(--warn);
+}
+
+.lagebild-urgent-rest.is-overdue {
+  color: var(--danger);
+}
+
+.lagebild-urgent-empty {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}

@@ -9,10 +9,86 @@
       name="description"
       content="RLS-SIM Salzburg — Rettungsleitstellen-Simulator. Inoffizielle Simulation."
     />
+    <!--
+      Favicon: inline SVG data URI (no extra request). Hex values mirror design/tokens.css:
+      #0b0e13 = --bg-app, #232a38 = --border-subtle, #e8edf5 = --text-primary, #34d167 = --status-00.
+    -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%230b0e13'/%3E%3Crect%20x='1'%20y='1'%20width='62'%20height='62'%20rx='13'%20fill='none'%20stroke='%23232a38'%20stroke-width='2'/%3E%3Ctext%20x='31'%20y='42'%20font-family='ui-monospace,Menlo,monospace'%20font-size='20'%20font-weight='700'%20letter-spacing='1'%20fill='%23e8edf5'%20text-anchor='middle'%3ERLS%3C/text%3E%3Ccircle%20cx='49'%20cy='16'%20r='5'%20fill='%2334d167'/%3E%3Ccircle%20cx='49'%20cy='16'%20r='8.5'%20fill='none'%20stroke='%2334d167'%20stroke-opacity='0.35'%20stroke-width='2'/%3E%3C/svg%3E"
+    />
     <title>RLS-SIM Salzburg — Rettungsleitstellen-Simulator</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!--
+        Static boot splash: visible from first paint until React renders (render replaces #root
+        children, including this style tag). Hex values mirror design/tokens.css, which is not
+        loaded yet at this point: #0b0e13 = --bg-app, #e8edf5 = --text-primary,
+        #6b7689 = --text-muted, #34d167 = --status-00.
+      -->
+      <style>
+        html,
+        body {
+          height: 100%;
+          margin: 0;
+          background: #0b0e13;
+        }
+        .boot-splash {
+          position: fixed;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+          background: #0b0e13;
+        }
+        .boot-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: #34d167;
+          box-shadow: 0 0 12px 2px rgba(52, 209, 103, 0.45);
+          animation: boot-pulse 1.4s ease-in-out infinite;
+        }
+        .boot-wordmark {
+          color: #e8edf5;
+          font-size: 28px;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+        }
+        .boot-sub {
+          color: #6b7689;
+          font-size: 13px;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+        }
+        @keyframes boot-pulse {
+          0%,
+          100% {
+            opacity: 0.35;
+            transform: scale(0.8);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.15);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .boot-dot {
+            animation: none;
+          }
+        }
+      </style>
+      <div class="boot-splash" aria-hidden="true">
+        <div class="boot-dot"></div>
+        <div class="boot-wordmark">RLS-SIM Salzburg</div>
+        <div class="boot-sub">Rettungsleitstellen-Simulator</div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

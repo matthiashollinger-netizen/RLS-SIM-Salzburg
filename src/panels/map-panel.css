@@ -9,6 +9,31 @@
   background: var(--bg-panel-inset);
 }
 
+/* ---- Atmosphäre: Tag/Nacht-Tönung nur über dem Basemap-Canvas ---- */
+/* lives inside the maplibre canvas container, BELOW the DOM markers */
+.map-night-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--night-tint);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 4000ms linear;
+}
+
+/* ---- Atmosphäre: Niederschlags-Canvas (Regen/Schnee) ---- */
+.map-weather-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* reduced motion: static fog tint instead of animated particles */
+.map-weather-overlay.weather-fog {
+  background: color-mix(in srgb, var(--text-secondary) 10%, transparent);
+}
+
+/* ---- Legende / Ebenen-Steuerung ---- */
 .map-layer-control {
   position: absolute;
   top: var(--sp-2);
@@ -31,6 +56,135 @@
   gap: 6px;
   cursor: pointer;
   white-space: nowrap;
+}
+
+.map-legend-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 2px 0;
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.map-legend-toggle:hover {
+  color: var(--text-primary);
+}
+
+.map-legend-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-top: var(--sp-1);
+  max-height: 60vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.map-legend-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.map-legend-heading {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.map-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.map-legend-chip {
+  flex: none;
+  width: 14px;
+  height: 9px;
+  border-radius: 5px;
+  border: 1px solid var(--bg-app);
+}
+
+.map-legend-shape {
+  flex: none;
+  display: inline-block;
+}
+
+.map-legend-shape-pill {
+  width: 16px;
+  height: 9px;
+  border-radius: 5px;
+  background: var(--status-00);
+  border: 1px solid var(--bg-app);
+}
+
+.map-legend-shape-square {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: var(--status-00);
+  border: 2px solid var(--bg-app);
+}
+
+.map-legend-shape-heli {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px 6px 2px 6px;
+  background: var(--status-00);
+  border: 2px solid var(--bg-app);
+}
+
+.map-legend-shape-incident {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--signal-red);
+  border: 1px solid var(--sosi-pulse);
+}
+
+.map-legend-shape-over {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--signal-red);
+  outline: 2px solid var(--signal-amber);
+  outline-offset: 1px;
+}
+
+.map-legend-shape-station {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--bg-panel-raised);
+  border: 1px solid var(--text-muted);
+}
+
+.map-legend-shape-hospital {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--bg-panel-raised);
+  border: 1.5px solid var(--warn);
+}
+
+.map-legend-line {
+  flex: none;
+  width: 22px;
+  border-top: 2px dashed var(--info);
+}
+
+.map-legend-line-sosi {
+  border-top-color: var(--sosi);
 }
 
 /* ---- Infrastruktur: dezent, klein — Fahrzeuge & Einsätze dominieren ---- */
@@ -121,7 +275,30 @@
 }
 
 .map-marker-vehicle.vehicle-engaged .map-marker-vehicle-status {
-  box-shadow: 0 0 6px 1px rgba(239, 67, 82, 0.6);
+  box-shadow: 0 0 6px 1px color-mix(in srgb, var(--signal-red) 60%, transparent);
+}
+
+/* Blaulicht: double-flash strobe while responding/transporting with SoSi */
+.map-marker-vehicle.vehicle-sosi .map-marker-vehicle-status {
+  animation: blaulicht-flash 1.1s infinite;
+}
+
+@keyframes blaulicht-flash {
+  0%,
+  7% {
+    box-shadow: 0 0 9px 3px var(--sosi-blue);
+  }
+  14% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  21%,
+  28% {
+    box-shadow: 0 0 9px 3px var(--sosi-blue);
+  }
+  38%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
 }
 
 .map-marker-vehicle-label {
@@ -186,6 +363,7 @@
   padding: 2px 6px;
 }
 
+/* ---- Einsatzorte: Eskalation über data-urgency / data-state (1 Hz sync) ---- */
 .map-marker-incident {
   display: flex;
   align-items: center;
@@ -199,22 +377,59 @@
   font-family: var(--font-mono);
   border: 2px solid var(--sosi-pulse);
   cursor: pointer;
+  --pulse-color: color-mix(in srgb, var(--signal-red) 50%, transparent);
+  --pulse-size: 8px;
   animation: incident-pulse 1.6s infinite;
 }
 
 @keyframes incident-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(239, 67, 82, 0.5);
+    box-shadow: 0 0 0 0 var(--pulse-color);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(239, 67, 82, 0);
+    box-shadow: 0 0 0 var(--pulse-size) transparent;
   }
 }
 
+/* dispatched / running scenes calm down */
+.map-marker-incident[data-state='disponiert'],
+.map-marker-incident[data-state='laufend'] {
+  --pulse-color: color-mix(in srgb, var(--signal-red) 25%, transparent);
+  animation-duration: 2.6s;
+}
+
+/* < 5 min to Hilfsfrist: faster + larger pulse (overrides state dimming) */
+.map-marker-incident[data-urgency='critical'] {
+  --pulse-color: color-mix(in srgb, var(--signal-red) 70%, transparent);
+  --pulse-size: 14px;
+  animation-duration: 0.8s;
+}
+
+/* Hilfsfrist missed: steady amber ring + fast amber pulse */
+.map-marker-incident[data-urgency='over'] {
+  --pulse-color: color-mix(in srgb, var(--signal-amber) 60%, transparent);
+  --pulse-size: 12px;
+  animation-duration: 0.7s;
+  outline: 2px solid var(--signal-amber);
+  outline-offset: 1px;
+}
+
+/* MANV: mass-casualty scenes dominate the Lagekarte */
+.map-marker-incident.map-marker-incident-manv {
+  width: 30px;
+  height: 30px;
+  font-size: 13px;
+}
+
+/* AML pin: token-colored inline SVG (Ortungskaskade, GAME_DATA §3b) */
 .map-marker-aml {
-  font-size: 18px;
+  color: var(--info);
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+}
+
+.map-marker-aml svg {
+  display: block;
 }
 
 /* partner organizations at the scene (POL/FW/WR/BR, Rework 2) */
@@ -228,7 +443,7 @@
   font-weight: 700;
   font-family: var(--font-mono);
   color: var(--text-inverse);
-  border: 1px solid var(--bg-deep);
+  border: 1px solid var(--bg-app);
 }
 
 .map-marker-partner-pol {
@@ -245,4 +460,21 @@
 
 .map-marker-partner-br {
   background: var(--warn);
+}
+
+/* ---- Reduced motion: no strobes/pulses, static rings instead ---- */
+@media (prefers-reduced-motion: reduce) {
+  .map-night-overlay {
+    transition: none;
+  }
+
+  .map-marker-incident {
+    animation: none;
+    box-shadow: 0 0 0 3px var(--pulse-color);
+  }
+
+  .map-marker-vehicle.vehicle-sosi .map-marker-vehicle-status {
+    animation: none;
+    box-shadow: 0 0 6px 2px color-mix(in srgb, var(--sosi-blue) 70%, transparent);
+  }
 }

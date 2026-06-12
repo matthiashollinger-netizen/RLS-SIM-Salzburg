@@ -1,0 +1,105 @@
+/* Notification toast stack — top-right, clear of the tutorial overlay
+   (top-center) and the taskbar (bottom). The whole layer is informational:
+   pointer-events none everywhere so toasts can never steal dispatch clicks
+   (they overlap the Einsatzliste on small viewports); auto-dismiss only. */
+
+.toast-host {
+  position: fixed;
+  top: var(--sp-2);
+  right: var(--sp-2);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  width: 300px;
+  max-width: calc(100vw - 2 * var(--sp-2));
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: flex-start;
+  background: var(--bg-panel-raised);
+  border: 1px solid var(--border-strong-solid);
+  border-left: 3px solid var(--info);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-popup);
+  padding: var(--sp-2) var(--sp-3);
+  animation: toast-enter var(--t-normal);
+}
+
+.toast-info {
+  border-left-color: var(--info);
+}
+
+.toast-ok {
+  border-left-color: var(--ok);
+}
+
+.toast-warn {
+  border-left-color: var(--warn);
+}
+
+.toast-danger {
+  border-left-color: var(--danger);
+}
+
+.toast-icon {
+  flex: none;
+  font-size: var(--fs-md);
+  line-height: var(--lh-dense);
+}
+
+.toast-info .toast-icon {
+  color: var(--info);
+}
+
+.toast-ok .toast-icon {
+  color: var(--ok);
+}
+
+.toast-warn .toast-icon {
+  color: var(--warn);
+}
+
+.toast-danger .toast-icon {
+  color: var(--danger);
+}
+
+.toast-body {
+  min-width: 0;
+}
+
+.toast-title {
+  display: block;
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+}
+
+.toast-text {
+  margin: 2px 0 0;
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+  overflow-wrap: break-word;
+}
+
+.toast-leaving {
+  animation: toast-exit 220ms ease-in forwards;
+  pointer-events: none;
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+
+@keyframes toast-exit {
+  to {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}

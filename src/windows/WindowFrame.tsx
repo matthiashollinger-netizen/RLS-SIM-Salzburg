@@ -1,5 +1,6 @@
-import { useCallback, useRef, type ReactNode } from 'react'
+import { useCallback, useRef, useState, type ReactNode } from 'react'
 import { useWindowStore, type WindowId } from './windowStore.ts'
+import { ErrorBoundary } from '../components/ErrorBoundary.tsx'
 import './windows.css'
 
 interface WindowFrameProps {
@@ -16,6 +17,8 @@ export function WindowFrame({ id, title, children }: WindowFrameProps) {
   const win = useWindowStore((s) => s.windows[id])
   const isTop = useWindowStore((s) => s.windows[id]?.z === s.maxZ)
   const frameRef = useRef<HTMLDivElement>(null)
+  // drag-lift: bigger shadow + grabbing cursor while the titlebar is dragged
+  const [dragging, setDragging] = useState(false)
 
   const onTitlePointerDown = useCallback(
     (e: React.PointerEvent) => {
@@ -28,8 +31,10 @@ export function WindowFrame({ id, title, children }: WindowFrameProps) {
       const offY = e.clientY - start.y
       const el = e.currentTarget as HTMLElement
       el.setPointerCapture(e.pointerId)
+      setDragging(true)
       const onMove = (ev: PointerEvent) => move(id, ev.clientX - offX, ev.clientY - offY)
       const onUp = () => {
+        setDragging(false)
         el.removeEventListener('pointermove', onMove)
         el.removeEventListener('pointerup', onUp)
       }
@@ -72,7 +77,7 @@ export function WindowFrame({ id, title, children }: WindowFrameProps) {
   return (
     <section
       ref={frameRef}
-      className={`window-frame${isTop ? ' window-frame-active' : ''}${win.minimized ? ' window-frame-minimized' : ''}`}
+      className={`window-frame${isTop ? ' window-frame-active' : ''}${win.minimized ? ' window-frame-minimized' : ''}${dragging ? ' window-dragging' : ''}`}
       style={{
         transform: `translate(${win.x}px, ${win.y}px)`,
         width: win.w,
@@ -104,7 +109,9 @@ export function WindowFrame({ id, title, children }: WindowFrameProps) {
       </header>
       {!win.minimized && (
         <>
-          <div className="window-content">{children}</div>
+          <div className="window-content">
+            <ErrorBoundary label={title}>{children}</ErrorBoundary>
+          </div>
           <div
             className="window-resize-handle"
             onPointerDown={onResizePointerDown}

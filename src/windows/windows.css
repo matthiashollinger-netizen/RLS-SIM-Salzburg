@@ -4,6 +4,9 @@
   height: 100%;
   overflow: hidden;
   background: var(--bg-app);
+  /* own stacking context: window z-order (grows unbounded with focus
+     changes) can never pierce taskbar, modals or toasts */
+  isolation: isolate;
 }
 
 .window-frame {
@@ -17,10 +20,31 @@
   box-shadow: var(--shadow-window);
   min-width: var(--window-min-w);
   overflow: hidden;
+  /* mount entrance — uses `scale`/`opacity` only, never `transform`,
+     because the frame position lives in an inline translate() */
+  animation: win-in 160ms ease-out;
+  transition: box-shadow var(--t-fast);
+}
+
+@keyframes win-in {
+  from {
+    opacity: 0;
+    scale: 0.97;
+  }
 }
 
 .window-frame-active {
   box-shadow: var(--shadow-window-active);
+}
+
+/* drag-lift while the titlebar is being dragged */
+.window-frame.window-dragging {
+  box-shadow: var(--shadow-window-active);
+  scale: 1.004;
+}
+
+.window-frame.window-dragging .window-titlebar {
+  cursor: grabbing;
 }
 
 .window-titlebar {
@@ -152,4 +176,51 @@
 .taskbar button.coop-waiting {
   border-color: var(--warn);
   color: var(--warn);
+}
+
+/* Pending-item badge on closed/minimized window buttons (game-feel pass) */
+.taskbar-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14px;
+  height: 14px;
+  margin-left: var(--sp-1);
+  padding: 0 3px;
+  border-radius: 7px;
+  background: var(--signal-amber);
+  color: var(--text-inverse);
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  line-height: 1;
+  animation: taskbar-badge-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes taskbar-badge-pulse {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.2;
+  }
+}
+
+/* Pause vignette: the orchestrator toggles .workspace-paused on the
+   workspace div in GamePage while speed === 0. Decorative only. */
+.window-workspace.workspace-paused::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-taskbar);
+  box-shadow: inset 0 0 140px 24px var(--bg-overlay);
+  animation: vignette-in var(--t-normal);
+}
+
+@keyframes vignette-in {
+  from {
+    opacity: 0;
+  }
 }

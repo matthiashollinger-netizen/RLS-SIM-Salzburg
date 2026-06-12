@@ -18,9 +18,17 @@ export function GameClock() {
 
   return (
     <div className="game-clock">
-      <span className="game-clock-time mono" data-testid="game-clock">
+      <span
+        className={`game-clock-time mono${speed === 0 ? ' clock-paused' : ''}`}
+        data-testid="game-clock"
+      >
         {WEEKDAYS[weekday - 1]} {formatGameTime(simSec)}
       </span>
+      {speed === 0 && (
+        <span className="pause-chip" role="status">
+          ⏸ PAUSE
+        </span>
+      )}
       <div className="game-clock-speeds" role="group" aria-label="Spielgeschwindigkeit">
         {SPEEDS.map((s) => (
           <button

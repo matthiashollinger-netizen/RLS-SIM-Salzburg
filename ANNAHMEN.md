@@ -324,3 +324,35 @@
   verzögert sich (Einsatzinfo) — keine harte Sperre, der Disponent entscheidet.
 - **Begründung:** Echte Kapazitätsnachweise schwanken je Schicht; spielbare
   Näherung ohne Daten-Anspruch.
+
+## 2026-06-12 — AAA-Pass (Produktionsqualität)
+
+### Sonderlagen-Wahrscheinlichkeit
+- **Frage:** Wie oft treten dynamische Großereignisse auf?
+- **Entscheidung:** 8 % Chance pro Sim-Stunde (max. 1 aktiv, Abklingzeit über
+  recent-Liste), Dauer 1,5–2,5 h. Ereignisse: Sturmfront, Glatteis-Morgen,
+  Festival-Abend, Grippewelle, Hitzewelle, MANV-Busunglück (selten, geskriptet).
+  Alle Faktoren SCHÄTZUNGEN, tunebar in src/engine/sonderlage.ts.
+- **Begründung:** ~0–2 Sonderlagen pro 8h-Schicht — spürbar, aber nicht dauernd.
+
+### Tageszeit-/Wetter-Einsatzmix
+- Nacht (22–4 h): Intox/Gewalt/Psychiatrie ×2, Rufhilfe ×1,5; Berufsverkehr
+  (7–9, 16–18 h): Verkehr ×1,8; Winter + Schlechtwetter: Verkehr/Sturz ×1,6.
+  SCHÄTZUNGEN nach plausibler Einsatzstatistik, deterministisch im Generator.
+
+### Audio-Synthese statt Assets
+- Sämtliche Sounds (Mixer-Kanäle ring/funk/gong/ui/ambient) bleiben reine
+  WebAudio-Synthese — keine Audiodateien, kein Download. Ambient-Bett =
+  tiefpassgefiltertes Rauschen + seltene Einsprengsel. TTS kann technisch
+  nicht gefiltert werden (kein captureStream auf speechSynthesis) — Funk-Gefühl
+  entsteht durch PTT-Klick + Squelch-Rauschfahne als Rahmen.
+
+### Schriften
+- Inter + JetBrains Mono (beide SIL OFL) werden als woff2 lokal mitgeliefert
+  (public/fonts/, Download zur BUILDZEIT von jsdelivr/Fontsource) — kein
+  Laufzeit-CDN, konsistente Typografie auf allen Systemen.
+
+### KH-Kapazität „frei"-Anzeige, Nachtkarte, Wetterpartikel
+- Nacht-Tinting dimmt nur den Basemap-Canvas (Marker bleiben hell); Regen/
+  Schnee als Canvas-Partikel nur bei Wetter „schlecht"; alles respektiert
+  prefers-reduced-motion (global + JS-matchMedia).

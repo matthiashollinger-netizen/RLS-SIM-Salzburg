@@ -1,6 +1,9 @@
 import { create } from 'zustand'
 import { dbGet, dbSet } from '../persistence/db.ts'
 import type { ShiftReport } from '../engine/scoring.ts'
+import { useGameStore } from './gameStore.ts'
+import { useDispatchStore } from './dispatchStore.ts'
+import { useHospitalLoad, hospitalFreeSlots } from './hospitalLoadStore.ts'
 
 /** Local achievements (M10), persisted in IndexedDB. */
 
@@ -32,6 +35,32 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     id: 'note-eins',
     title: 'Leitstellen-Niveau',
     description: 'Eine Schicht mit Note 1 abgeschlossen.',
+  },
+  // ---- mid-shift unlockables (AAA pass) ----
+  {
+    id: 'erste-sonderlage',
+    title: 'Erste Sonderlage gemeistert',
+    description: 'Eine Sonderlage während laufender Schicht überstanden.',
+  },
+  {
+    id: 'manv-koordiniert',
+    title: 'MANV koordiniert',
+    description: 'Einen MANV-Einsatz vollständig abgearbeitet.',
+  },
+  {
+    id: 'blitzdispo',
+    title: 'Blitzdispo',
+    description: 'Einen Auftrag keine 60 Sekunden nach Anlage alarmiert.',
+  },
+  {
+    id: 'nachtwache',
+    title: 'Nachtwache',
+    description: 'Um 03:00 Uhr früh noch im Dienst gewesen.',
+  },
+  {
+    id: 'volle-huette',
+    title: 'Volle Hütte',
+    description: 'Eine Notaufnahme bis auf den letzten Platz belegt.',
   },
 ]
 
@@ -91,3 +120,94 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
     if (report.note === 1) unlock('note-eins')
   },
 }))
+
+// ---------------------------------------------------------------------------
+// Mid-shift achievement triggers (AAA pass) — wired here at module level so
+// no other store needs editing. The toast flow stays the existing unlock().
+// ---------------------------------------------------------------------------
+
+/** Load-safe unlock: never write before the persisted set has been read. */
+function safeUnlock(id: string) {
+  const st = useAchievementStore.getState()
+  if (st.loaded) {
+    st.unlock(id)
+    return
+  }
+  void st.load().then(() => useAchievementStore.getState().unlock(id))
+}
+
+// 'blitzdispo' + 'manv-koordiniert': watch Auftrag state transitions
+const auftragStates = new Map<string, string>()
+useDispatchStore.subscribe((s) => {
+  if (Object.keys(s.auftraege).length === 0) {
+    auftragStates.clear()
+    return
+  }
+  for (const a of Object.values(s.auftraege)) {
+    const prev = auftragStates.get(a.id)
+    if (prev === a.state) continue
+    auftragStates.set(a.id, a.state)
+    if (a.uebung) continue
+    // alarmed less than 60 s after creation (offen → disponiert via alarmieren)
+    if (prev === 'offen' && a.state === 'disponiert') {
+      if (useGameStore.getState().simSec - a.createdAt < 60) safeUnlock('blitzdispo')
+    }
+    // a MANV-coded Auftrag fully worked off (GAME_DATA §3 MANV classes)
+    if (a.state === 'abgeschlossen' && a.code.startsWith('MANV')) safeUnlock('manv-koordiniert')
+  }
+})
+
+// 'nachtwache': the sim clock ticks across 03:00 during a running shift
+useGameStore.subscribe((s, prev) => {
+  if (s.simSec === prev.simSec || !s.running || s.shiftOver) return
+  const THREE_AM = 3 * 3600
+  const day = ((s.simSec % 86400) + 86400) % 86400
+  const prevDay = ((prev.simSec % 86400) + 86400) % 86400
+  // continuous-tick crossing only (≤ 30 s step) — ignores clock teleports
+  if (prevDay < THREE_AM && day >= THREE_AM && day - prevDay <= 30) safeUnlock('nachtwache')
+})
+
+// 'volle-huette': a Notaufnahme hits 0 free slots (Kapazitätsnachweis)
+useHospitalLoad.subscribe((s) => {
+  const simSec = useGameStore.getState().simSec
+  for (const [hospitalId, slots] of Object.entries(s.occupied)) {
+    if (slots.length > 0 && hospitalFreeSlots(hospitalId, simSec) === 0) {
+      safeUnlock('volle-huette')
+      return
+    }
+  }
+})
+
+// 'erste-sonderlage': a Sonderlage ends while the shift is still active.
+// The store lands in a concurrent workstream — import defensively.
+void import('./sonderlageStore.ts')
+  .then((mod) => {
+    const store = (
+      mod as unknown as {
+        useSonderlageStore?: {
+          getState: () => unknown
+          subscribe: (fn: () => void) => () => void
+        }
+      }
+    ).useSonderlageStore
+    if (!store?.getState || !store.subscribe) return
+    type SonderlageShape = { active?: unknown; recent?: unknown[] } | null
+    const snap = () => {
+      const s = store.getState() as SonderlageShape
+      return { active: !!s?.active, recentLen: s?.recent?.length ?? 0 }
+    }
+    let prev = snap()
+    store.subscribe(() => {
+      const now = snap()
+      // only a NATURAL end counts: end() pushes the id into `recent`,
+      // while a world reset() clears `active` AND empties `recent`
+      if (prev.active && !now.active && now.recentLen > prev.recentLen) {
+        const g = useGameStore.getState()
+        if (g.running && !g.shiftOver) safeUnlock('erste-sonderlage')
+      }
+      prev = now
+    })
+  })
+  .catch(() => {
+    /* Sonderlage feature not present */
+  })

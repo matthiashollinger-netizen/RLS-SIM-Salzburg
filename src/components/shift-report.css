@@ -33,12 +33,15 @@
   font-size: var(--fs-lg);
 }
 
+/* grade badge as a rotated stamp (static rotation — not motion) */
 .report-note {
   font-size: var(--fs-xl);
   font-weight: 700;
   font-family: var(--font-mono);
   padding: var(--sp-1) var(--sp-3);
   border-radius: var(--radius-md);
+  transform: rotate(-6deg);
+  box-shadow: var(--shadow-popup);
 }
 
 .note-badge-1,
@@ -91,10 +94,46 @@
 }
 
 .report-debrief h3,
-.report-history h3 {
+.report-history h3,
+.report-timeline h3 {
   margin: 0 0 var(--sp-1);
   font-size: var(--fs-md);
   color: var(--text-secondary);
+}
+
+/* ---- Schichtverlauf timeline strip ---- */
+
+.shift-timeline {
+  width: 100%;
+  max-width: 420px;
+}
+
+.tl-axis,
+.tl-tick {
+  stroke: var(--border-strong-solid);
+  stroke-width: 1;
+}
+
+.tl-tick-label {
+  fill: var(--text-muted);
+  font-size: 8px;
+  font-family: var(--font-mono);
+}
+
+.tl-dot {
+  opacity: 0.9;
+}
+
+.tl-dot-ok {
+  fill: var(--ok);
+}
+
+.tl-dot-warn {
+  fill: var(--warn);
+}
+
+.tl-dot-danger {
+  fill: var(--danger);
 }
 
 .report-debrief ul {
@@ -148,4 +187,62 @@
   color: var(--text-inverse);
   border: none;
   font-weight: 600;
+}
+
+/* ---- Cinematic entrance (AAA pass) — gated on reduced-motion preference;
+   the global guard in base.css additionally collapses these. ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .report-dialog {
+    animation: report-dialog-in var(--t-normal) backwards;
+  }
+
+  .report-stat {
+    /* per-tile stagger via inline animation-delay */
+    animation: report-tile-in 360ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+
+  .report-note {
+    animation: report-stamp-in 380ms cubic-bezier(0.34, 1.56, 0.64, 1) 320ms backwards;
+  }
+
+  @keyframes report-dialog-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes report-tile-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes report-stamp-in {
+    0% {
+      opacity: 0;
+      transform: rotate(-18deg) scale(2.4);
+    }
+
+    70% {
+      opacity: 1;
+      transform: rotate(-4deg) scale(0.94);
+    }
+
+    100% {
+      opacity: 1;
+      transform: rotate(-6deg) scale(1);
+    }
+  }
 }

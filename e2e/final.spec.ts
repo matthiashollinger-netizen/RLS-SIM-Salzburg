@@ -50,14 +50,16 @@ test('definition of done: complete tutorial shift end-to-end', async ({ page }) 
   await slots.nth(1).locator('.unit-candidate').first().click()
   await detail.getByTestId('alarmieren').click()
 
-  // step: watch status flow — fast-forward via jump-to-event until arrival
+  // step: watch status flow — fast-forward via jump-to-event until arrival.
+  // The world emits log entries (duty changes, weather, Sonderlagen) and each
+  // jump stops at the NEXT one, so keep jumping until the unit arrives.
   await expect(tutorial).toContainText('Beobachte Karte und Funkfeld')
-  for (let i = 0; i < 8; i++) {
-    if (await tutorial.getByText('Eintreffen gemeldet').isVisible()) break
+  await expect(async () => {
+    if (await tutorial.getByText('Eintreffen gemeldet').isVisible()) return
     await page.getByRole('button', { name: 'Sprung zum nächsten Ereignis' }).click()
-    await page.waitForTimeout(400)
-  }
-  await expect(tutorial).toContainText('Eintreffen gemeldet', { timeout: 30_000 })
+    await page.waitForTimeout(300)
+    expect(await tutorial.getByText('Eintreffen gemeldet').isVisible()).toBe(true)
+  }).toPass({ timeout: 60_000 })
 
   // interactive radio (Rework #4): the first unit CALLS — the player must
   // answer „kommen" and close with „Verstanden"

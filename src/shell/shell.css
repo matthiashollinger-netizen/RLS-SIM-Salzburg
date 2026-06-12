@@ -21,6 +21,118 @@
   font-size: var(--fs-xs);
 }
 
+.app-footer-left {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+}
+
+/* ---- Version identity + changelog popover ---- */
+
+.app-version-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.app-version {
+  background: none;
+  border: none;
+  padding: 0 var(--sp-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.app-version:hover,
+.app-version[aria-expanded='true'] {
+  background: none;
+  color: var(--text-secondary);
+  text-decoration: underline;
+}
+
+.changelog-popover {
+  position: absolute;
+  bottom: calc(100% + var(--sp-2));
+  left: 0;
+  z-index: var(--z-toast);
+  width: min(400px, 90vw);
+  max-height: min(420px, 60vh);
+  overflow-y: auto;
+  padding: var(--sp-3);
+  background: var(--bg-panel-raised);
+  border: 1px solid var(--border-strong-solid);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-popup);
+  color: var(--text-secondary);
+  animation: changelog-rise var(--t-fast) backwards;
+}
+
+@keyframes changelog-rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.changelog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-2);
+}
+
+.changelog-title {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.changelog-close {
+  background: none;
+  border: none;
+  padding: 0 var(--sp-1);
+  font-size: var(--fs-md);
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.changelog-close:hover {
+  background: none;
+  color: var(--text-primary);
+}
+
+.changelog-entry h3 {
+  margin: var(--sp-2) 0 var(--sp-1);
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+}
+
+.changelog-phase {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.changelog-entry ul {
+  margin: 0;
+  padding-left: var(--sp-4);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-normal);
+}
+
+.changelog-entry li + li {
+  margin-top: var(--sp-1);
+}
+
+/* ---- Home (base layout; cinematic layer lives in home.css) ---- */
+
 .home {
   display: flex;
   flex-direction: column;
@@ -61,10 +173,75 @@
   background: var(--sosi-pulse);
 }
 
+/* ---- Branded route-loading screen ---- */
+
 .route-loading {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
   color: var(--text-muted);
+}
+
+.loading-screen {
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.loading-wordmark {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-primary);
+}
+
+.loading-wordmark-sub {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.loading-ekg {
+  width: min(320px, 70vw);
+  height: 60px;
+}
+
+.loading-ekg path {
+  fill: none;
+  stroke: var(--status-00);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 26 74;
+  stroke-dashoffset: 100;
+  animation: ekg-travel 2.4s linear infinite;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--status-00) 55%, transparent));
+}
+
+@keyframes ekg-travel {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.loading-hint {
+  font-size: var(--fs-md);
+  color: var(--text-secondary);
+}
+
+.loading-status {
+  min-height: 1.5em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .changelog-popover {
+    animation: none;
+  }
+  .loading-ekg path {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
 }

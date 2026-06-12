@@ -17,7 +17,7 @@ import {
 } from '../engine/funk.ts'
 import type { VehicleEvent } from '../engine/vehicleSim.ts'
 import { unitDisplayName } from '../lib/format.ts'
-import { funkQuittung, pagerGong } from '../audio/sounds.ts'
+import { alarmGong, funkQuittung, pttClick, squelchTail } from '../audio/sounds.ts'
 import { vehicleSim } from './simulation.ts'
 import { useDispatchStore } from './dispatchStore.ts'
 import { useGameStore } from './gameStore.ts'
@@ -65,6 +65,13 @@ function logFunk(text: string, vehicleId?: string, auftragId?: string) {
 /** which auftraege already produced their Erstmeldung */
 const erstmeldungDone = new Set<string>()
 
+/** radio frame: PTT click → quittung blips → squelch tail */
+function quittungFramed() {
+  pttClick()
+  funkQuittung()
+  squelchTail(0.2)
+}
+
 export const useFunkStore = create<FunkState>((set, get) => ({
   sprueche: [],
   targetVehicleId: null,
@@ -82,7 +89,7 @@ export const useFunkStore = create<FunkState>((set, get) => ({
       const sprueche = [...st.sprueche, spruch]
       return { sprueche: sprueche.length > MAX_SPRUECHE ? sprueche.slice(-MAX_SPRUECHE) : sprueche }
     })
-    funkQuittung()
+    quittungFramed()
     if (spruch.stage === 'quittiert') {
       const main = spruch.lines.find((l) => l.speaker !== LEITSTELLE && l.text !== 'kommen')
       if (main) logFunk(`${main.speaker}: „${main.text}"`, spruch.vehicleId, spruch.auftragId)
@@ -96,7 +103,7 @@ export const useFunkStore = create<FunkState>((set, get) => ({
     const name = rt ? unitDisplayName(rt.unit) : spruch.vehicleId
     const message =
       spruch.pendingMessage ?? (rt ? sprechwunschText(rt) : '… Meldung nicht mehr aktuell.')
-    funkQuittung()
+    quittungFramed()
     logFunk(`${name}: „${message}"`, spruch.vehicleId, spruch.auftragId)
     set((st) => ({
       sprueche: st.sprueche.map((s) =>
@@ -119,7 +126,7 @@ export const useFunkStore = create<FunkState>((set, get) => ({
   verstanden: (id) => {
     const spruch = get().sprueche.find((s) => s.id === id)
     if (!spruch || spruch.stage !== 'offen') return
-    funkQuittung()
+    quittungFramed()
     set((st) => ({
       sprueche: st.sprueche.map((s) =>
         s.id === id
@@ -251,8 +258,10 @@ export const useFunkStore = create<FunkState>((set, get) => ({
     const dispatch = useDispatchStore.getState()
     const auftrag = e.assignmentId ? dispatch.auftraege[e.assignmentId] : undefined
 
-    // pager gong on alarm
-    if (e.to === '1') pagerGong()
+    // pager gong on alarm — variant derived from the mission (SoSi/MANV)
+    if (e.to === '1') {
+      alarmGong(auftrag?.code.startsWith('MANV') ? 'manv' : auftrag?.sosi ? 'sosi' : 'routine')
+    }
 
     if (!auftrag) return
 

@@ -54,6 +54,26 @@ export function isDaylight(simSec: number, ctx: SimContext): boolean {
   return hour >= sunrise && hour <= sunset
 }
 
+function clamp01(x: number): number {
+  return x < 0 ? 0 : x > 1 ? 1 : x
+}
+
+/** Dawn/dusk ramp half-width: ±45 min around sunrise/sunset. */
+const TWILIGHT_HOURS = 0.75
+
+/**
+ * Continuous daylight 0..1 for the map night tint: 0 = full night, 1 = full
+ * day, with linear ±45 min ramps centered on the DAYLIGHT_TABLE sunrise and
+ * sunset. Pure and deterministic — no wall clock, no randomness.
+ */
+export function daylightFactor(simSec: number, ctx: SimContext): number {
+  const [sunrise, sunset] = DAYLIGHT_TABLE[ctx.month] ?? [6, 20]
+  const hour = secondsOfDay(simSec) / 3600
+  const dawn = clamp01((hour - (sunrise - TWILIGHT_HOURS)) / (2 * TWILIGHT_HOURS))
+  const dusk = clamp01((sunset + TWILIGHT_HOURS - hour) / (2 * TWILIGHT_HOURS))
+  return Math.min(dawn, dusk)
+}
+
 /** Night window for turnout times (volunteers/pager, NEF-101 KH-Personal). */
 export function isNight(simSec: number): boolean {
   const hour = secondsOfDay(simSec) / 3600

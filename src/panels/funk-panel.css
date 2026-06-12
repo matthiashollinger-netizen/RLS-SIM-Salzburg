@@ -21,6 +21,8 @@
   border-radius: var(--radius-sm);
   background: var(--bg-panel-inset);
   font-size: var(--fs-xs);
+  /* entrance flash for fresh radio traffic (stably keyed by Spruch id) */
+  animation: row-in 500ms ease-out;
 }
 
 .funk-spruch.funk-pending {
@@ -62,7 +64,9 @@
 
 .funk-spruch.funk-ruf {
   border-color: var(--info);
-  animation: funk-ruf-pulse 1.4s infinite;
+  animation:
+    row-in 500ms ease-out,
+    funk-ruf-pulse 1.4s infinite;
 }
 
 @keyframes funk-ruf-pulse {

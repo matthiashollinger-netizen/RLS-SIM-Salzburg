@@ -7,17 +7,36 @@ import { simulateDemoCall } from '../state/debugActions.ts'
 import './panels.css'
 import './call-panels.css'
 
+const TITLE_ALARM = '☎ ANRUF — RLS-SIM Salzburg'
+
 export function AnrufQueuePanel() {
   const queue = useCallStore((s) => s.queue)
   const active = useCallStore((s) => s.active)
   const answer = useCallStore((s) => s.answer)
   const simSec = useGameStore((s) => s.simSec)
+  const hasWaiting = queue.length > 0
 
   useEffect(() => {
     if (queue.length > 0) startRinging()
     else stopRinging()
     return stopRinging
   }, [queue.length])
+
+  // tab-title alarm while calls wait — restore the exact title on cleanup
+  useEffect(() => {
+    if (!hasWaiting) return
+    const baseTitle = document.title
+    let flash = true
+    document.title = TITLE_ALARM
+    const interval = setInterval(() => {
+      flash = !flash
+      document.title = flash ? TITLE_ALARM : baseTitle
+    }, 1000)
+    return () => {
+      clearInterval(interval)
+      document.title = baseTitle
+    }
+  }, [hasWaiting])
 
   return (
     <div className="anruf-queue" data-testid="anruf-queue">

@@ -2,6 +2,7 @@ import { balancing, categoryById, places } from '../data/index.ts'
 import type { Place, Region } from '../data/schemas.ts'
 import { HAUPTBESCHWERDEN, type Hauptbeschwerde } from './abfrage.ts'
 import { pickWeighted, randBetween, type Rng } from './rng.ts'
+import { applyCategoryFactors } from './sonderlage.ts'
 import type { LatLon } from './geo.ts'
 
 /**
@@ -121,6 +122,14 @@ const LAGEN: Record<string, LageVariante[]> = {
       rolle: 'selbst',
       alter: [45, 80],
     },
+    {
+      text: 'Hier Seniorenheim — ein Bewohner klagt über starken Druck auf der Brust.',
+      detail1: 'Ja, in den linken Arm und in den Rücken.',
+      detail2: 'Ja, kaltschweißig und ganz blass.',
+      rolle: 'fachpersonal',
+      alter: [70, 95],
+      geschlecht: 'm',
+    },
   ],
   atemnot: [
     {
@@ -137,6 +146,14 @@ const LAGEN: Record<string, LageVariante[]> = {
       detail2: 'Das weiß ich nicht, ich bin nur der Nachbar.',
       rolle: 'passant',
       alter: [50, 85],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Mein Bub hat einen Asthmaanfall, der Spray hilft heut gar nicht!',
+      detail1: 'Nur einzelne Wörter, er pfeift richtig beim Atmen!',
+      detail2: 'Ja, Asthma — aber so schlimm war es noch nie!',
+      rolle: 'angehoeriger',
+      alter: [6, 16],
       geschlecht: 'm',
     },
   ],
@@ -157,6 +174,14 @@ const LAGEN: Record<string, LageVariante[]> = {
       alter: [30, 80],
       geschlecht: 'w',
     },
+    {
+      text: 'Hier Hauskrankenpflege — eine Klientin ist nicht erweckbar, sie atmet aber.',
+      detail1: 'Ja, sie atmet ruhig und regelmäßig.',
+      detail2: 'Nein, keine Zuckungen beobachtet.',
+      rolle: 'fachpersonal',
+      alter: [70, 96],
+      geschlecht: 'w',
+    },
   ],
   schlaganfall: [
     {
@@ -174,6 +199,14 @@ const LAGEN: Record<string, LageVariante[]> = {
       rolle: 'angehoeriger',
       alter: [70, 95],
       geschlecht: 'w',
+    },
+    {
+      text: 'Meinem Mann ist beim Frühstück die Tasse aus der Hand gefallen, die ganze rechte Seite gehorcht ihm nicht.',
+      detail1: 'Ja, der Mundwinkel hängt und er lallt.',
+      detail2: 'Vor zehn Minuten, ganz plötzlich.',
+      rolle: 'angehoeriger',
+      alter: [55, 90],
+      geschlecht: 'm',
     },
   ],
   krampfanfall: [
@@ -193,6 +226,14 @@ const LAGEN: Record<string, LageVariante[]> = {
       alter: [20, 70],
       geschlecht: 'm',
     },
+    {
+      text: 'Im Schwimmbad hat ein Mädchen gekrampft, jetzt ist sie ganz weggetreten.',
+      detail1: 'Nein, der Krampf ist vorbei, aber sie schläft fast ein.',
+      detail2: 'Die Mutter sagt nein, das hatte sie noch nie.',
+      rolle: 'passant',
+      alter: [5, 15],
+      geschlecht: 'w',
+    },
   ],
   sturz: [
     {
@@ -211,6 +252,22 @@ const LAGEN: Record<string, LageVariante[]> = {
       alter: [70, 95],
       geschlecht: 'm',
     },
+    {
+      text: 'Meine Mutter ist in der Nacht aus dem Bett gefallen und liegt seit Stunden am Boden.',
+      detail1: 'Nur aus dem Bett, aber sie kommt allein nicht mehr auf.',
+      detail2: 'Ja, sie nimmt einen Blutverdünner, Eliquis heißt der.',
+      rolle: 'angehoeriger',
+      alter: [75, 95],
+      geschlecht: 'w',
+    },
+    {
+      text: 'Am Gehsteig ist eine Frau auf dem Eis ausgerutscht, der Arm steht ganz komisch ab.',
+      detail1: 'Aus dem Stand, direkt auf den Arm gefallen.',
+      detail2: 'Das weiß ich nicht, ich kenne die Frau nicht.',
+      rolle: 'passant',
+      alter: [40, 85],
+      geschlecht: 'w',
+    },
   ],
   verkehrsunfall: [
     {
@@ -226,6 +283,22 @@ const LAGEN: Record<string, LageVariante[]> = {
       detail2: 'Zwei.',
       rolle: 'passant',
       alter: [18, 75],
+    },
+    {
+      text: 'Ein Motorradfahrer ist in der Kurve gestürzt, er liegt neben der Leitschiene!',
+      detail1: 'Nein, eingeklemmt ist er nicht, aber er hält das Bein und schreit.',
+      detail2: 'Nur das Motorrad, sonst niemand.',
+      rolle: 'passant',
+      alter: [18, 60],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Ein Auto hat einen Radfahrer erwischt, der liegt auf der Straße!',
+      detail1: 'Nein, er liegt frei auf der Fahrbahn.',
+      detail2: 'Ein Auto und das Fahrrad.',
+      rolle: 'passant',
+      alter: [20, 75],
+      geschlecht: 'm',
     },
   ],
   blutung: [
@@ -261,6 +334,14 @@ const LAGEN: Record<string, LageVariante[]> = {
       rolle: 'angehoeriger',
       alter: [40, 85],
       geschlecht: 'm',
+    },
+    {
+      text: 'Die Oma hat furchtbare Bauchkrämpfe und krümmt sich zusammen.',
+      detail1: 'Im ganzen Bauch, sie kann gar nicht sagen wo genau.',
+      detail2: 'Erbrochen ja — und ganz dunkel hat es ausgeschaut.',
+      rolle: 'angehoeriger',
+      alter: [70, 95],
+      geschlecht: 'w',
     },
   ],
   allergie: [
@@ -298,6 +379,14 @@ const LAGEN: Record<string, LageVariante[]> = {
       alter: [18, 40],
       geschlecht: 'm',
     },
+    {
+      text: 'Vor dem Lokal liegt ein junger Mann, seine Freunde sagen, er hat was eingeworfen.',
+      detail1: 'Die Freunde reden von Tabletten — und getrunken hat er auch ordentlich.',
+      detail2: 'Vor ein paar Stunden, so genau weiß das keiner.',
+      rolle: 'passant',
+      alter: [16, 30],
+      geschlecht: 'm',
+    },
   ],
   geburt: [
     {
@@ -332,6 +421,14 @@ const LAGEN: Record<string, LageVariante[]> = {
       detail2: 'Aggressiv nicht, aber völlig außer sich.',
       rolle: 'passant',
       alter: [20, 65],
+      geschlecht: 'w',
+    },
+    {
+      text: 'Meine Tochter hat sich im Zimmer eingesperrt und schreit, sie will nicht mehr leben.',
+      detail1: 'Ja, sie hat es mehrmals ganz deutlich gesagt.',
+      detail2: 'Aggressiv nicht, aber sie macht die Tür nicht auf.',
+      rolle: 'angehoeriger',
+      alter: [14, 30],
       geschlecht: 'w',
     },
   ],
@@ -477,6 +574,21 @@ const LAGEN: Record<string, LageVariante[]> = {
       alter: [50, 90],
       geschlecht: 'm',
     },
+    {
+      text: 'Hier Pflegeheim — eine Bewohnerin hat seit gestern Durchfall und ist jetzt ganz apathisch.',
+      detail1: 'Seit gestern Abend, es wird stündlich schlechter.',
+      detail2: '38,2 Fieber, erbrochen hat sie zweimal.',
+      rolle: 'fachpersonal',
+      alter: [75, 98],
+      geschlecht: 'w',
+    },
+    {
+      text: 'Ich hab seit Tagen eine Grippe und beim Husten bekomm ich kaum noch Luft.',
+      detail1: 'Seit vier, fünf Tagen — heute ist es richtig schlimm.',
+      detail2: 'Fieber hab ich, 38,9 hab ich gemessen.',
+      rolle: 'selbst',
+      alter: [30, 75],
+    },
   ],
   rufhilfe: [
     {
@@ -554,6 +666,45 @@ export interface GenerateOpts {
   /** force a call type (tutorial/editor) */
   forceType?: CallType
   forceHauptbeschwerde?: string
+  /** sim hour of day (0–23) — drives time-of-day weight multipliers */
+  hour?: number
+  /** current weather — 'schlecht' boosts traffic/fall categories in winter */
+  weather?: 'gut' | 'schlecht'
+  /** shift season — needed for the winter ice rule (weather alone is ambiguous) */
+  season?: 'winter' | 'summer' | 'none'
+  /** Sonderlage category multipliers, applied on top of time/weather factors */
+  categoryFactors?: Record<string, number>
+  /** scripted MANV (Sonderlage Busunglück): overrides personen for a traffic scenario */
+  forceManvPersonen?: number
+}
+
+/**
+ * Deterministic time-of-day/weather weight multiplier per category
+ * (Welt-Direktor: incident mix follows the day rhythm, ANNAHMEN.md):
+ * - night 22:00–03:59: INTOX/GEWALT/PSYCH ×2, RUFHILFE (elder alert) ×1.5
+ * - rush hours 07–09 / 16–18: VERKEHR ×1.8
+ * - weather 'schlecht' in winter (ice): VERKEHR/TRAUMA ×1.6
+ * Missing opts → factor 1 (existing callers stay unchanged).
+ */
+export function timeWeatherFactor(
+  cid: string,
+  opts: Pick<GenerateOpts, 'hour' | 'weather' | 'season'>,
+): number {
+  let f = 1
+  if (opts.hour !== undefined) {
+    const h = opts.hour
+    const night = h >= 22 || h < 4
+    if (night) {
+      if (cid === 'INTOX' || cid === 'GEWALT' || cid === 'PSYCH') f *= 2
+      if (cid === 'RUFHILFE') f *= 1.5
+    }
+    const rush = (h >= 7 && h < 9) || (h >= 16 && h < 18)
+    if (rush && cid === 'VERKEHR') f *= 1.8
+  }
+  if (opts.weather === 'schlecht' && opts.season === 'winter') {
+    if (cid === 'VERKEHR' || cid === 'TRAUMA') f *= 1.6
+  }
+  return f
 }
 
 export function generateScenario(rng: Rng, opts: GenerateOpts): Scenario {
@@ -570,17 +721,26 @@ export function generateScenario(rng: Rng, opts: GenerateOpts): Scenario {
       { value: 'taschenwaehler' as const, weight: 4 },
     ])
 
-  // duplicate caller for an existing incident (GAME_MECHANICS §1)
+  // duplicate caller for an existing incident (GAME_MECHANICS §1);
+  // scripted MANV calls are always a fresh incident
   const duplicates = opts.openIncidents ?? []
-  const isDuplicate = callType === 'notfall' && duplicates.length > 0 && rng() < 0.18
+  const isDuplicate =
+    callType === 'notfall' &&
+    opts.forceManvPersonen === undefined &&
+    duplicates.length > 0 &&
+    rng() < 0.18
   const dupTarget = isDuplicate
     ? duplicates[Math.floor(rng() * duplicates.length)]
     : undefined
 
-  // weighted emergency category (balancing.json)
-  const weights = Object.entries(balancing.categoryWeights)
-    .map(([cid, w]) => ({ cid, weight: w[opts.region] ?? w.base }))
-    .filter((w) => w.weight > 0 && categoryById.get(w.cid)?.group === 'emergency')
+  // weighted emergency category (balancing.json) × time/weather/Sonderlage factors
+  const weights = applyCategoryFactors(
+    Object.entries(balancing.categoryWeights).map(([cid, w]) => ({
+      cid,
+      weight: (w[opts.region] ?? w.base) * timeWeatherFactor(cid, opts),
+    })),
+    opts.categoryFactors,
+  ).filter((w) => w.weight > 0 && categoryById.get(w.cid)?.group === 'emergency')
   const beschwerdenForCat = (cid: string) => HAUPTBESCHWERDEN.filter((h) => h.categoryId === cid)
   let hb: Hauptbeschwerde
   if (opts.forceHauptbeschwerde) {
@@ -595,12 +755,14 @@ export function generateScenario(rng: Rng, opts: GenerateOpts): Scenario {
     hb = options[Math.floor(rng() * options.length)]!
   }
 
+  // scripted MANV (Sonderlage) overrides the rolled person count
   const personen =
-    hb.categoryId === 'VERKEHR' && rng() < 0.12
+    opts.forceManvPersonen ??
+    (hb.categoryId === 'VERKEHR' && rng() < 0.12
       ? 6 + Math.floor(rng() * 8)
       : rng() < 0.06
         ? 2
-        : 1
+        : 1)
 
   const atmet = hb.id === 'reanimation' ? false : true
   const ansprechbar = hb.id === 'reanimation' || hb.id === 'bewusstlos' ? false : rng() > 0.12

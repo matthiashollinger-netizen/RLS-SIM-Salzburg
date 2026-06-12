@@ -2,24 +2,34 @@ import { useEffect, useState } from 'react'
 import { useLlmStore } from '../state/llmStore.ts'
 import { isTtsAvailable } from '../llm/tts.ts'
 import { WEBLLM_MODELS, type WebLlmModelId } from '../llm/types.ts'
-import { getVolume, setVolume } from '../audio/sounds.ts'
+import {
+  getVolume,
+  isAmbientEnabled,
+  previewChannel,
+  setAmbientEnabled,
+  setVolume,
+  type SoundChannel,
+} from '../audio/sounds.ts'
 import { ACHIEVEMENTS, useAchievementStore } from '../state/achievementStore.ts'
 import './settings-dialog.css'
 
-const MIXER_CHANNELS = [
-  { id: 'master' as const, label: 'Gesamt' },
-  { id: 'ring' as const, label: 'Telefon' },
-  { id: 'funk' as const, label: 'Funk-Quittung' },
-  { id: 'gong' as const, label: 'Pager-Gong' },
+const MIXER_CHANNELS: { id: SoundChannel; label: string }[] = [
+  { id: 'master', label: 'Gesamt' },
+  { id: 'ring', label: 'Telefon' },
+  { id: 'funk', label: 'Funk-Quittung' },
+  { id: 'gong', label: 'Pager-Gong' },
+  { id: 'ui', label: 'Interface' },
+  { id: 'ambient', label: 'Ambiente' },
 ]
 
 function SoundMixer() {
   const [, force] = useState(0)
+  const [ambientOn, setAmbientOn] = useState(isAmbientEnabled)
   return (
     <section className="settings-section">
       <h3>Sound-Mixer</h3>
       {MIXER_CHANNELS.map((c) => (
-        <label key={c.id} className="mixer-row">
+        <div key={c.id} className="mixer-row">
           <span>{c.label}</span>
           <input
             type="range"
@@ -32,8 +42,29 @@ function SoundMixer() {
               force((n) => n + 1)
             }}
           />
-        </label>
+          <button
+            type="button"
+            className="mixer-preview"
+            aria-label={`${c.label} vorhören`}
+            title="Vorhören"
+            onClick={() => previewChannel(c.id)}
+          >
+            ▶
+          </button>
+        </div>
       ))}
+      <label className="mixer-row">
+        <span>Ambiente</span>
+        <input
+          type="checkbox"
+          checked={ambientOn}
+          onChange={(e) => {
+            setAmbientEnabled(e.target.checked)
+            setAmbientOn(e.target.checked)
+          }}
+        />
+        <span className="mixer-toggle-hint">Hintergrundgeräusche der Leitstelle</span>
+      </label>
     </section>
   )
 }

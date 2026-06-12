@@ -1,13 +1,21 @@
 /**
  * TTS via Web Speech API (AI_CALLER_TECH §TTS Stufe 1): prefers a de-AT voice,
  * falls back to any German voice. No-ops when speechSynthesis is unavailable.
+ * While an utterance plays, ambient/ring/funk channels duck (sounds.ts).
  */
+
+import { duck, unduck } from '../audio/sounds.ts'
 
 let enabled = false
 
 export function setTtsEnabled(v: boolean) {
   enabled = v
-  if (!v && typeof speechSynthesis !== 'undefined') speechSynthesis.cancel()
+  if (!v && typeof speechSynthesis !== 'undefined') {
+    speechSynthesis.cancel()
+    // cancelled utterances do not reliably fire end/error in all browsers —
+    // make sure the mix is not left ducked (unduck clamps at zero)
+    unduck()
+  }
 }
 
 export function isTtsAvailable(): boolean {
@@ -31,5 +39,8 @@ export function speakCaller(text: string) {
   if (voice) utterance.voice = voice
   utterance.lang = voice?.lang ?? 'de-AT'
   utterance.rate = 1.05
+  utterance.onstart = () => duck()
+  utterance.onend = () => unduck()
+  utterance.onerror = () => unduck()
   speechSynthesis.speak(utterance)
 }

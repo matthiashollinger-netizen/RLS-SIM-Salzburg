@@ -1,0 +1,81 @@
+/* Lage-Ticker bar (AAA pass) — sits above the taskbar, tokens only. */
+
+.lage-ticker {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  height: 24px;
+  padding: 0 var(--sp-2);
+  background: var(--bg-panel-inset);
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  line-height: var(--lh-dense);
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  white-space: nowrap;
+  flex: none;
+}
+
+.lage-ticker:hover {
+  background: var(--bg-hover);
+}
+
+.lage-ticker:focus-visible {
+  outline: 1px solid var(--border-focus);
+  outline-offset: -1px;
+}
+
+.lage-ticker-label {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.1em;
+  color: var(--signal-amber);
+  flex: none;
+}
+
+.lage-ticker-msg {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lage-ticker-time {
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  flex: none;
+}
+
+.lage-ticker-sonderlage {
+  color: var(--signal-amber);
+  font-weight: 600;
+}
+
+.lage-ticker-empty {
+  color: var(--text-muted);
+}
+
+/* gentle crossfade per cycled message — collapsed by the global
+   reduced-motion guard, explicitly gated here as well */
+@media (prefers-reduced-motion: no-preference) {
+  .lage-ticker-msg {
+    animation: lage-ticker-fade 300ms ease-out;
+  }
+
+  @keyframes lage-ticker-fade {
+    from {
+      opacity: 0;
+      transform: translateY(2px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

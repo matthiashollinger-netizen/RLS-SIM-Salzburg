@@ -10,6 +10,21 @@
   font-weight: 700;
   color: var(--text-inverse);
   line-height: 1;
+  /* pop on (re)mount — StatusBadge is keyed by status, so every status
+     change replays this. Uses `scale`/`filter` so the skewX transform on
+     .status-badge-sonder stays intact. */
+  animation: badge-pop 250ms ease-out;
+}
+
+@keyframes badge-pop {
+  from {
+    scale: 1.35;
+    filter: brightness(1.7);
+  }
+  to {
+    scale: 1;
+    filter: brightness(1);
+  }
 }
 
 /* shape per status kind — redundant encoding besides color */

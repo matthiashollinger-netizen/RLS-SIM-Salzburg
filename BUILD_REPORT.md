@@ -466,3 +466,70 @@ DoD-Flow mit Gespräch/Schema-Split und manuellem Notieren).
 **Wie getestet:** `npm run lint` ✓ · `npm test` ✓ (167 Tests; neu:
 Kapazitäts-Staffelung + Slot-Verfall) · `npm run build` ✓ · `npm run smoke` ✓
 (26 E2E).
+
+---
+
+## AAA-Pass — Produktionsqualität (2026-06-12)
+
+Orchestriert als Multi-Agent-Workflow: 6-Bereiche-Audit → 6 parallele
+Workstreams (disjunkte Datei-Zuständigkeit, feste API-Verträge) →
+Integration → 4-Linsen-Review mit adversarialer Verifikation.
+
+**1. Identität & erste 30 Sekunden:** SVG-Favicon + Boot-Splash in index.html
+(kein schwarzes Erstbild), kinoreifes Hauptmenü (Radar-Backdrop mit pulsierenden
+Status-Punkten, gestaffelte Entrance-Choreografie, atmender Start-Knopf),
+Pending-State „Leitstelle wird verbunden…" auf allen Start-Pfaden, gebrandeter
+LoadingScreen mit EKG-Linie, Inter + JetBrains Mono lokal mitgeliefert,
+Versionsnummer + Changelog-Popover im Footer.
+
+**2. Lagekarte-Atmosphäre:** Tag/Nacht-Tinting synchron zur Sim-Uhr
+(daylightFactor mit Dämmerungsrampen, unit-getestet), Blaulicht-Doppelblitz auf
+SoSi-Fahrzeugen, Regen-/Schnee-Partikel bei Schlechtwetter, Hilfsfrist-
+Eskalation der Einsatzmarker (critical/over, MANV-Großmarker), fließende
+Routen-Strichelung, butterweiche 60-fps-Markerbewegung (Render-Extrapolation +
+Dirty-Checks), einklappbare Kartenlegende.
+
+**3. Soundscape:** Echter Mixer (Kanal-GainNodes, Live-Ramping, persistiert),
+Leitstellen-Ambient-Bett (gefiltertes Rauschen + entfernte Telefone/Tastatur),
+Funk-Textur (PTT-Klick + Squelch-Fahne), Alarm-Gong-Varianten nach Schwere
+(routine/sosi/MANV), Hilfsfrist-Warnglocke, Achievement-Fanfare, Report-Sting,
+TTS-Audio-Ducking, Tab-Titel-Alarm bei wartenden Anrufen.
+
+**4. Game-Feel:** Motion-Foundation (Transitions + Press-States überall,
+globaler prefers-reduced-motion-Guard), Row-Entrance in allen Listen,
+Status-Pop bei Badge-Wechsel, Fenster-Animationen (win-in, Drag-Lift),
+Taskbar-Badges mit Attention-Pulse, inszenierter ALARMIEREN-Moment,
+Toast-System (Debriefings/Hilfsfrist/Sonderlagen), Pause-Vignette + blinkende
+Uhr, ErrorBoundary um jedes Fenster (Absturz kostet ein Fenster, nicht die App).
+
+**5. Welt-Direktor:** 6 deterministische Sonderlagen (Sturmfront, Glatteis,
+Festival, Grippewelle, Hitzewelle, MANV-Bus mit geskriptetem Anruf),
+Tageszeit-/Wetter-abhängiger Einsatzmix, mehr Lage-Varianten gegen
+Wiederholung — alles seeded-RNG, 21 neue Engine-Tests.
+
+**6. Lagebild & Abschluss:** Neues „Lagebild"-Fenster (Live-KPIs mit
+SVG-Sparklines, dringendste Einsätze, Sonderlage-Banner), Lage-Ticker über der
+Taskbar, kinoreifer Schichtreport (Count-up, Noten-Stempel, SVG-Schicht-
+Timeline), 5 neue Mid-Shift-Achievements.
+
+**Performance:** maplibre-gl als eigener Chunk (GamePage-Chunk 1,12 MB → 88 KB),
+Warm-Prefetch vom Hauptmenü, Dirty-Check-Markerloop, Hidden-Tab-Drosselung.
+
+**Wie getestet:** `tsc` ✓ · `eslint` ✓ · `npm test` ✓ (198 Tests, +31 neue:
+daylightFactor, Sonderlagen-Engine, Szenario-Mix-Verteilungen) ·
+`npm run build` ✓ · `npm run smoke` ✓ (26 E2E; Tutorial-Test gegen die
+ereignisreichere Welt gehärtet) · 4-Linsen-Review + adversariale Verifikation.
+
+**Review-Ergebnis (4 Linsen × adversariale Verifikation, 19 Agenten):**
+15 bestätigte Befunde, alle behoben — u. a.: Lage-Ticker/Ereignis-Sprung froren
+an der 500-Einträge-Kappe des Logs ein (monotone ID statt Länge), Sim-Loop lief
+nach Verlassen der GamePage im Menü weiter (stopGameLoop im Cleanup),
+maplibre-Chunk wurde durch CJS-Helper-Hoisting doch eager geladen (Helper in
+eigenen Chunk gepinnt, Entry preloadet jetzt 1 KB statt 1 MB), Toasts waren
+über Modals und konnten Dispatch-Klicks stehlen (z-Ebenen getauscht,
+Toast-Layer komplett pointer-events:none), Fenster-z-Index konnte Taskbar
+durchstoßen (isolation: isolate), Sonderlage würfelte schon in Sekunde 0
+(Erster-Tick-Guard), Achievement-Fehltrigger bei Weltreset (recent-Wachstum
+als Echtes-Ende-Signal), Hauptmenü-Radiogroup für Screenreader unsichtbar
+(group + aria-pressed), Lagebild-Countdowns froren 30 s ein (1-Hz-Tick),
+routeLayer renderte die Karte permanent (Fingerprint-Dirty-Check).

@@ -44,8 +44,16 @@ Rettungsdienst-Leitstellenalltags. Du arbeitest als **Calltaker** (Notrufabfrage
 - **Szenario-Editor** für eigene Übungen (JSON-Export/-Import, läuft als ÜBUNG),
   zwei dezente Story-Arcs, Achievements, Sound-Mixer, geführtes Tutorial.
 - **Leitstellen-Komfort:** Status-Lichterkette (gesamte Flotte auf einen Blick),
+  Live-**Lagebild** (KPIs mit Sparklines), Lage-Ticker, Einsatztagebuch,
   Tastaturkürzel (Leertaste Pause, 1/2/3 Tempo, N Ereignis-Sprung, A Anruf
   annehmen, ? Übersicht).
+- **Lebendige Welt:** Sonderlagen (Sturmfront, Glatteis, Festival-Abend,
+  Grippewelle, MANV-Busunglück …) verändern Anrufrate und Einsatzmix;
+  Tag/Nacht-Karte, Regen/Schnee, Blaulicht-Puls, Tageszeit-abhängige Notfälle.
+- **Soundscape & Game-Feel:** Leitstellen-Ambiente, Funk mit PTT/Squelch,
+  Alarm-Gong nach Schwere, Hilfsfrist-Warnglocke, Toast-Benachrichtigungen,
+  kinoreifer Schichtreport — alles WebAudio-synthetisiert, respektiert
+  prefers-reduced-motion.
 
 ## Schnellstart (Spielen)
 

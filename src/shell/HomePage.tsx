@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   useGameStore,
@@ -8,6 +8,7 @@ import {
 } from '../state/gameStore.ts'
 import { resetWorld } from '../state/simulation.ts'
 import { useTutorialStore } from '../state/tutorialStore.ts'
+import { uiTick } from '../audio/sounds.ts'
 import type { Region } from '../data/schemas.ts'
 import './home.css'
 
@@ -19,6 +20,88 @@ const MONTHS = [
   { value: 12, label: 'Dezember (Winter, Advent)' },
 ]
 
+type StartKind = 'schicht' | 'tutorial' | 'coop'
+
+// Duration of the .home fade-out (matches --t-normal-ish exit in home.css).
+const FADE_OUT_MS = 320
+
+/** Resolves after the menu fade-out has played (instant under reduced motion). */
+function fadeOutDelay(): Promise<void> {
+  const ms = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : FADE_OUT_MS
+  return new Promise((resolve) => window.setTimeout(resolve, ms))
+}
+
+// Decorative dispatch-grid dots (status colors, staggered pulse). Coordinates
+// live in the 1200x800 viewBox of the background SVG.
+const SCENE_DOTS: ReadonlyArray<{ cx: number; cy: number; token: string; delay: string }> = [
+  { cx: 245, cy: 195, token: '--status-00', delay: '0s' },
+  { cx: 905, cy: 160, token: '--status-2', delay: '0.5s' },
+  { cx: 1050, cy: 420, token: '--status-00', delay: '1.1s' },
+  { cx: 150, cy: 510, token: '--status-88', delay: '1.7s' },
+  { cx: 700, cy: 640, token: '--status-3', delay: '0.9s' },
+  { cx: 420, cy: 110, token: '--status-6', delay: '2.2s' },
+  { cx: 980, cy: 660, token: '--status-00', delay: '1.4s' },
+  { cx: 330, cy: 690, token: '--status-4', delay: '2.6s' },
+  { cx: 560, cy: 250, token: '--status-88', delay: '0.3s' },
+  { cx: 800, cy: 330, token: '--status-2', delay: '1.9s' },
+  { cx: 120, cy: 130, token: '--status-00', delay: '2.9s' },
+  { cx: 1110, cy: 220, token: '--status-3', delay: '0.7s' },
+]
+
+/** Animated "Leitstelle wird verbunden…" label for pending start buttons. */
+function PendingLabel() {
+  return (
+    <span className="pending-label">
+      Leitstelle wird verbunden
+      <span className="pending-dots" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+      </span>
+    </span>
+  )
+}
+
+/** Decorative menu backdrop: grid, radar rings, pulsing status dots, sweep, vignette. */
+function HomeScene() {
+  return (
+    <div className="home-scene" aria-hidden="true">
+      <div className="home-grid-lines" />
+      <svg
+        className="home-radar"
+        viewBox="0 0 1200 800"
+        preserveAspectRatio="xMidYMid slice"
+        focusable="false"
+      >
+        <g className="radar-rings" fill="none" stroke="var(--border-subtle)" strokeWidth="1">
+          <circle cx="600" cy="400" r="150" />
+          <circle cx="600" cy="400" r="290" />
+          <circle cx="600" cy="400" r="430" />
+          <circle cx="600" cy="400" r="570" />
+          <line x1="0" y1="400" x2="1200" y2="400" />
+          <line x1="600" y1="0" x2="600" y2="800" />
+        </g>
+        {SCENE_DOTS.map((d) => (
+          <circle
+            key={`${d.cx}-${d.cy}`}
+            className="scene-dot"
+            cx={d.cx}
+            cy={d.cy}
+            r="4"
+            fill={`var(${d.token})`}
+            style={{ animationDelay: d.delay }}
+          />
+        ))}
+      </svg>
+      <div className="home-sweep" />
+      <div className="home-vignette" />
+    </div>
+  )
+}
+
+/** Helper for the staggered entrance delay (`--i` consumed in home.css). */
+const enter = (i: number): CSSProperties => ({ '--i': i }) as CSSProperties
+
 export function HomePage() {
   const navigate = useNavigate()
   const [region, setRegion] = useState<Region>('NORD')
@@ -27,9 +110,24 @@ export function HomePage() {
   const [role, setRole] = useState<PlayerRole>('voll')
   const [month, setMonth] = useState(6)
   const [startHour, setStartHour] = useState(7)
+  const [starting, setStarting] = useState<StartKind | null>(null)
 
-  const start = async () => {
-    await resetWorld()
+  // Warm up the heavy lazy chunks while the user reads the menu: the GamePage
+  // route module and the map library (own chunk via vite manualChunks).
+  useEffect(() => {
+    void import('./GamePage.tsx')
+    void import('maplibre-gl')
+  }, [])
+
+  const pick = (apply: () => void) => () => {
+    uiTick()
+    apply()
+  }
+
+  const start = async (kind: StartKind = 'schicht') => {
+    if (starting) return
+    setStarting(kind)
+    await Promise.all([resetWorld(), fadeOutDelay()])
     useGameStore.getState().startShift({
       region,
       mode,
@@ -44,13 +142,16 @@ export function HomePage() {
 
   // Coop (M9/Rework 2 point 11): start a shift and open the connection dialog
   const startCoop = async () => {
+    if (starting) return
     const { useCoopStore } = await import('../state/coopStore.ts')
     useCoopStore.getState().requestDialog()
-    await start()
+    await start('coop')
   }
 
   const startTutorial = async () => {
-    await resetWorld()
+    if (starting) return
+    setStarting('tutorial')
+    await Promise.all([resetWorld(), fadeOutDelay()])
     useGameStore.getState().startShift({
       region: 'NORD',
       mode: 'endlos',
@@ -66,83 +167,114 @@ export function HomePage() {
   }
 
   return (
-    <div className="home">
-      <h1 className="home-title">RLS-SIM Salzburg</h1>
-      <p className="home-subtitle">Rettungsleitstellen-Simulator</p>
+    <div className={starting ? 'home home-leaving' : 'home'}>
+      <HomeScene />
+      <h1 className="home-title" style={enter(0)}>
+        RLS-SIM Salzburg
+      </h1>
+      <p className="home-subtitle" style={enter(1)}>
+        Rettungsleitstellen-Simulator
+      </p>
 
       <div className="menu-card" data-testid="hauptmenue">
-        <div className="menu-row" role="radiogroup" aria-label="Leitstelle">
+        <div className="menu-row" role="group" aria-label="Leitstelle" style={enter(2)}>
           <span className="menu-label">Leitstelle</span>
           <button
             className={region === 'NORD' ? 'menu-active' : ''}
-            onClick={() => setRegion('NORD')}
+            aria-pressed={region === 'NORD'}
+            onClick={pick(() => setRegion('NORD'))}
           >
             NORD — Salzburg Stadt
           </button>
           <button
             className={region === 'SUED' ? 'menu-active' : ''}
-            onClick={() => setRegion('SUED')}
+            aria-pressed={region === 'SUED'}
+            onClick={pick(() => setRegion('SUED'))}
           >
             SÜD — Zell am See
           </button>
         </div>
 
-        <div className="menu-row" role="radiogroup" aria-label="Modus">
+        <div className="menu-row" role="group" aria-label="Modus" style={enter(3)}>
           <span className="menu-label">Modus</span>
-          <button className={mode === 'schicht' ? 'menu-active' : ''} onClick={() => setMode('schicht')}>
+          <button
+            className={mode === 'schicht' ? 'menu-active' : ''}
+            aria-pressed={mode === 'schicht'}
+            onClick={pick(() => setMode('schicht'))}
+          >
             8h-Schicht
           </button>
-          <button className={mode === 'endlos' ? 'menu-active' : ''} onClick={() => setMode('endlos')}>
+          <button
+            className={mode === 'endlos' ? 'menu-active' : ''}
+            aria-pressed={mode === 'endlos'}
+            onClick={pick(() => setMode('endlos'))}
+          >
             Endlos
           </button>
         </div>
 
-        <div className="menu-row" role="radiogroup" aria-label="Rolle">
+        <div className="menu-row" role="group" aria-label="Rolle" style={enter(4)}>
           <span className="menu-label">Rolle</span>
-          <button className={role === 'voll' ? 'menu-active' : ''} onClick={() => setRole('voll')}>
+          <button
+            className={role === 'voll' ? 'menu-active' : ''}
+            aria-pressed={role === 'voll'}
+            onClick={pick(() => setRole('voll'))}
+          >
             Vollbetrieb
           </button>
           <button
             className={role === 'calltaker' ? 'menu-active' : ''}
-            onClick={() => setRole('calltaker')}
+            aria-pressed={role === 'calltaker'}
+            onClick={pick(() => setRole('calltaker'))}
             title="Du nimmst Notrufe an, der KI-Disponent alarmiert."
           >
             Calltaker (KI disponiert)
           </button>
           <button
             className={role === 'disponent' ? 'menu-active' : ''}
-            onClick={() => setRole('disponent')}
+            aria-pressed={role === 'disponent'}
+            onClick={pick(() => setRole('disponent'))}
             title="Der KI-Calltaker erzeugt Aufträge, du disponierst."
           >
             Disponent (KI nimmt an)
           </button>
         </div>
 
-        <div className="menu-row" role="radiogroup" aria-label="Schwierigkeit">
+        <div className="menu-row" role="group" aria-label="Schwierigkeit" style={enter(5)}>
           <span className="menu-label">Schwierigkeit</span>
           <button
             className={difficulty === 'entspannt' ? 'menu-active' : ''}
-            onClick={() => setDifficulty('entspannt')}
+            aria-pressed={difficulty === 'entspannt'}
+            onClick={pick(() => setDifficulty('entspannt'))}
           >
             Entspannt
           </button>
           <button
             className={difficulty === 'realistisch' ? 'menu-active' : ''}
-            onClick={() => setDifficulty('realistisch')}
+            aria-pressed={difficulty === 'realistisch'}
+            onClick={pick(() => setDifficulty('realistisch'))}
           >
             Realistisch
           </button>
           <button
             className={difficulty === 'albtraum' ? 'menu-active' : ''}
-            onClick={() => setDifficulty('albtraum')}
+            aria-pressed={difficulty === 'albtraum'}
+            onClick={pick(() => setDifficulty('albtraum'))}
           >
             Albtraum
           </button>
         </div>
 
-        <div className="menu-row">
+        <div className="menu-row" style={enter(6)}>
           <span className="menu-label">Jahreszeit</span>
-          <select aria-label="Monat" value={month} onChange={(e) => setMonth(Number(e.target.value))}>
+          <select
+            aria-label="Monat"
+            value={month}
+            onChange={(e) => {
+              uiTick()
+              setMonth(Number(e.target.value))
+            }}
+          >
             {MONTHS.map((m) => (
               <option key={m.value} value={m.value}>
                 {m.label}
@@ -153,28 +285,52 @@ export function HomePage() {
           <select
             aria-label="Schichtbeginn"
             value={startHour}
-            onChange={(e) => setStartHour(Number(e.target.value))}
+            onChange={(e) => {
+              uiTick()
+              setStartHour(Number(e.target.value))
+            }}
           >
             <option value={7}>07:00 (Tagschicht)</option>
             <option value={19}>19:00 (Nachtschicht)</option>
           </select>
         </div>
 
-        <button className="home-start" data-testid="schicht-starten" onClick={() => void start()}>
-          Schicht starten
+        <button
+          className={starting === 'schicht' ? 'home-start is-pending' : 'home-start'}
+          data-testid="schicht-starten"
+          disabled={starting !== null}
+          style={enter(7)}
+          onClick={() => void start('schicht')}
+        >
+          {starting === 'schicht' ? <PendingLabel /> : 'Schicht starten'}
         </button>
 
-        <div className="menu-secondary">
-          <button data-testid="tutorial-starten" onClick={() => void startTutorial()}>
-            Tutorial (geführte erste Schicht)
+        <div className="menu-secondary" style={enter(8)}>
+          <button
+            data-testid="tutorial-starten"
+            className={starting === 'tutorial' ? 'is-pending' : ''}
+            disabled={starting !== null}
+            onClick={() => void startTutorial()}
+          >
+            {starting === 'tutorial' ? <PendingLabel /> : 'Tutorial (geführte erste Schicht)'}
           </button>
-          <button onClick={() => navigate('/editor')}>Szenario-Editor</button>
+          <button
+            disabled={starting !== null}
+            onClick={() => {
+              uiTick()
+              navigate('/editor')
+            }}
+          >
+            Szenario-Editor
+          </button>
           <button
             data-testid="coop-starten"
+            className={starting === 'coop' ? 'is-pending' : ''}
+            disabled={starting !== null}
             title="Zu zweit spielen: Rollensplit Calltaker/Disponent (Host simuliert)"
             onClick={() => void startCoop()}
           >
-            Coop (2 Spieler)
+            {starting === 'coop' ? <PendingLabel /> : 'Coop (2 Spieler)'}
           </button>
         </div>
       </div>

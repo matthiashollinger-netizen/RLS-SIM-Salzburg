@@ -15,4 +15,5 @@ export const WINDOW_DEFS: WindowDef[] = [
   { id: 'ressourcen', title: 'Ressourcen' },
   { id: 'funk', title: 'Funkfeld' },
   { id: 'protokoll', title: 'Protokoll' },
+  { id: 'sonderlagen', title: 'Lagebild' },
 ]

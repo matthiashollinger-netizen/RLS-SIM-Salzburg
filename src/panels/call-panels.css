@@ -29,6 +29,8 @@
   gap: var(--sp-2);
   padding: var(--sp-2);
   border-bottom: 1px solid var(--border-subtle);
+  /* entrance flash for incoming calls (stably keyed by call id) */
+  animation: row-in 500ms ease-out;
 }
 
 .queue-ring {

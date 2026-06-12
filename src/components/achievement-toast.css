@@ -1,27 +1,34 @@
+/* Achievement toast — restyled to match the ToastHost notification look,
+   but stays its own component (data-testid="achievement-toast", E2E contract).
+   Bottom-right, above the taskbar; purely informational → never intercepts
+   clicks on the game UI. */
+
 .achievement-toast {
   position: fixed;
-  right: var(--sp-4);
+  right: var(--sp-2);
   bottom: 64px;
   z-index: var(--z-toast);
   display: flex;
   gap: var(--sp-2);
   align-items: center;
   background: var(--bg-panel-raised);
-  border: 1px solid var(--signal-amber);
+  border: 1px solid var(--border-strong-solid);
+  border-left: 3px solid var(--signal-amber);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-popup);
   padding: var(--sp-2) var(--sp-3);
   max-width: 340px;
-  animation: toast-in 240ms ease-out;
+  pointer-events: none;
+  animation: toast-in var(--t-normal);
 }
 
 @keyframes toast-in {
   from {
-    transform: translateY(12px);
+    transform: translateX(16px);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translateX(0);
     opacity: 1;
   }
 }
@@ -31,8 +38,13 @@
   font-size: var(--fs-xl);
 }
 
+.achievement-toast strong {
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+}
+
 .achievement-toast p {
-  margin: 0;
+  margin: 2px 0 0;
   font-size: var(--fs-xs);
   color: var(--text-secondary);
 }

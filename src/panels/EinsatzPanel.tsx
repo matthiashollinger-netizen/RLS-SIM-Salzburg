@@ -19,6 +19,7 @@ import { useMapStore } from '../state/mapStore.ts'
 import { vehicleSim } from '../state/simulation.ts'
 import { useVehicleVersion } from '../state/useVehicles.ts'
 import { createRandomAuftrag } from '../state/debugActions.ts'
+import { uiTick } from '../audio/sounds.ts'
 import { StatusBadge } from '../components/StatusBadge.tsx'
 import './panels.css'
 import './einsatz-panel.css'
@@ -195,6 +196,7 @@ function FreieMittelwahl({
               key={rt.id}
               className="unit-candidate"
               onClick={() => {
+                uiTick()
                 store.assignVehicle(auftrag.id, rt.id)
                 setQuery('')
               }}
@@ -254,6 +256,8 @@ function AuftragInfos({ auftrag }: { auftrag: Auftrag }) {
 function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
   useVehicleVersion()
   const store = useDispatchStore.getState()
+  // brief red edge flash on the detail container right after ALARMIEREN
+  const [alarmFlash, setAlarmFlash] = useState(false)
   const simSec = useGameStore((s) => s.simSec)
   const weather = useGameStore((s) => s.weather)
   const gameCtx = useGameStore.getState()
@@ -288,7 +292,14 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
   const daylight = isDaylight(simSec, gameCtx)
 
   return (
-    <div className="auftrag-detail" data-testid="auftrag-detail">
+    <div
+      className={`auftrag-detail${alarmFlash ? ' alarm-flash' : ''}`}
+      data-testid="auftrag-detail"
+      onAnimationEnd={(e) => {
+        // children's animations bubble — only clear on our own flash
+        if (e.animationName === 'alarm-flash') setAlarmFlash(false)
+      }}
+    >
       <div className="auftrag-detail-header">
         <span className={`code-chip ${auftrag.sosi ? 'code-sosi' : ''}`}>{auftrag.code}</span>
         <span className="auftrag-alarmtext mono">{alarmtext(auftrag)}</span>
@@ -376,7 +387,10 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
                     key={c.id}
                     className="unit-candidate"
                     title="Zuteilen (Alarmierung erfolgt gesammelt)"
-                    onClick={() => store.assignVehicle(auftrag.id, c.id)}
+                    onClick={() => {
+                      uiTick()
+                      store.assignVehicle(auftrag.id, c.id)
+                    }}
                     disabled={assignedIds.includes(c.id)}
                   >
                     <span className="mono">+ {unitDisplayName(c.runtime.unit)}</span>
@@ -415,7 +429,10 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
                 {stateOf === 'zugeteilt' && (
                   <button
                     title="Zuteilung entfernen"
-                    onClick={() => store.removeStagedVehicle(auftrag.id, id)}
+                    onClick={() => {
+                      uiTick()
+                      store.removeStagedVehicle(auftrag.id, id)
+                    }}
                   >
                     ✕
                   </button>
@@ -440,7 +457,10 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
         <button
           className="alarmieren-btn"
           data-testid="alarmieren"
-          onClick={() => store.alarmieren(auftrag.id)}
+          onClick={() => {
+            store.alarmieren(auftrag.id)
+            setAlarmFlash(true)
+          }}
         >
           🔔 ALARMIEREN ({stagedCount} Mittel)
         </button>

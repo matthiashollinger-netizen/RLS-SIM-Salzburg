@@ -59,6 +59,8 @@
   /* ---- SoSi (Sondersignal) indicator ---- */
   --sosi: var(--signal-red);
   --sosi-pulse: #ff6b75;
+  --sosi-blue: #4ea0ff; /* Blaulicht pulse on responding SoSi vehicles (AAA pass) */
+  --night-tint: rgba(9, 14, 34, 0.46); /* map canvas overlay at full night (AAA pass) */
 
   /* ---- Typography ---- */
   --font-ui:
@@ -98,8 +100,8 @@
   --z-map: 0;
   --z-windows: 100; /* window manager assigns 100..899 */
   --z-taskbar: 900;
-  --z-modal: 1000;
-  --z-toast: 1100;
+  --z-toast: 1000; /* informational only — must never cover a modal */
+  --z-modal: 1100;
 
   /* ---- Window manager ---- */
   --window-titlebar-h: 30px;

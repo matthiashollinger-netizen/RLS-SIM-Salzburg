@@ -12,11 +12,17 @@ import { EinsatzPanel } from '../panels/EinsatzPanel.tsx'
 import { RessourcenPanel } from '../panels/RessourcenPanel.tsx'
 import { FunkPanel } from '../panels/FunkPanel.tsx'
 import { ProtokollPanel } from '../panels/FeedPanels.tsx'
-import { startGameLoop } from '../state/simulation.ts'
+import { LagebildPanel } from '../panels/LagebildPanel.tsx'
+import { startGameLoop, stopGameLoop } from '../state/simulation.ts'
+import { useGameStore } from '../state/gameStore.ts'
+import { resetKpi, startKpiSampling } from '../state/kpiStore.ts'
+import { startAmbient, stopAmbient } from '../audio/sounds.ts'
 import { ShiftReportDialog } from '../components/ShiftReportDialog.tsx'
 import { TutorialOverlay } from '../components/TutorialOverlay.tsx'
 import { KeyboardShortcuts } from '../components/KeyboardShortcuts.tsx'
 import { AchievementToast } from '../components/AchievementToast.tsx'
+import { ToastHost } from '../components/ToastHost.tsx'
+import { LageTicker } from '../components/LageTicker.tsx'
 import './game-page.css'
 
 function defaultRects(): Record<WindowId, WindowRect> {
@@ -61,26 +67,39 @@ function defaultRects(): Record<WindowId, WindowRect> {
   }
 }
 
+/** windows that start closed to keep the default layout uncluttered */
+const CLOSED_BY_DEFAULT: ReadonlySet<WindowId> = new Set(['protokoll', 'sonderlagen'])
+
 export function GamePage() {
   const initialized = useRef(false)
   if (!initialized.current) {
     initialized.current = true
     const rects = defaultRects()
     const { register } = useWindowStore.getState()
-    // Protokoll starts closed to keep the default layout uncluttered
-    for (const def of WINDOW_DEFS) register(def.id, rects[def.id], def.id !== 'protokoll')
+    for (const def of WINDOW_DEFS) register(def.id, rects[def.id], !CLOSED_BY_DEFAULT.has(def.id))
   }
 
   useEffect(() => {
     void restoreLayout()
     startGameLoop()
+    resetKpi()
+    startKpiSampling()
+    startAmbient()
     const stop = startLayoutAutosave()
-    return stop
+    return () => {
+      stopAmbient()
+      stop()
+      // leaving the game route (browser back) must not keep the world
+      // ticking — gongs/toasts would otherwise fire into the main menu
+      stopGameLoop()
+    }
   }, [])
+
+  const paused = useGameStore((s) => s.speed === 0)
 
   return (
     <div className="game-page">
-      <div className="window-workspace">
+      <div className={`window-workspace${paused ? ' workspace-paused' : ''}`}>
         <WindowFrame id="anrufe" title="Anrufe">
           <AnrufQueuePanel />
         </WindowFrame>
@@ -105,11 +124,16 @@ export function GamePage() {
         <WindowFrame id="protokoll" title="Protokoll">
           <ProtokollPanel />
         </WindowFrame>
+        <WindowFrame id="sonderlagen" title="Lagebild">
+          <LagebildPanel />
+        </WindowFrame>
       </div>
+      <LageTicker />
       <Taskbar defs={WINDOW_DEFS} />
       <ShiftReportDialog />
       <TutorialOverlay />
       <AchievementToast />
+      <ToastHost />
       <KeyboardShortcuts />
     </div>
   )

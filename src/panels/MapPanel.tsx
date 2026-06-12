@@ -1,19 +1,28 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { helicopters, hospitals, stations } from '../data/index.ts'
+import { daylightFactor } from '../engine/time.ts'
+import { useGameStore } from '../state/gameStore.ts'
 import { useMapStore, type MapLayers } from '../state/mapStore.ts'
 import { attachVehicleMarkers } from './vehicleMarkers.ts'
 import { attachIncidentMarkers } from './incidentMarkers.ts'
 import { attachRouteLayer } from './routeLayer.ts'
+import { attachWeatherOverlay } from './weatherOverlay.ts'
 import './map-panel.css'
 
 /**
  * Dark base map (OpenFreeMap vector style, no key) with raster fallback
  * (Carto dark) per CLAUDE.md §1. Infrastructure markers as DOM markers so
  * design tokens style them and no glyph server is needed.
+ *
+ * Atmosphere pass: day/night tint over the basemap canvas (markers stay
+ * bright), weather particle overlay, collapsible map legend.
  */
 const VECTOR_DARK_STYLE = 'https://tiles.openfreemap.org/styles/dark'
+
+/** night-tint refresh cadence — a 5 s timer is plenty for a ±45 min dusk ramp */
+const NIGHT_TINT_MS = 5000
 
 const RASTER_FALLBACK_STYLE: maplibregl.StyleSpecification = {
   version: 8,
@@ -39,13 +48,26 @@ function makeMarkerEl(kind: 'station' | 'hospital' | 'heli', label: string, titl
   return el
 }
 
+const STATUS_LEGEND: { token: string; label: string }[] = [
+  { token: '--status-00', label: '00/7 frei / Rückfahrt' },
+  { token: '--status-1', label: '1/2 alarmiert / Anfahrt' },
+  { token: '--status-3', label: '3 am Einsatzort' },
+  { token: '--status-4', label: '4/5 Transport / am Ziel' },
+  { token: '--status-6', label: '6 abgeschlossen' },
+  { token: '--status-88', label: '88 / Position' },
+  { token: '--status-oos', label: '91–95 außer Betrieb' },
+]
+
 export function MapPanel() {
+  const wrapRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
+  const [legendOpen, setLegendOpen] = useState(false)
 
   useEffect(() => {
     const container = containerRef.current
-    if (!container) return
+    const wrap = wrapRef.current
+    if (!container || !wrap) return
 
     const map = new maplibregl.Map({
       container,
@@ -57,6 +79,20 @@ export function MapPanel() {
     mapRef.current = map
     map.addControl(new maplibregl.AttributionControl({ compact: true }))
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right')
+
+    // Day/night tint: dims only the basemap canvas — DOM markers are appended
+    // to the same canvas container LATER, so they stay bright above the tint.
+    const nightEl = document.createElement('div')
+    nightEl.className = 'map-night-overlay'
+    nightEl.style.opacity = '0'
+    map.getCanvasContainer().appendChild(nightEl)
+    const applyNight = () => {
+      const g = useGameStore.getState()
+      const next = (1 - daylightFactor(g.simSec, g)).toFixed(2)
+      if (nightEl.style.opacity !== next) nightEl.style.opacity = next
+    }
+    applyNight()
+    const nightTimer = window.setInterval(applyNight, NIGHT_TINT_MS)
 
     // Style fetch failed (offline/CI) → switch to raster fallback once.
     let styleLoaded = false
@@ -135,6 +171,7 @@ export function MapPanel() {
     const detachVehicles = attachVehicleMarkers(map)
     const detachIncidents = attachIncidentMarkers(map)
     const detachRoutes = attachRouteLayer(map)
+    const detachWeather = attachWeatherOverlay(wrap)
 
     const ro = new ResizeObserver(() => map.resize())
     ro.observe(container)
@@ -146,6 +183,9 @@ export function MapPanel() {
       detachVehicles()
       detachIncidents()
       detachRoutes()
+      detachWeather()
+      window.clearInterval(nightTimer)
+      nightEl.remove()
       for (const list of Object.values(infra)) for (const m of list) m.remove()
       map.remove()
       mapRef.current = null
@@ -163,19 +203,85 @@ export function MapPanel() {
   ]
 
   return (
-    <div className="map-panel-wrap">
+    <div ref={wrapRef} className="map-panel-wrap">
       <div ref={containerRef} className="map-panel" data-testid="map-panel" />
-      <div className="map-layer-control" role="group" aria-label="Kartenebenen">
-        {layerDefs.map((l) => (
-          <label key={l.key}>
-            <input
-              type="checkbox"
-              checked={layers[l.key]}
-              onChange={() => toggleLayer(l.key)}
-            />
-            {l.label}
-          </label>
-        ))}
+      <div className="map-layer-control" role="group" aria-label="Kartenebenen und Legende">
+        <button
+          type="button"
+          className="map-legend-toggle"
+          aria-expanded={legendOpen}
+          onClick={() => setLegendOpen((o) => !o)}
+        >
+          <span aria-hidden="true">{legendOpen ? '▾' : '▸'}</span> Legende
+        </button>
+        {legendOpen && (
+          <div className="map-legend-body">
+            <div className="map-legend-section">
+              <div className="map-legend-heading">Ebenen</div>
+              {layerDefs.map((l) => (
+                <label key={l.key}>
+                  <input
+                    type="checkbox"
+                    checked={layers[l.key]}
+                    onChange={() => toggleLayer(l.key)}
+                  />
+                  {l.label}
+                </label>
+              ))}
+            </div>
+            <div className="map-legend-section">
+              <div className="map-legend-heading">Fahrzeug-Status</div>
+              {STATUS_LEGEND.map((s) => (
+                <div key={s.token} className="map-legend-row">
+                  <span className="map-legend-chip" style={{ background: `var(${s.token})` }} />
+                  {s.label}
+                </div>
+              ))}
+            </div>
+            <div className="map-legend-section">
+              <div className="map-legend-heading">Symbole</div>
+              <div className="map-legend-row">
+                <span className="map-legend-shape map-legend-shape-pill" />
+                RTW/KTW (rund)
+              </div>
+              <div className="map-legend-row">
+                <span className="map-legend-shape map-legend-shape-square" />
+                NEF/NAW (eckig)
+              </div>
+              <div className="map-legend-row">
+                <span className="map-legend-shape map-legend-shape-heli" />
+                Hubschrauber
+              </div>
+              <div className="map-legend-row">
+                <span className="map-legend-shape map-legend-shape-incident" />
+                Einsatzort (pulsierend)
+              </div>
+              <div className="map-legend-row">
+                <span className="map-legend-shape map-legend-shape-over" />
+                Hilfsfrist überschritten
+              </div>
+              <div className="map-legend-row">
+                <span className="map-legend-shape map-legend-shape-station" />
+                Wache
+              </div>
+              <div className="map-legend-row">
+                <span className="map-legend-shape map-legend-shape-hospital" />
+                Klinik
+              </div>
+            </div>
+            <div className="map-legend-section">
+              <div className="map-legend-heading">Routen</div>
+              <div className="map-legend-row">
+                <span className="map-legend-line map-legend-line-sosi" />
+                Anfahrt mit Sondersignal
+              </div>
+              <div className="map-legend-row">
+                <span className="map-legend-line map-legend-line-normal" />
+                Anfahrt / Transport
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

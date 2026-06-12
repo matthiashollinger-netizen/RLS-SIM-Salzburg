@@ -27,6 +27,36 @@
   color: var(--text-primary);
 }
 
+/* slightly stronger press feedback on the tiny speed buttons */
+.game-clock-speeds button:active:not(:disabled) {
+  transform: translateY(1px) scale(0.92);
+}
+
+/* paused: the clock time blinks in two discrete steps */
+.game-clock-time.clock-paused {
+  animation: clock-blink 1.2s steps(2, jump-none) infinite;
+}
+
+@keyframes clock-blink {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.35;
+  }
+}
+
+.pause-chip {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--warn);
+  border: 1px solid var(--warn);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+
 .end-shift-btn {
   font-size: var(--fs-xs);
   padding: 2px var(--sp-2);

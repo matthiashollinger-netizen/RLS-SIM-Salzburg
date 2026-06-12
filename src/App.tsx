@@ -1,6 +1,7 @@
+import './styles/fonts.css'
 import { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import { AppShell } from './shell/AppShell.tsx'
+import { AppShell, LoadingScreen } from './shell/AppShell.tsx'
 import { HomePage } from './shell/HomePage.tsx'
 
 const GamePage = lazy(() =>
@@ -21,7 +22,7 @@ export default function App() {
         <Route
           path="spiel"
           element={
-            <Suspense fallback={<div className="route-loading">Leitstelle wird geladen…</div>}>
+            <Suspense fallback={<LoadingScreen hint="Leitstelle wird geladen…" />}>
               <GamePage />
             </Suspense>
           }
@@ -29,7 +30,7 @@ export default function App() {
         <Route
           path="editor"
           element={
-            <Suspense fallback={<div className="route-loading">Editor wird geladen…</div>}>
+            <Suspense fallback={<LoadingScreen hint="Editor wird geladen…" />}>
               <EditorPage />
             </Suspense>
           }
@@ -37,7 +38,7 @@ export default function App() {
         <Route
           path="debug/data"
           element={
-            <Suspense fallback={<div className="route-loading">Daten werden geladen…</div>}>
+            <Suspense fallback={<LoadingScreen hint="Daten werden geladen…" />}>
               <DataBrowser />
             </Suspense>
           }
