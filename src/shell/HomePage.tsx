@@ -42,6 +42,13 @@ export function HomePage() {
     navigate('/spiel')
   }
 
+  // Coop (M9/Rework 2 point 11): start a shift and open the connection dialog
+  const startCoop = async () => {
+    const { useCoopStore } = await import('../state/coopStore.ts')
+    useCoopStore.getState().requestDialog()
+    await start()
+  }
+
   const startTutorial = async () => {
     await resetWorld()
     useGameStore.getState().startShift({
@@ -162,6 +169,13 @@ export function HomePage() {
             Tutorial (geführte erste Schicht)
           </button>
           <button onClick={() => navigate('/editor')}>Szenario-Editor</button>
+          <button
+            data-testid="coop-starten"
+            title="Zu zweit spielen: Rollensplit Calltaker/Disponent (Host simuliert)"
+            onClick={() => void startCoop()}
+          >
+            Coop (2 Spieler)
+          </button>
         </div>
       </div>
     </div>

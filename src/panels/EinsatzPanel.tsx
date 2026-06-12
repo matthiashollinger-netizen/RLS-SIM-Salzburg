@@ -3,11 +3,13 @@ import { categories, categoryById, codes } from '../data/index.ts'
 import type { Partner } from '../data/schemas.ts'
 import { alarmtext, type Auftrag } from '../engine/auftrag.ts'
 import { hospitalNeedsFor, proposeAo, unitsForCode } from '../engine/ao.ts'
-import { findUnits } from '../engine/dispatchSearch.ts'
+import { findUnits, type SearchContext } from '../engine/dispatchSearch.ts'
 import { matchHospitals } from '../engine/hospitalMatch.ts'
+import { routeGround } from '../engine/routing.ts'
+import { isAvailable } from '../engine/status.ts'
 import { isDaylight } from '../engine/time.ts'
 import { searchAddress } from '../lib/fuzzy.ts'
-import { formatCountdown } from '../lib/format.ts'
+import { formatCountdown, formatGameTime } from '../lib/format.ts'
 import { unitDisplayName } from '../lib/format.ts'
 import { useDispatchStore } from '../state/dispatchStore.ts'
 import { useGameStore } from '../state/gameStore.ts'
@@ -136,6 +138,117 @@ function AuftragEdit({ auftrag }: { auftrag: Auftrag }) {
   )
 }
 
+/** Freie Mittelwahl (Rework 2): jedes verfügbare Mittel suchen und zuteilen. */
+function FreieMittelwahl({
+  auftrag,
+  searchCtx,
+}: {
+  auftrag: Auftrag
+  searchCtx: SearchContext
+}) {
+  const [query, setQuery] = useState('')
+  const store = useDispatchStore.getState()
+  const assignedIds = Object.keys(auftrag.assigned)
+
+  const hits = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (q.length < 2) return []
+    return vehicleSim
+      .all()
+      .filter(
+        (rt) =>
+          isAvailable(rt.status) &&
+          !assignedIds.includes(rt.id) &&
+          (unitDisplayName(rt.unit).toLowerCase().includes(q) ||
+            rt.unit.typ.toLowerCase().includes(q) ||
+            rt.unit.stationName.toLowerCase().includes(q)),
+      )
+      .map((rt) => ({
+        rt,
+        etaSec: Math.round(
+          vehicleSim.estimateTurnoutSec(rt.id, searchCtx.simSec) +
+            routeGround(vehicleSim.posOf(rt, searchCtx.simSec), auftrag.ort, {
+              typ: rt.unit.typ,
+              sosi: auftrag.sosi,
+            }).sec,
+        ),
+      }))
+      .sort((a, b) => a.etaSec - b.etaSec)
+      .slice(0, 6)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, auftrag.id, assignedIds.length, searchCtx.simSec])
+
+  return (
+    <div className="freie-mittelwahl">
+      <input
+        aria-label="Beliebiges Mittel suchen"
+        placeholder="Beliebiges Mittel suchen (Rufname/Typ/Wache)…"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      {hits.length > 0 && (
+        <div className="unit-candidates">
+          {hits.map(({ rt, etaSec }) => (
+            <button
+              key={rt.id}
+              className="unit-candidate"
+              onClick={() => {
+                store.assignVehicle(auftrag.id, rt.id)
+                setQuery('')
+              }}
+            >
+              <span className="mono">
+                + {unitDisplayName(rt.unit)} ({rt.unit.typ})
+              </span>
+              <span className="eta">{Math.round(etaSec / 60)} min</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/** Einsatzinfos wie im echten ELS: zeitgestempelte Freitext-Zeilen (Rework 2). */
+function AuftragInfos({ auftrag }: { auftrag: Auftrag }) {
+  const [text, setText] = useState('')
+  const addInfo = useDispatchStore((s) => s.addInfo)
+  return (
+    <div className="auftrag-infos" data-testid="auftrag-infos">
+      {(auftrag.infos ?? []).length > 0 && (
+        <ul className="auftrag-infos-list">
+          {auftrag.infos!.map((info, i) => (
+            <li key={i}>
+              <span className="mono info-time">{formatGameTime(info.simSec).slice(0, 5)}</span>{' '}
+              {info.text}
+            </li>
+          ))}
+        </ul>
+      )}
+      <form
+        className="auftrag-infos-form"
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (text.trim()) {
+            addInfo(auftrag.id, text)
+            setText('')
+          }
+        }}
+      >
+        <input
+          aria-label="Einsatzinfo hinzufügen"
+          placeholder={'Einsatzinfo eintragen (z. B. Zufahrt über Hofeinfahrt)…'}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <button type="submit" disabled={!text.trim()}>
+          Info
+        </button>
+      </form>
+    </div>
+  )
+}
+
 function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
   useVehicleVersion()
   const store = useDispatchStore.getState()
@@ -218,8 +331,25 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
             {p}
           </button>
         ))}
-        {auftrag.lagefreigabe && <span className="lagefreigabe-hint">⚠ Lagefreigabe Polizei!</span>}
+        {auftrag.lagefreigabe && !auftrag.lageFreigegeben && (
+          <span className="lagefreigabe-hint">⚠ Lagefreigabe Polizei!</span>
+        )}
+        {auftrag.lageFreigegeben && <span className="lagefreigabe-ok">Lagefreigabe ✓</span>}
       </div>
+
+      {auftrag.lagefreigabe && !auftrag.lageFreigegeben && auftrag.lagePolizeiFreiAt !== undefined && (
+        <div className="lagefreigabe-banner" data-testid="lagefreigabe-banner">
+          {auftrag.lageGemeldet
+            ? 'Polizei meldet: Lage GESICHERT — Anfahrt freigeben?'
+            : 'Mittel warten im Bereitstellungsraum — Polizei sichert die Lage…'}
+          <button
+            className={auftrag.lageGemeldet ? 'lagefreigabe-btn' : 'lagefreigabe-btn lagefreigabe-risiko'}
+            onClick={() => store.freigabeLage(auftrag.id)}
+          >
+            {auftrag.lageGemeldet ? 'Anfahrt freigeben' : 'Trotzdem freigeben (Lage NICHT gesichert!)'}
+          </button>
+        </div>
+      )}
 
       {proposal.heliRecommended && (
         <div className="heli-hint">
@@ -302,6 +432,8 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
         </div>
       )}
 
+      <FreieMittelwahl auftrag={auftrag} searchCtx={searchCtx} />
+
       {stagedCount > 0 && (
         <button
           className="alarmieren-btn"
@@ -311,6 +443,8 @@ function AuftragDetail({ auftrag }: { auftrag: Auftrag }) {
           🔔 ALARMIEREN ({stagedCount} Mittel)
         </button>
       )}
+
+      <AuftragInfos auftrag={auftrag} />
 
       <div className="auftrag-row">
         <label>

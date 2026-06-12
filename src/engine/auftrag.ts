@@ -47,10 +47,18 @@ export interface Auftrag {
   outcome?: { survived: boolean; text: string; issues: string[]; quality: number }
   /** dispatcher notes (editable, Rework #10) */
   notiz?: string
+  /** timestamped free-text infos like the real ELS Einsatzinfos (Rework 2) */
+  infos?: { simSec: number; text: string }[]
   /** code was manually overridden — edits must not re-derive it */
   codeManuell?: boolean
   /** units currently allocated as patient transporters (Rework #6) */
   transporters?: string[]
+  /** Lagefreigabe-Mechanik (Rework 2): simSec when POL will report the scene secure */
+  lagePolizeiFreiAt?: number
+  /** police reported the scene secure (radio message arrived) */
+  lageGemeldet?: boolean
+  /** dispatcher released the approach — units leave the Bereitstellungsraum */
+  lageFreigegeben?: boolean
 }
 
 /** Alarmtext format `CODE STADTTEIL STRASSE` — exactly as on pager/terminal (GAME_DATA §3a). */

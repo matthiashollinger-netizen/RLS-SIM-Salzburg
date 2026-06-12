@@ -407,3 +407,41 @@ inkl. Heli-transportiert/RTW-unterstützt, Auftrag-Edit/Re-Routing, interaktiver
 Funk-Flow inkl. Funkdisziplin-Sperre, Anrufer-Wiederholungen/Unbekannt/Detail-Matching)
 · `npm run build` ✓ · `npm run smoke` ✓ (26 E2E, DoD-Test bedient jetzt den
 interaktiven Funk selbst).
+
+---
+
+## Rework 2 — zweites Spieler-Feedback (2026-06-12)
+
+**Was:**
+1. **Straßen-Routing**: OSM-Straßengraph (Buildzeit-Export, Land Salzburg) +
+   A* im Browser — Bodenfahrzeuge folgen jetzt dem Straßenverlauf (Marker UND
+   Fahrzeit), Restrouten werden als gestrichelte Linien auf der Karte gezeigt.
+   Nur Hubschrauber fliegen Luftlinie. Fallback Luftlinie×1,35 bleibt.
+2. **Relevanter Funk + Einsatzinfos**: Nur noch Erstmeldung/Nachforderung/
+   Sprechwunsch rufen; zeitgestempelte Einsatzinfos im Auftrag frei ergänzbar.
+3. **Freie Mittelwahl**: Suchfeld im Auftrag findet JEDES verfügbare Mittel
+   (Rufname/Typ/Wache, ETA-Anzeige) — nicht nur die AO-Vorschläge.
+4. **Umdisponieren**: Mittel aus laufendem Einsatz (vor Transport) per Klick zu
+   anderem Auftrag; Quell-Auftrag erhält Info.
+5. **NA abziehen**: „NA abkömmlich?"-Funkfrage → bei Freigabe Abzieh-Aktion.
+6. **Kein NA verfügbar**: Info am Auftrag, RTW übernimmt inkl. Transport.
+7. **A4 = Aufwertung**: nie bei A/MANV; B–E mit Wahrheits-Schwere hoch ohne NA
+   → bestehender Auftrag wird A4 (kein Duplikat).
+8. **Offizielles Abfrageschema**: eigenes Fenster (Ja/Nein-Fragen, Kernpunkte),
+   separates Gesprächs-Fenster; Antworten werden MANUELL notiert; Auftrag bleibt
+   voll editierbar inkl. Kategorie-Code (KRANK/STILL …) und Freitext.
+9. **KI-Anrufer konsistent**: Lagevarianten binden Text+Details+Rolle+Alter —
+   Widersprüche eliminiert.
+10. **Partner auf der Karte + Lagefreigabe**: POL/FW/WR/BR-Marker am EO sobald
+    alarmiert; bei Lagefreigabe-Kategorien Bereitstellungsraum-Mechanik:
+    warten → Polizei-Funk „Lage gesichert" → Disponent gibt Anfahrt frei.
+11. **Coop sichtbar**: Hauptmenü-Eintrag „Coop (2 Spieler)" startet Schicht und
+    öffnet den Verbindungsdialog (PeerJS-Cloud / manueller Code / lokal);
+    Guest-Whitelist um neue Dispo-Aktionen erweitert.
+
+**Wie getestet:** `npm run lint` ✓ · `npm test` ✓ (165 Tests; neu: A*-Graph,
+Straßen- vs. Luftlinien-Routing, Bereitstellungsraum-Hold/Release-Lifecycle,
+A4-Aufwertungs-Semantik) · `npm run build` ✓ · `npm run smoke` ✓ (26 E2E,
+DoD-Flow mit Gespräch/Schema-Split und manuellem Notieren).
+
+**Offene Punkte:** Award-Polish (eigene Features) folgt als nächster Schritt.

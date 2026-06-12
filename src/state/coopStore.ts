@@ -26,6 +26,10 @@ interface CoopState {
   mode: CoopMode
   connected: boolean
   hostRole: PlayerRole
+  /** main menu „Coop" entry → game page opens the dialog right away */
+  dialogRequested: boolean
+  requestDialog: () => void
+  clearDialogRequest: () => void
   startHost: (transport: Transport, hostRole: PlayerRole) => void
   startGuest: (transport: Transport) => void
   stop: () => void
@@ -139,6 +143,9 @@ export const useCoopStore = create<CoopState>((set, get) => ({
   mode: 'off',
   connected: false,
   hostRole: 'disponent',
+  dialogRequested: false,
+  requestDialog: () => set({ dialogRequested: true }),
+  clearDialogRequest: () => set({ dialogRequested: false }),
 
   startHost: (transport, hostRole) => {
     get().stop()

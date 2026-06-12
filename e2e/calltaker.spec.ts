@@ -11,20 +11,24 @@ test('calltaker flow: answer call, interview, create Auftrag in dispatch list', 
   await expect(answerBtn).toBeVisible()
   await answerBtn.click()
 
+  const gespraech = page.getByTestId('gespraech-panel')
   const abfrage = page.getByTestId('abfrage-panel')
+  await expect(gespraech).toBeVisible()
   await expect(abfrage).toBeVisible()
   // greeting transcript + prefilled Festnetz address
   await expect(page.getByTestId('transcript')).toContainText('Rettungsleitstelle Salzburg')
   await expect(page.getByTestId('adresse-value')).toContainText('Festnetz-Anschlussdaten')
 
   // ask the standardized questions
-  await abfrage.getByRole('button', { name: 'Was genau ist passiert?' }).click()
-  await abfrage.getByRole('button', { name: 'Wie viele Personen sind betroffen?' }).click()
-  await abfrage.getByRole('button', { name: 'Ist die Person ansprechbar?' }).click()
-  await abfrage.getByRole('button', { name: 'Atmet die Person normal?' }).click()
+  await gespraech.getByRole('button', { name: 'Was genau ist passiert?' }).click()
+  await gespraech.getByRole('button', { name: 'Wie viele Personen sind betroffen?' }).click()
+  await gespraech.getByRole('button', { name: 'Ist die Person ansprechbar?' }).click()
+  await gespraech.getByRole('button', { name: 'Atmet die Person normal?' }).click()
   await expect(page.getByTestId('transcript')).toContainText('Brust')
 
-  // pick the Hauptbeschwerde (grid is inline in Schritt 2 of the wizard)
+  // NOTE the answers manually in the official schema (Rework 2: no auto-fill)
+  await abfrage.getByLabel('Personenzahl notieren').fill('1')
+  // pick the Hauptbeschwerde in the schema window
   await page.getByTestId('beschwerde-grid').getByRole('button', { name: 'Brustschmerz' }).click()
 
   // Merkmalskette preview shows interview facts
@@ -38,8 +42,8 @@ test('calltaker flow: answer call, interview, create Auftrag in dispatch list', 
   await expect(row.locator('.code-chip')).toHaveText(/^(A1|B1)$/)
 
   // hang up ends the call
-  await abfrage.getByRole('button', { name: 'Auflegen' }).click()
-  await expect(page.getByTestId('abfrage-panel').getByText('Kein aktives Gespräch.')).toBeVisible()
+  await gespraech.getByRole('button', { name: 'Auflegen' }).click()
+  await expect(page.getByTestId('gespraech-panel').getByText('Kein aktives Gespräch.')).toBeVisible()
 })
 
 test('address fuzzy search sets the Einsatzort', async ({ page }) => {

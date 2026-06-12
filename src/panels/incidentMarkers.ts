@@ -12,8 +12,24 @@ import { alarmtext } from '../engine/auftrag.ts'
 const AML_SOURCE = 'aml-circle'
 const AML_LAYER = 'aml-circle-fill'
 
+/** partner forces around the scene (POL/FW/WR/BR — Rework 2, point 10) */
+const PARTNER_OFFSETS: Record<string, [number, number]> = {
+  POL: [0.0012, 0.0018],
+  FW: [-0.0012, 0.0018],
+  WR: [0.0012, -0.0018],
+  BR: [-0.0012, -0.0018],
+}
+
+const PARTNER_TITLES: Record<string, string> = {
+  POL: 'Polizei',
+  FW: 'Feuerwehr',
+  WR: 'Wasserrettung',
+  BR: 'Bergrettung',
+}
+
 export function attachIncidentMarkers(map: maplibregl.Map): () => void {
   const markers = new Map<string, maplibregl.Marker>()
+  const partnerMarkers = new Map<string, maplibregl.Marker>()
   let amlMarker: maplibregl.Marker | null = null
 
   const syncIncidents = () => {
@@ -34,6 +50,29 @@ export function attachIncidentMarkers(map: maplibregl.Map): () => void {
       } else if (!open && existing) {
         existing.remove()
         markers.delete(a.id)
+      }
+
+      // alarmed partner organizations appear beside the scene (Rework 2)
+      for (const [partner, [dLat, dLon]] of Object.entries(PARTNER_OFFSETS)) {
+        const key = `${a.id}:${partner}`
+        const show = open && a.partnersAlarmed.includes(partner as never)
+        const pExisting = partnerMarkers.get(key)
+        if (show && !pExisting) {
+          const el = document.createElement('div')
+          el.className = `map-marker-partner map-marker-partner-${partner.toLowerCase()}`
+          el.textContent = partner
+          const securing = partner === 'POL' && a.lagefreigabe && !a.lageFreigegeben
+          el.title = `${PARTNER_TITLES[partner] ?? partner} — ${a.id}${securing ? ' (sichert die Lage)' : ''}`
+          partnerMarkers.set(
+            key,
+            new maplibregl.Marker({ element: el })
+              .setLngLat([a.ort.lon + dLon, a.ort.lat + dLat])
+              .addTo(map),
+          )
+        } else if (!show && pExisting) {
+          pExisting.remove()
+          partnerMarkers.delete(key)
+        }
       }
     }
   }
@@ -97,6 +136,8 @@ export function attachIncidentMarkers(map: maplibregl.Map): () => void {
     unsubCall()
     for (const m of markers.values()) m.remove()
     markers.clear()
+    for (const m of partnerMarkers.values()) m.remove()
+    partnerMarkers.clear()
     amlMarker?.remove()
   }
 }

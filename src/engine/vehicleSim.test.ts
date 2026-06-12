@@ -197,6 +197,39 @@ describe('VehicleSim', () => {
     expect(sim.get(id)!.status).toBe('00')
   })
 
+  it('holds at the Bereitstellungsraum until releaseHold (Lagefreigabe)', () => {
+    const { sim, events } = makeSim([testVehicle], 99)
+    const id = testVehicle.funkrufname
+    run(sim, 0, 1500)
+    sim.dispatch(
+      id,
+      {
+        id: 'pol1',
+        label: 'B2 AMOK Testplatz',
+        einsatzort: { lat: 47.82, lon: 13.06 },
+        sosi: true,
+        transport: false,
+        holdAt: { lat: 47.8245, lon: 13.06 }, // staging ≈500 m north
+      },
+      1500,
+    )
+    // long run: without a release the unit must NEVER reach status 3
+    run(sim, 1500, 1500 + 3600)
+    const rt = sim.get(id)!
+    expect(rt.status).toBe('2')
+    expect(rt.held).toBe(true)
+    const pos = sim.posOf(rt, 1500 + 3600)
+    expect(pos.lat).toBeCloseTo(47.8245, 3)
+
+    // Lagefreigabe → unit proceeds to the Einsatzort and completes the run
+    sim.releaseHold('pol1', 1500 + 3600)
+    expect(sim.get(id)!.held).toBe(false)
+    run(sim, 1500 + 3600, 1500 + 3 * 3600)
+    // 2 appears thrice: en route → staging arrival (note) → release (note)
+    const seq = events.filter((e) => e.type === 'status' && e.simSec >= 1500).map((e) => e.to)
+    expect(seq).toEqual(['1', '2', '2', '2', '3', '6', '7', '00'])
+  })
+
   it('keeps engaged vehicles in service past duty end, despawns afterwards', () => {
     const { sim } = makeSim([dayVehicle], 99)
     const id = dayVehicle.funkrufname

@@ -8,7 +8,8 @@ export interface WindowDef {
 /** GAME_DATA §12 — the dispatch workspace windows */
 export const WINDOW_DEFS: WindowDef[] = [
   { id: 'anrufe', title: 'Anrufe' },
-  { id: 'abfrage', title: 'Abfrage' },
+  { id: 'gespraech', title: 'Gespräch' },
+  { id: 'abfrage', title: 'Abfrageschema' },
   { id: 'karte', title: 'Lagekarte' },
   { id: 'einsatzliste', title: 'Einsatzliste' },
   { id: 'ressourcen', title: 'Ressourcen' },

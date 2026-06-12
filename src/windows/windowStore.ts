@@ -12,6 +12,7 @@ export type WindowId =
   | 'funk'
   | 'protokoll'
   | 'anrufe'
+  | 'gespraech'
   | 'abfrage'
   | 'khliste'
   | 'sonderlagen'

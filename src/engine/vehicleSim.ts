@@ -2,8 +2,8 @@ import { hospitalById, stationById, balancing } from '../data/index.ts'
 import type { DutyWindow, Helicopter, Vehicle, VehicleType } from '../data/schemas.ts'
 import { isOnDuty, type DutyContext } from './duty.ts'
 import { canTransition, isAvailable, type StatusCode, type VehiclePhase } from './status.ts'
-import { routeTravelSec } from './routing.ts'
-import { lerpLatLon, type LatLon } from './geo.ts'
+import { routeGround, routeTravelSec } from './routing.ts'
+import { lerpLatLon, pathCumulativeKm, pathPosition, type LatLon } from './geo.ts'
 import { isDaylight, isNight } from './time.ts'
 import { mulberry32, randBetween, type Rng } from './rng.ts'
 
@@ -81,6 +81,8 @@ export interface AssignmentSpec {
   zielName?: string
   onSceneSec?: number
   handoverSec?: number
+  /** Bereitstellungsraum: hold here until Lagefreigabe (Rework 2, POL) */
+  holdAt?: LatLon
 }
 
 export interface VehicleEvent {
@@ -103,12 +105,20 @@ export interface VehicleRuntime {
   moveStart?: number
   moveArrive?: number
   assignment?: AssignmentSpec
+  /** street polyline being followed (ground vehicles with road graph) */
+  movePath?: LatLon[]
+  /** cumulative km along movePath */
+  moveCum?: number[]
   /** Timer for dwell phases: turnout (1), on scene (3), handover (5), pause (6), Sonderstatus */
   phaseUntil?: number
   positionTargetCode?: StatusCode
   positionTargetPos?: LatLon
   /** Reserve vehicles activated manually (GAME_DATA §10b status 94 rule) */
   manualService: boolean
+  /** approaching the Bereitstellungsraum (not yet released) */
+  holdPending?: boolean
+  /** waiting AT the Bereitstellungsraum for Lagefreigabe */
+  held?: boolean
   note?: string
 }
 
@@ -192,6 +202,8 @@ export class VehicleSim {
       simSec < rt.moveArrive
     ) {
       const t = (simSec - rt.moveStart) / Math.max(1, rt.moveArrive - rt.moveStart)
+      // street path when available (Rework: Fahrzeuge folgen der Straße)
+      if (rt.movePath && rt.moveCum) return pathPosition(rt.movePath, rt.moveCum, t)
       return lerpLatLon(rt.moveFrom, rt.moveTo, t)
     }
     return rt.moveTo && rt.moveArrive !== undefined && simSec >= rt.moveArrive
@@ -199,18 +211,53 @@ export class VehicleSim {
       : rt.basePos
   }
 
+  /** Remaining street path from the current position (route display on map). */
+  remainingPath(rt: VehicleRuntime, simSec: number): LatLon[] | null {
+    if (
+      !rt.movePath ||
+      !rt.moveCum ||
+      rt.moveStart === undefined ||
+      rt.moveArrive === undefined ||
+      simSec >= rt.moveArrive
+    )
+      return null
+    const t = (simSec - rt.moveStart) / Math.max(1, rt.moveArrive - rt.moveStart)
+    const total = rt.moveCum[rt.moveCum.length - 1] ?? 0
+    const target = t * total
+    const pos = this.posOf(rt, simSec)
+    const rest: LatLon[] = [pos]
+    for (let i = 0; i < rt.movePath.length; i++) {
+      if (rt.moveCum[i]! > target) rest.push(rt.movePath[i]!)
+    }
+    return rest.length > 1 ? rest : null
+  }
+
   private startMove(rt: VehicleRuntime, to: LatLon, simSec: number, sosi: boolean) {
     const from = this.posOf(rt, simSec)
-    const sec = Math.max(20, routeTravelSec(from, to, { typ: rt.unit.typ, sosi }))
+    const typ = rt.unit.typ
+    if (typ === 'HELI') {
+      // Luftlinie nur für Hubschrauber (Rework)
+      const sec = Math.max(20, routeTravelSec(from, to, { typ, sosi }))
+      rt.moveFrom = from
+      rt.moveTo = to
+      rt.movePath = rt.moveCum = undefined
+      rt.moveStart = simSec
+      rt.moveArrive = simSec + sec
+      return
+    }
+    const route = routeGround(from, to, { typ, sosi })
     rt.moveFrom = from
     rt.moveTo = to
+    rt.movePath = route.path
+    rt.moveCum = route.path ? pathCumulativeKm(route.path) : undefined
     rt.moveStart = simSec
-    rt.moveArrive = simSec + sec
+    rt.moveArrive = simSec + Math.max(20, route.sec)
   }
 
   private endMove(rt: VehicleRuntime) {
     if (rt.moveTo) rt.basePos = rt.moveTo
     rt.moveFrom = rt.moveTo = undefined
+    rt.movePath = rt.moveCum = undefined
     rt.moveStart = rt.moveArrive = undefined
   }
 
@@ -245,6 +292,7 @@ export class VehicleSim {
     this.endMove(rt)
     rt.positionTargetCode = undefined
     rt.positionTargetPos = undefined
+    rt.holdPending = rt.held = false
     rt.assignment = {
       onSceneSec: Math.round(randBetween(this.rng, 600, 1200)),
       handoverSec: Math.round(randBetween(this.rng, 480, 900)),
@@ -314,6 +362,7 @@ export class VehicleSim {
     if (!rt || !rt.assignment) return false
     if (rt.status !== '1' && rt.status !== '2' && rt.status !== '3') return false
     this.endMove(rt)
+    rt.holdPending = rt.held = false
     const assignmentId = rt.assignment.id
     rt.assignment = undefined
     const from = rt.status
@@ -355,6 +404,30 @@ export class VehicleSim {
     return true
   }
 
+  /** Lagefreigabe erteilt: alle wartenden/anfahrenden Mittel rücken zum EO vor. */
+  releaseHold(auftragId: string, simSec: number) {
+    for (const rt of this.runtimes.values()) {
+      if (rt.assignment?.id !== auftragId) continue
+      if (!rt.held && !rt.holdPending) continue
+      const a = rt.assignment
+      a.holdAt = undefined
+      rt.holdPending = false
+      rt.held = false
+      rt.note = undefined
+      this.startMove(rt, a.einsatzort, simSec, a.sosi)
+      this.emit({
+        simSec,
+        vehicleId: rt.id,
+        type: 'status',
+        from: '2',
+        to: '2',
+        note: 'Lagefreigabe erhalten — rücken zum Einsatzort vor',
+        assignmentId: a.id,
+      })
+    }
+    this.notify()
+  }
+
   /** Mirror a host snapshot (coop guest — no local ticking, M9). */
   applySnapshot(units: { id: string; status: VehiclePhase; lat: number; lon: number }[]) {
     for (const u of units) {
@@ -380,6 +453,7 @@ export class VehicleSim {
       rt.positionTargetCode = undefined
       rt.positionTargetPos = undefined
       rt.manualService = false
+      rt.holdPending = rt.held = false
     }
     this.notify()
   }
@@ -448,12 +522,35 @@ export class VehicleSim {
         if (a && rt.phaseUntil !== undefined && simSec >= rt.phaseUntil) {
           rt.phaseUntil = undefined
           this.setStatus(rt, '2', simSec)
-          this.startMove(rt, a.einsatzort, simSec, a.sosi)
+          // Lagefreigabe ausständig → erst in den Bereitstellungsraum (Rework 2)
+          if (a.holdAt) {
+            rt.holdPending = true
+            this.startMove(rt, a.holdAt, simSec, a.sosi)
+          } else {
+            this.startMove(rt, a.einsatzort, simSec, a.sosi)
+          }
         }
         break
       case '2':
         if (rt.moveArrive !== undefined && simSec >= rt.moveArrive) {
           this.endMove(rt)
+          if (rt.holdPending) {
+            // angekommen im Bereitstellungsraum: warten auf Freigabe (Status bleibt 2)
+            rt.holdPending = false
+            rt.held = true
+            rt.note = 'Bereitstellungsraum — wartet auf Lagefreigabe'
+            this.emit({
+              simSec,
+              vehicleId: rt.id,
+              type: 'status',
+              from: '2',
+              to: '2',
+              note: 'Bereitstellungsraum erreicht — wartet auf Lagefreigabe (Polizei)',
+              assignmentId: a?.id,
+            })
+            break
+          }
+          if (rt.held) break // still waiting for release
           this.setStatus(rt, '3', simSec)
           rt.phaseUntil = simSec + (a?.onSceneSec ?? 900)
         }

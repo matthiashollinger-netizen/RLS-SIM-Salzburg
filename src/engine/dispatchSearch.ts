@@ -1,6 +1,6 @@
 import type { LatLon } from './geo.ts'
 import { haversineKm } from './geo.ts'
-import { routeTravelSec } from './routing.ts'
+import { routeGround } from './routing.ts'
 import { isAvailable } from './status.ts'
 import type { DutyContext } from './duty.ts'
 import type { UnitType } from './ao.ts'
@@ -54,7 +54,7 @@ export function findUnits(
     if (typeRank < 0) continue
     if (rt.unit.typ === 'HELI' && ctx.weather === 'schlecht') continue
     const pos = sim.posOf(rt, ctx.simSec)
-    const travel = routeTravelSec(pos, einsatzort, { typ: rt.unit.typ, sosi })
+    const travel = routeGround(pos, einsatzort, { typ: rt.unit.typ, sosi }).sec
     const turnout = sim.estimateTurnoutSec(rt.id, ctx.simSec)
     out.push({
       id: rt.id,

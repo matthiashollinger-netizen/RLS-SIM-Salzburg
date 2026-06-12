@@ -18,10 +18,19 @@ export function Taskbar({ defs }: { defs: WindowDef[] }) {
   const [showCoop, setShowCoop] = useState(false)
   const coopMode = useCoopStore((s) => s.mode)
   const coopConnected = useCoopStore((s) => s.connected)
+  const coopDialogRequested = useCoopStore((s) => s.dialogRequested)
 
   useEffect(() => {
     void listPresets().then(setPresets)
   }, [])
+
+  // main menu „Coop" entry lands here with the dialog pre-requested
+  useEffect(() => {
+    if (coopDialogRequested) {
+      setShowCoop(true)
+      useCoopStore.getState().clearDialogRequest()
+    }
+  }, [coopDialogRequested])
 
   return (
     <div className="taskbar">

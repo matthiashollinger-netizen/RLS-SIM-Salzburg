@@ -6,6 +6,7 @@ import { restoreLayout, startLayoutAutosave } from '../windows/layoutPersistence
 import { WINDOW_DEFS } from '../windows/windowDefs.ts'
 import { MapPanel } from '../panels/MapPanel.tsx'
 import { AnrufQueuePanel } from '../panels/AnrufQueuePanel.tsx'
+import { GespraechPanel } from '../panels/GespraechPanel.tsx'
 import { AbfragePanel } from '../panels/AbfragePanel.tsx'
 import { EinsatzPanel } from '../panels/EinsatzPanel.tsx'
 import { RessourcenPanel } from '../panels/RessourcenPanel.tsx'
@@ -21,30 +22,41 @@ function defaultRects(): Record<WindowId, WindowRect> {
   const w = Math.max(window.innerWidth, 1024)
   const h = Math.max(window.innerHeight - 90, 560) // minus footer+taskbar
   return {
-    anrufe: { x: 8, y: 8, w: Math.round(w * 0.17), h: Math.round(h * 0.3) },
-    abfrage: { x: 8, y: Math.round(h * 0.32) + 8, w: Math.round(w * 0.27), h: Math.round(h * 0.66) },
-    karte: {
-      x: Math.round(w * 0.28) + 8,
-      y: 8,
-      w: Math.round(w * 0.27),
-      h: Math.round(h * 0.62),
+    anrufe: { x: 8, y: 8, w: Math.round(w * 0.15), h: Math.round(h * 0.3) },
+    gespraech: {
+      x: 8,
+      y: Math.round(h * 0.32) + 8,
+      w: Math.round(w * 0.15),
+      h: Math.round(h * 0.66),
     },
-    einsatzliste: { x: Math.round(w * 0.56), y: 8, w: Math.round(w * 0.43), h: Math.round(h * 0.55) },
-    ressourcen: {
-      x: Math.round(w * 0.56),
-      y: Math.round(h * 0.57) + 8,
-      w: Math.round(w * 0.43),
-      h: Math.round(h * 0.41),
+    abfrage: {
+      x: Math.round(w * 0.16) + 8,
+      y: 8,
+      w: Math.round(w * 0.22),
+      h: h - 8,
+    },
+    karte: {
+      x: Math.round(w * 0.39) + 8,
+      y: 8,
+      w: Math.round(w * 0.2),
+      h: Math.round(h * 0.6),
     },
     funk: {
-      x: Math.round(w * 0.29),
-      y: Math.round(h * 0.65) + 8,
-      w: Math.round(w * 0.26),
-      h: Math.round(h * 0.33),
+      x: Math.round(w * 0.39) + 8,
+      y: Math.round(h * 0.62) + 8,
+      w: Math.round(w * 0.2),
+      h: Math.round(h * 0.36),
+    },
+    einsatzliste: { x: Math.round(w * 0.6), y: 8, w: Math.round(w * 0.39), h: Math.round(h * 0.55) },
+    ressourcen: {
+      x: Math.round(w * 0.6),
+      y: Math.round(h * 0.57) + 8,
+      w: Math.round(w * 0.39),
+      h: Math.round(h * 0.41),
     },
     protokoll: { x: Math.round(w * 0.36), y: Math.round(h * 0.4), w: 380, h: 260 },
-    khliste: { x: 80, y: 80, w: 420, h: 320 },
-    sonderlagen: { x: 120, y: 120, w: 420, h: 320 },
+    khliste: { x: 80, y: 80, w: 460, h: 340 },
+    sonderlagen: { x: 120, y: 120, w: 460, h: 340 },
   }
 }
 
@@ -71,7 +83,10 @@ export function GamePage() {
         <WindowFrame id="anrufe" title="Anrufe">
           <AnrufQueuePanel />
         </WindowFrame>
-        <WindowFrame id="abfrage" title="Abfrage">
+        <WindowFrame id="gespraech" title="Gespräch">
+          <GespraechPanel />
+        </WindowFrame>
+        <WindowFrame id="abfrage" title="Abfrageschema">
           <AbfragePanel />
         </WindowFrame>
         <WindowFrame id="karte" title="Lagekarte">

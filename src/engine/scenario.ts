@@ -71,216 +71,465 @@ export interface Scenario {
   storyArc?: string
 }
 
-const LAGE_TEXTE: Record<string, string[]> = {
+/**
+ * Lage-Varianten (Rework 2, Anrufer-Konsistenz): Lagetext und die beiden
+ * Detail-Antworten gehören FEST zusammen — keine Widersprüche mehr
+ * (z. B. „Lift" im Eröffnungssatz, „Badezimmer" auf Nachfrage). Optionale
+ * Constraints erzwingen plausible Rolle/Alter/Geschlecht.
+ */
+interface LageVariante {
+  text: string
+  detail1: string
+  detail2: string
+  rolle?: AnruferRolle
+  alter?: [number, number]
+  geschlecht?: 'm' | 'w'
+}
+
+const LAGEN: Record<string, LageVariante[]> = {
   reanimation: [
-    'Mein Mann ist umgefallen und rührt sich nicht mehr! Er schnauft so komisch!',
-    'Da liegt einer am Boden, ganz blau im Gesicht, der atmet nicht!',
+    {
+      text: 'Mein Mann ist umgefallen und rührt sich nicht mehr! Er schnauft so komisch!',
+      detail1: 'Ja, er liegt direkt vor mir.',
+      detail2: 'Ich… ich glaub schon, sagen Sie mir was ich tun soll!',
+      rolle: 'angehoeriger',
+      alter: [50, 88],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Da liegt einer am Boden, ganz blau im Gesicht, der atmet nicht!',
+      detail1: 'Ich seh ihn von hier, er liegt am Gehsteig.',
+      detail2: 'Ich trau mich, wenn Sie mir sagen wie!',
+      rolle: 'passant',
+      alter: [40, 85],
+      geschlecht: 'm',
+    },
   ],
   brustschmerz: [
-    'Mein Vater hat so einen Druck auf der Brust, ihm ist schlecht.',
-    'Ich hab solche Schmerzen in der Brust, es zieht in den Arm.',
+    {
+      text: 'Mein Vater hat so einen Druck auf der Brust, ihm ist schlecht.',
+      detail1: 'Ja, in den linken Arm.',
+      detail2: 'Ja, ganz nass und grau im Gesicht.',
+      rolle: 'angehoeriger',
+      alter: [55, 90],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Ich hab solche Schmerzen in der Brust, es zieht in den Arm.',
+      detail1: 'In den linken Arm, bis in den Kiefer.',
+      detail2: 'Schauen kann ich nicht, aber mir rinnt der Schweiß runter.',
+      rolle: 'selbst',
+      alter: [45, 80],
+    },
   ],
   atemnot: [
-    'Meine Frau bekommt keine Luft mehr, sie ringt richtig!',
-    'Der Nachbar sitzt am Fenster und schnappt nach Luft.',
+    {
+      text: 'Meine Frau bekommt keine Luft mehr, sie ringt richtig!',
+      detail1: 'Kaum — nur einzelne Wörter.',
+      detail2: 'Ja, COPD seit Jahren.',
+      rolle: 'angehoeriger',
+      alter: [55, 88],
+      geschlecht: 'w',
+    },
+    {
+      text: 'Der Nachbar sitzt am Fenster und schnappt nach Luft.',
+      detail1: 'Nein, er ringt nur nach Luft!',
+      detail2: 'Das weiß ich nicht, ich bin nur der Nachbar.',
+      rolle: 'passant',
+      alter: [50, 85],
+      geschlecht: 'm',
+    },
   ],
   bewusstlos: [
-    'Meine Mutter ist einfach zusammengesackt, jetzt ist sie wieder halbwegs da.',
-    'Da ist jemand umgekippt im Geschäft, sie reagiert kaum.',
+    {
+      text: 'Meine Mutter ist einfach zusammengesackt, jetzt ist sie wieder halbwegs da.',
+      detail1: 'Jetzt atmet sie wieder normal, glaub ich.',
+      detail2: 'Nein, keine Zuckungen.',
+      rolle: 'angehoeriger',
+      alter: [55, 92],
+      geschlecht: 'w',
+    },
+    {
+      text: 'Da ist jemand umgekippt im Geschäft, sie reagiert kaum.',
+      detail1: 'Ja, atmet — aber ganz flach.',
+      detail2: 'Ja, kurz gezuckt hat es.',
+      rolle: 'passant',
+      alter: [30, 80],
+      geschlecht: 'w',
+    },
   ],
   schlaganfall: [
-    'Mein Mann redet auf einmal so komisch und der Mundwinkel hängt.',
-    'Die Oma kann den Arm nicht mehr heben und lallt.',
+    {
+      text: 'Mein Mann redet auf einmal so komisch und der Mundwinkel hängt.',
+      detail1: 'Ja! Der rechte Mundwinkel hängt ganz runter.',
+      detail2: 'Vor circa einer halben Stunde hat es angefangen.',
+      rolle: 'angehoeriger',
+      alter: [55, 90],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Die Oma kann den Arm nicht mehr heben und lallt.',
+      detail1: 'Ich glaub schon… ja, das Gesicht ist schief.',
+      detail2: 'Seit heute Früh schon.',
+      rolle: 'angehoeriger',
+      alter: [70, 95],
+      geschlecht: 'w',
+    },
   ],
   krampfanfall: [
-    'Mein Sohn krampft am ganzen Körper, bitte schnell!',
-    'Da liegt wer am Gehsteig und zuckt ganz arg.',
+    {
+      text: 'Mein Sohn krampft am ganzen Körper, bitte schnell!',
+      detail1: 'Ja! Es hört nicht auf!',
+      detail2: 'Ja, Epilepsie seit der Kindheit.',
+      rolle: 'angehoeriger',
+      alter: [6, 25],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Da liegt wer am Gehsteig und zuckt ganz arg.',
+      detail1: 'Nein, jetzt liegt er still da und schnauft.',
+      detail2: 'Das weiß ich nicht, ich kenn den Mann nicht.',
+      rolle: 'passant',
+      alter: [20, 70],
+      geschlecht: 'm',
+    },
   ],
   sturz: [
-    'Die Nachbarin ist von der Leiter gefallen, das Bein steht ganz schief.',
-    'Mein Vater ist gestürzt und jetzt blutet er am Kopf.',
+    {
+      text: 'Die Nachbarin ist von der Leiter gefallen, das Bein steht ganz schief.',
+      detail1: 'Von der Leiter, circa drei Meter.',
+      detail2: 'Nein, keine Blutverdünner, soweit ich weiß.',
+      rolle: 'passant',
+      alter: [40, 80],
+      geschlecht: 'w',
+    },
+    {
+      text: 'Mein Vater ist gestürzt und jetzt blutet er am Kopf.',
+      detail1: 'Nur über die Teppichkante, aber er kommt nicht mehr hoch.',
+      detail2: 'Ja, Marcoumar!',
+      rolle: 'angehoeriger',
+      alter: [70, 95],
+      geschlecht: 'm',
+    },
   ],
   verkehrsunfall: [
-    'Da ist ein Auto gegen einen Baum, die Windschutzscheibe ist kaputt!',
-    'Zwei Autos sind zusammengekracht, eines liegt im Graben!',
+    {
+      text: 'Da ist ein Auto gegen einen Baum, die Windschutzscheibe ist kaputt!',
+      detail1: 'Ich glaub der Fahrer ist eingeklemmt, die Tür geht nicht auf!',
+      detail2: 'Nur eines, gegen den Baum.',
+      rolle: 'passant',
+      alter: [18, 75],
+    },
+    {
+      text: 'Zwei Autos sind zusammengekracht, eines liegt im Graben!',
+      detail1: 'Nein, alle sind draußen, aber einer liegt im Gras.',
+      detail2: 'Zwei.',
+      rolle: 'passant',
+      alter: [18, 75],
+    },
   ],
   blutung: [
-    'Er hat sich mit der Kreissäge geschnitten, das blutet wie verrückt!',
-    'Meine Frau hat starkes Nasenbluten, es hört nicht auf, sie nimmt Marcoumar.',
+    {
+      text: 'Er hat sich mit der Kreissäge geschnitten, das blutet wie verrückt!',
+      detail1: 'Ja, es spritzt richtig!',
+      detail2: 'Wir drücken mit einem Tuch drauf, es wird kaum weniger!',
+      rolle: 'angehoeriger',
+      alter: [25, 70],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Meine Frau hat starkes Nasenbluten, es hört nicht auf, sie nimmt Marcoumar.',
+      detail1: 'Es rinnt stark, aber spritzen tut nichts.',
+      detail2: 'Es geht durch jedes Taschentuch durch!',
+      rolle: 'angehoeriger',
+      alter: [60, 90],
+      geschlecht: 'w',
+    },
   ],
   bauchschmerz: [
-    'Ich hab seit Stunden so schlimme Bauchschmerzen, rechts unten.',
-    'Meinem Mann ist speiübel und der Bauch ist ganz hart.',
+    {
+      text: 'Ich hab seit Stunden so schlimme Bauchschmerzen, rechts unten.',
+      detail1: 'Rechts unten, ganz stark beim Drücken.',
+      detail2: 'Nein, nichts dergleichen.',
+      rolle: 'selbst',
+      alter: [16, 60],
+    },
+    {
+      text: 'Meinem Mann ist speiübel und der Bauch ist ganz hart.',
+      detail1: 'So um den Nabel herum, wellenartig.',
+      detail2: 'Erbrochen ja, Blut nein.',
+      rolle: 'angehoeriger',
+      alter: [40, 85],
+      geschlecht: 'm',
+    },
   ],
   allergie: [
-    'Mein Sohn ist von einer Wespe gestochen worden, das Gesicht schwillt an!',
-    'Sie hat Nüsse gegessen und kriegt Ausschlag am ganzen Körper, die Zunge kribbelt.',
+    {
+      text: 'Mein Sohn ist von einer Wespe gestochen worden, das Gesicht schwillt an!',
+      detail1: 'Ja! Die Lippen und die Zunge schwellen an!',
+      detail2: 'Ja, gegen Wespen — aber das Notfallset ist abgelaufen!',
+      rolle: 'angehoeriger',
+      alter: [5, 16],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Sie hat Nüsse gegessen und kriegt Ausschlag am ganzen Körper, die Zunge kribbelt.',
+      detail1: 'Nein, nur der Ausschlag am Körper — aber die Zunge kribbelt.',
+      detail2: 'Nein, das ist das erste Mal.',
+      rolle: 'angehoeriger',
+      alter: [16, 50],
+      geschlecht: 'w',
+    },
   ],
   vergiftung: [
-    'Meine Tochter hat Tabletten geschluckt, ich weiß nicht wie viele!',
-    'Mein Freund hat irgendwas genommen, er ist ganz weggetreten.',
+    {
+      text: 'Meine Tochter hat Tabletten geschluckt, ich weiß nicht wie viele!',
+      detail1: 'Schlaftabletten von der Oma — die Schachtel ist leer!',
+      detail2: 'Vor circa einer Stunde, glaub ich.',
+      rolle: 'angehoeriger',
+      alter: [14, 25],
+      geschlecht: 'w',
+    },
+    {
+      text: 'Mein Freund hat irgendwas genommen, er ist ganz weggetreten.',
+      detail1: 'Irgendwas Gemischtes, mit Alkohol.',
+      detail2: 'Ich weiß es nicht, ich bin grad erst gekommen.',
+      rolle: 'angehoeriger',
+      alter: [18, 40],
+      geschlecht: 'm',
+    },
   ],
   geburt: [
-    'Meine Frau bekommt das Baby! Die Wehen kommen ganz schnell!',
-    'Die Fruchtblase ist geplatzt, wir schaffen es nicht mehr ins Krankenhaus!',
+    {
+      text: 'Meine Frau bekommt das Baby! Die Wehen kommen ganz schnell!',
+      detail1: 'Alle zwei Minuten!',
+      detail2: '38. Woche.',
+      rolle: 'angehoeriger',
+      alter: [20, 42],
+      geschlecht: 'w',
+    },
+    {
+      text: 'Die Fruchtblase ist geplatzt, wir schaffen es nicht mehr ins Krankenhaus!',
+      detail1: 'So alle drei, vier Minuten.',
+      detail2: 'Die 36. glaub ich.',
+      rolle: 'angehoeriger',
+      alter: [20, 42],
+      geschlecht: 'w',
+    },
   ],
   psychisch: [
-    'Mein Bruder redet davon, sich was anzutun. Ich komm nicht zu ihm rein.',
-    'Eine Frau steht da ganz aufgelöst und schreit, sie will springen.',
+    {
+      text: 'Mein Bruder redet davon, sich was anzutun. Ich komm nicht zu ihm rein.',
+      detail1: 'Er hat es ganz konkret angekündigt, ja!',
+      detail2: 'Nein, aggressiv nicht. Nur verzweifelt.',
+      rolle: 'angehoeriger',
+      alter: [20, 60],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Eine Frau steht da ganz aufgelöst und schreit, sie will springen.',
+      detail1: 'Sie sagt es immer wieder, ja!',
+      detail2: 'Aggressiv nicht, aber völlig außer sich.',
+      rolle: 'passant',
+      alter: [20, 65],
+      geschlecht: 'w',
+    },
   ],
   gewalt: [
-    'Da war eine Schlägerei vorm Lokal, einer liegt am Boden und blutet!',
-    'Mein Nachbar wurde mit einem Messer verletzt! Der Typ ist weggerannt… glaub ich.',
+    {
+      text: 'Da war eine Schlägerei vorm Lokal, einer liegt am Boden und blutet!',
+      detail1: 'Ich glaub die sind weg… ich seh niemanden mehr.',
+      detail2: 'Am Kopf, eine große Platzwunde.',
+      rolle: 'passant',
+      alter: [18, 45],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Mein Nachbar wurde mit einem Messer verletzt! Der Typ ist weggerannt… glaub ich.',
+      detail1: 'ER KÖNNTE NOCH DA SEIN, ich hab Angst!',
+      detail2: 'Am Bauch — da ist viel Blut!',
+      rolle: 'passant',
+      alter: [25, 65],
+      geschlecht: 'm',
+    },
   ],
   wasser: [
-    'Im See treibt jemand, er bewegt sich nicht!',
-    'Ein Kind ist in den Bach gefallen, sie haben es rausgezogen, es hustet ganz arg.',
+    {
+      text: 'Im See treibt jemand, er bewegt sich nicht!',
+      detail1: 'JA, ich seh ihn noch treiben!',
+      detail2: 'Keine Ahnung — wir haben ihn erst jetzt gesehen.',
+      rolle: 'passant',
+      alter: [15, 70],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Ein Kind ist in den Bach gefallen, sie haben es rausgezogen, es hustet ganz arg.',
+      detail1: 'Nein, es ist schon draußen!',
+      detail2: 'Vielleicht eine Minute, ging ganz schnell.',
+      rolle: 'passant',
+      alter: [4, 12],
+    },
   ],
   alpin: [
-    'Mein Mann ist beim Wandern abgestürzt, ich sehe ihn unten am Schotterfeld!',
-    'Auf der Piste liegt einer, der ist gegen den Lift gefahren, das Bein ist hin.',
+    {
+      text: 'Mein Mann ist beim Wandern abgestürzt, ich sehe ihn unten am Schotterfeld!',
+      detail1: 'Nein, das ist steiles Schottergelände, da kommt keiner zu Fuß hin.',
+      detail2: 'Sonnig, gute Sicht.',
+      rolle: 'angehoeriger',
+      alter: [30, 70],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Auf der Piste liegt einer, der ist gegen den Lift gefahren, das Bein ist hin.',
+      detail1: 'Ja, mit dem Skidoo kommt man hin, die Pistenrettung ist verständigt.',
+      detail2: 'Leicht bewölkt, gute Sicht.',
+      rolle: 'passant',
+      alter: [16, 60],
+      geschlecht: 'm',
+    },
   ],
   brand: [
-    'Bei den Nachbarn brennts in der Küche, die Frau hat Rauch eingeatmet!',
-    'Im Keller hat es gebrannt, mein Mann hat gelöscht und jetzt hustet er Ruß.',
+    {
+      text: 'Bei den Nachbarn brennts in der Küche, die Frau hat Rauch eingeatmet!',
+      detail1: 'Ich weiß nicht — vielleicht ist noch wer drin!',
+      detail2: 'Ja, sie hustet ganz stark.',
+      rolle: 'passant',
+      alter: [30, 80],
+      geschlecht: 'w',
+    },
+    {
+      text: 'Im Keller hat es gebrannt, mein Mann hat gelöscht und jetzt hustet er Ruß.',
+      detail1: 'Nein, alle sind draußen!',
+      detail2: 'Ja, er hustet schwarzen Auswurf.',
+      rolle: 'angehoeriger',
+      alter: [35, 75],
+      geschlecht: 'm',
+    },
   ],
   strom: [
-    'Mein Kollege hat an der Leitung gearbeitet und einen Schlag bekommen!',
-    'Er hängt am Weidezaun-Gerät fest gewesen, jetzt ist ihm ganz schwindlig.',
+    {
+      text: 'Mein Kollege hat an der Leitung gearbeitet und einen Schlag bekommen!',
+      detail1: 'Ja, der FI-Schalter ist gefallen.',
+      detail2: 'Normale Steckdose, 230 Volt.',
+      rolle: 'passant',
+      alter: [20, 60],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Er ist am Weidezaun-Gerät hängen geblieben, jetzt ist ihm ganz schwindlig.',
+      detail1: 'Ja, wir haben alles abgesteckt.',
+      detail2: 'Nur der Weidezaun, keine Hochspannung.',
+      rolle: 'angehoeriger',
+      alter: [25, 70],
+      geschlecht: 'm',
+    },
   ],
   eingeklemmt: [
-    'Auf der Baustelle ist eine Platte umgefallen, der Hubert ist drunter!',
-    'Der Traktor ist umgekippt, mein Vater ist eingeklemmt!',
+    {
+      text: 'Auf der Baustelle ist eine Platte umgefallen, der Hubert ist drunter!',
+      detail1: 'Eine Betonplatte liegt auf seinem Bein.',
+      detail2: 'Ja, er redet noch mit uns.',
+      rolle: 'passant',
+      alter: [25, 60],
+      geschlecht: 'm',
+    },
+    {
+      text: 'Der Traktor ist umgekippt, mein Vater ist eingeklemmt!',
+      detail1: 'Der Traktor liegt auf ihm drauf!',
+      detail2: 'Er antwortet nicht mehr!',
+      rolle: 'angehoeriger',
+      alter: [45, 80],
+      geschlecht: 'm',
+    },
   ],
   eingeschlossen: [
-    'Die Oma ist im Bad eingesperrt und antwortet nicht mehr richtig.',
-    'Der Lift steckt fest, da drin ist ein Herzpatient!',
+    {
+      text: 'Die Oma ist im Bad eingesperrt und antwortet nicht mehr richtig.',
+      detail1: 'Im Badezimmer, erster Stock.',
+      detail2: 'Nur eingesperrt — aber sie ist 92 und antwortet kaum noch.',
+      rolle: 'angehoeriger',
+      alter: [85, 96],
+      geschlecht: 'w',
+    },
+    {
+      text: 'Der Lift steckt fest, da drin ist ein Herzpatient!',
+      detail1: 'Im Lift, zwischen zwei Stockwerken.',
+      detail2: 'Ja, er hat ein Herzleiden und bekommt Panik!',
+      rolle: 'passant',
+      alter: [55, 85],
+      geschlecht: 'm',
+    },
   ],
   krank: [
-    'Meiner Mutter geht es seit Tagen schlecht, heute kommt sie gar nicht mehr auf.',
-    'Mein Mann hat hohes Fieber und ist ganz verwirrt.',
+    {
+      text: 'Meiner Mutter geht es seit Tagen schlecht, heute kommt sie gar nicht mehr auf.',
+      detail1: 'Seit drei Tagen wird es immer schlimmer.',
+      detail2: 'Kein Fieber, aber sie ist ganz schwach.',
+      rolle: 'angehoeriger',
+      alter: [60, 95],
+      geschlecht: 'w',
+    },
+    {
+      text: 'Mein Mann hat hohes Fieber und ist ganz verwirrt.',
+      detail1: 'Seit heute Morgen.',
+      detail2: '39,5 Fieber, und erbrochen hat er auch.',
+      rolle: 'angehoeriger',
+      alter: [50, 90],
+      geschlecht: 'm',
+    },
   ],
   rufhilfe: [
-    'Hier Rufhilfe-Zentrale, Alarm von Teilnehmerin Huber, keine Sprechverbindung.',
-    'Rufhilfe-Alarm, Teilnehmer reagiert nicht auf Rückruf.',
+    {
+      text: 'Hier Rufhilfe-Zentrale, Alarm von Teilnehmerin Huber, keine Sprechverbindung.',
+      detail1: 'Keine Reaktion auf die Gegensprechanlage.',
+      detail2: 'Ja, ein Schlüsselsafe ist hinterlegt, den Code haben wir.',
+      rolle: 'fachpersonal',
+      alter: [75, 96],
+      geschlecht: 'w',
+    },
+    {
+      text: 'Rufhilfe-Alarm, Teilnehmer reagiert nicht auf Rückruf.',
+      detail1: 'Sie hat kurz gestöhnt, mehr kam nicht.',
+      detail2: 'Nein, kein Schlüssel deponiert.',
+      rolle: 'fachpersonal',
+      alter: [75, 96],
+    },
   ],
   unklar: [
-    'Da liegt wer im Park, ich trau mich nicht hin.',
-    'Bei den Nachbarn schreit wer um Hilfe, ich weiß nicht was los ist.',
+    {
+      text: 'Da liegt wer im Park, ich trau mich nicht hin.',
+      detail1: 'Eine Person liegt am Boden und bewegt sich nicht.',
+      detail2: 'Nein… Moment… doch, der Arm hat sich gerade bewegt!',
+      rolle: 'passant',
+      alter: [25, 75],
+    },
+    {
+      text: 'Bei den Nachbarn schreit wer um Hilfe, ich weiß nicht was los ist.',
+      detail1: 'Ich höre nur Schreie aus der Wohnung.',
+      detail2: 'Ich trau mich nicht näher hin.',
+      rolle: 'passant',
+      alter: [20, 90],
+    },
   ],
 }
 
-const DETAIL_ANTWORTEN: Record<string, [string[], string[]]> = {
-  reanimation: [
-    ['Ja, er liegt direkt vor mir.', 'Ich seh ihn von hier.'],
-    ['Ich… ich glaub schon, sagen Sie mir was ich tun soll!', 'Ich trau mich nicht!'],
-  ],
-  brustschmerz: [
-    ['Ja, in den linken Arm.', 'Bis in den Kiefer hinauf.'],
-    ['Ja, ganz nass und grau im Gesicht.', 'Nein, aber er zittert.'],
-  ],
-  atemnot: [
-    ['Kaum — nur einzelne Wörter.', 'Nein, sie ringt nur nach Luft!'],
-    ['Ja, COPD seit Jahren.', 'Nein, nie Probleme gehabt.'],
-  ],
-  bewusstlos: [
-    ['Jetzt atmet sie wieder normal, glaub ich.', 'Ja, atmet — aber ganz flach.'],
-    ['Nein, keine Zuckungen.', 'Ja, kurz gezuckt hat es.'],
-  ],
-  schlaganfall: [
-    ['Ja! Der rechte Mundwinkel hängt ganz runter.', 'Ich glaub schon… ja, das Gesicht ist schief.'],
-    ['Vor circa einer halben Stunde hat es angefangen.', 'Seit heute Früh schon.'],
-  ],
-  krampfanfall: [
-    ['Nein, jetzt liegt er still da und schnauft.', 'Ja! Es hört nicht auf!'],
-    ['Ja, Epilepsie seit der Kindheit.', 'Nein, so etwas hatte sie noch nie.'],
-  ],
-  sturz: [
-    ['Von der Leiter, circa drei Meter.', 'Nur über die Teppichkante, aber sie kommt nicht mehr hoch.'],
-    ['Ja, Marcoumar!', 'Nein, keine Blutverdünner, soweit ich weiß.'],
-  ],
-  verkehrsunfall: [
-    ['Ich glaub der Fahrer ist eingeklemmt, die Tür geht nicht auf!', 'Nein, alle sind draußen.'],
-    ['Zwei.', 'Nur eines, aber es liegt am Dach.'],
-  ],
-  blutung: [
-    ['Ja, es spritzt richtig!', 'Es rinnt stark, aber spritzen tut nichts.'],
-    ['Wir drücken mit einem Tuch drauf, es wird weniger.', 'Nein! Es geht durch alles durch!'],
-  ],
-  bauchschmerz: [
-    ['Rechts unten, ganz stark beim Drücken.', 'So um den Nabel herum, wellenartig.'],
-    ['Erbrochen ja, Blut nein.', 'Nein, nichts dergleichen.'],
-  ],
-  allergie: [
-    ['Ja! Die Lippen und die Zunge schwellen an!', 'Nein, nur der Ausschlag am Körper.'],
-    ['Ja, gegen Wespen — aber das Notfallset ist abgelaufen!', 'Nein, das ist das erste Mal.'],
-  ],
-  vergiftung: [
-    ['Schlaftabletten von der Oma — die Schachtel ist leer!', 'Irgendwas Gemischtes, mit Alkohol.'],
-    ['Vor circa einer Stunde, glaub ich.', 'Ich weiß es nicht, wir haben sie erst jetzt gefunden.'],
-  ],
-  geburt: [
-    ['Alle zwei Minuten!', 'So alle zehn Minuten.'],
-    ['38. Woche.', 'Die 36. glaub ich.'],
-  ],
-  psychisch: [
-    ['Er hat es ganz konkret angekündigt, ja!', 'Ich weiß nicht — er ist völlig durcheinander.'],
-    ['Nein, aggressiv nicht. Nur verzweifelt.', 'Ja, er hat schon einen Sessel geworfen!'],
-  ],
-  gewalt: [
-    ['Ich glaub er ist weg… ich seh ihn nicht mehr.', 'ER STEHT NOCH DA DRÜBEN!'],
-    ['Am Bauch — da ist viel Blut!', 'Am Kopf, eine große Platzwunde.'],
-  ],
-  wasser: [
-    ['Nein, sie haben ihn schon rausgezogen!', 'JA, ich seh ihn noch treiben!'],
-    ['Vielleicht zwei, drei Minuten.', 'Keine Ahnung — wir haben ihn erst jetzt gesehen.'],
-  ],
-  alpin: [
-    ['Nein, das ist steiles Schottergelände, da kommt keiner zu Fuß hin.', 'Ja, über den Wanderweg kommt man hin.'],
-    ['Sonnig, gute Sicht.', 'Es zieht gerade Nebel auf!'],
-  ],
-  brand: [
-    ['Nein, alle sind draußen!', 'Ich weiß nicht — die Nachbarin ist vielleicht noch drin!'],
-    ['Ja, sie hustet ganz stark.', 'Nein, allen geht es soweit gut.'],
-  ],
-  strom: [
-    ['Ja, der FI-Schalter ist gefallen.', 'Ich weiß es nicht, da hängt alles voller Kabel!'],
-    ['Normale Steckdose, 230 Volt.', 'Das war die große Leitung am Dach!'],
-  ],
-  eingeklemmt: [
-    ['Eine Betonplatte liegt auf seinem Bein.', 'Der Traktor liegt auf ihm drauf!'],
-    ['Ja, er redet noch mit uns.', 'Er antwortet nicht mehr!'],
-  ],
-  eingeschlossen: [
-    ['Im Badezimmer, erster Stock.', 'Im Lift, zwischen zwei Stockwerken.'],
-    ['Ja, sie hat ein Herzleiden!', 'Nein, nur eingesperrt — aber sie ist 92.'],
-  ],
-  krank: [
-    ['Seit drei Tagen wird es immer schlimmer.', 'Seit heute Morgen.'],
-    ['38,9 Fieber, und erbrochen hat sie auch.', 'Kein Fieber, aber sie ist ganz schwach.'],
-  ],
-  rufhilfe: [
-    ['Keine Reaktion auf die Gegensprechanlage.', 'Sie hat kurz gestöhnt, mehr kam nicht.'],
-    ['Ja, ein Schlüsselsafe ist hinterlegt, den Code haben wir.', 'Nein, kein Schlüssel deponiert.'],
-  ],
-  unklar: [
-    ['Eine Person liegt am Boden und bewegt sich nicht.', 'Ich höre nur Schreie aus der Wohnung.'],
-    ['Nein… Moment… doch, der Arm hat sich gerade bewegt!', 'Ich trau mich nicht näher hin.'],
-  ],
+const FALLBACK_VARIANTE: LageVariante = {
+  text: 'Es ist etwas passiert, bitte kommen Sie schnell!',
+  detail1: 'Ich weiß es nicht genau.',
+  detail2: 'Schwer zu sagen.',
 }
 
-function pickLage(rng: Rng, hb: Hauptbeschwerde): string {
-  const texts = LAGE_TEXTE[hb.id] ?? ['Es ist etwas passiert, bitte kommen Sie schnell!']
-  return texts[Math.floor(rng() * texts.length)]!
-}
-
-function pickDetails(rng: Rng, hb: Hauptbeschwerde): [string, string] {
-  const d = DETAIL_ANTWORTEN[hb.id]
-  if (!d) return ['Ich weiß es nicht genau.', 'Schwer zu sagen.']
-  return [
-    d[0][Math.floor(rng() * d[0].length)]!,
-    d[1][Math.floor(rng() * d[1].length)]!,
-  ]
+/** plausible patient age by caller role when the variant has no range */
+function alterFuerRolle(rng: Rng, rolle: AnruferRolle): number {
+  const ranges: Record<AnruferRolle, [number, number]> = {
+    selbst: [18, 85],
+    angehoeriger: [35, 92],
+    passant: [15, 88],
+    fachpersonal: [20, 95],
+    kind: [28, 55], // a child calls about a parent
+  }
+  const [min, max] = ranges[rolle]
+  return Math.round(randBetween(rng, min, max))
 }
 
 function pickPlaceOrt(rng: Rng, region: Region): ScenarioOrt {
@@ -366,27 +615,15 @@ export function generateScenario(rng: Rng, opts: GenerateOpts): Scenario {
       }
     : pickPlaceOrt(rng, opts.region)
 
-  const [detail1, detail2] = pickDetails(rng, hb)
+  // ONE variant binds Lagetext + Detailantworten + Rolle/Alter/Geschlecht
+  // (Rework 2: Anrufer-Konsistenz)
+  const varianten = LAGEN[hb.id] ?? [FALLBACK_VARIANTE]
+  const variante = varianten[Math.floor(rng() * varianten.length)]!
 
-  const truth: ScenarioTruth = {
-    categoryId: hb.categoryId,
-    hauptbeschwerdeId: hb.id,
-    severity: hb.severity,
-    personen,
-    alter: 5 + Math.floor(rng() * 85),
-    geschlecht: rng() < 0.5 ? 'm' : 'w',
-    ansprechbar,
-    atmet,
-    zugang: rng() < 0.8 ? 'frei' : rng() < 0.5 ? 'versperrt' : 'schwer',
-    lageText: pickLage(rng, hb),
-    detail1,
-    detail2,
-    ort,
-  }
-
-  // caller profile
+  // caller profile — variant constraint wins, otherwise weighted
   const rolle: AnruferRolle =
-    hb.id === 'reanimation' || !ansprechbar
+    variante.rolle ??
+    (hb.id === 'reanimation' || !ansprechbar
       ? pickWeighted(rng, [
           { value: 'angehoeriger' as const, weight: 60 },
           { value: 'passant' as const, weight: 35 },
@@ -398,7 +635,25 @@ export function generateScenario(rng: Rng, opts: GenerateOpts): Scenario {
           { value: 'passant' as const, weight: 25 },
           { value: 'fachpersonal' as const, weight: 7 },
           { value: 'kind' as const, weight: 3 },
-        ])
+        ]))
+
+  const truth: ScenarioTruth = {
+    categoryId: hb.categoryId,
+    hauptbeschwerdeId: hb.id,
+    severity: hb.severity,
+    personen,
+    alter: variante.alter
+      ? Math.round(randBetween(rng, variante.alter[0], variante.alter[1]))
+      : alterFuerRolle(rng, rolle),
+    geschlecht: variante.geschlecht ?? (rng() < 0.5 ? 'm' : 'w'),
+    ansprechbar,
+    atmet,
+    zugang: rng() < 0.8 ? 'frei' : rng() < 0.5 ? 'versperrt' : 'schwer',
+    lageText: variante.text,
+    detail1: variante.detail1,
+    detail2: variante.detail2,
+    ort,
+  }
   const emotion: Emotion =
     truth.severity === 'hoch'
       ? pickWeighted(rng, [

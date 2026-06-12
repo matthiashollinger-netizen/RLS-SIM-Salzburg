@@ -5,6 +5,7 @@ import { helicopters, hospitals, stations } from '../data/index.ts'
 import { useMapStore, type MapLayers } from '../state/mapStore.ts'
 import { attachVehicleMarkers } from './vehicleMarkers.ts'
 import { attachIncidentMarkers } from './incidentMarkers.ts'
+import { attachRouteLayer } from './routeLayer.ts'
 import './map-panel.css'
 
 /**
@@ -133,6 +134,7 @@ export function MapPanel() {
 
     const detachVehicles = attachVehicleMarkers(map)
     const detachIncidents = attachIncidentMarkers(map)
+    const detachRoutes = attachRouteLayer(map)
 
     const ro = new ResizeObserver(() => map.resize())
     ro.observe(container)
@@ -143,6 +145,7 @@ export function MapPanel() {
       unsubFocus()
       detachVehicles()
       detachIncidents()
+      detachRoutes()
       for (const list of Object.values(infra)) for (const m of list) m.remove()
       map.remove()
       mapRef.current = null

@@ -27,7 +27,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     id: 'abfrage',
-    text: 'Führe die Notrufabfrage: Frage mindestens, WAS passiert ist und ob die Person ansprechbar ist (Frage-Buttons in der Abfrage).',
+    text: 'Sprich mit dem Anrufer im Fenster „Gespräch": Frage mindestens, WAS passiert ist und ob die Person ansprechbar ist.',
     done: () => {
       const call = useCallStore.getState().active
       if (!call) return true
@@ -36,8 +36,13 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     },
   },
   {
+    id: 'notieren',
+    text: 'Notiere die Antworten im Fenster „Abfrageschema": Ansprechbar Ja/Nein anklicken — das Schema ist deine offizielle Dokumentation.',
+    done: () => useCallStore.getState().active?.answers.ansprechbar !== undefined,
+  },
+  {
     id: 'beschwerde',
-    text: 'Wähle jetzt die Hauptbeschwerde (hier: Brustschmerz) — daraus entsteht das Einsatzstichwort.',
+    text: 'Wähle im Abfrageschema die Hauptbeschwerde (hier: Brustschmerz) — daraus entsteht das Einsatzstichwort.',
     done: () => !!useCallStore.getState().active?.answers.hauptbeschwerdeId,
   },
   {

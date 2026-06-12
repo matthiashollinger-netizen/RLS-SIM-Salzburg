@@ -36,6 +36,33 @@ export function lerpLatLon(a: LatLon, b: LatLon, t: number): LatLon {
   return { lat: a.lat + (b.lat - a.lat) * c, lon: a.lon + (b.lon - a.lon) * c }
 }
 
+/** Cumulative distances (km) along a polyline; index 0 = 0. */
+export function pathCumulativeKm(path: LatLon[]): number[] {
+  const cum = [0]
+  for (let i = 1; i < path.length; i++) {
+    cum.push(cum[i - 1]! + haversineKm(path[i - 1]!, path[i]!))
+  }
+  return cum
+}
+
+/** Position along a polyline at `fraction` (0..1) of its total length. */
+export function pathPosition(path: LatLon[], cum: number[], fraction: number): LatLon {
+  const total = cum[cum.length - 1] ?? 0
+  if (total === 0 || path.length < 2) return path[path.length - 1] ?? { lat: 0, lon: 0 }
+  const target = Math.min(1, Math.max(0, fraction)) * total
+  let lo = 0
+  let hi = cum.length - 1
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1
+    if (cum[mid]! < target) lo = mid + 1
+    else hi = mid
+  }
+  const i = Math.max(1, lo)
+  const segLen = cum[i]! - cum[i - 1]!
+  const t = segLen === 0 ? 0 : (target - cum[i - 1]!) / segLen
+  return lerpLatLon(path[i - 1]!, path[i]!, t)
+}
+
 /** Circle polygon (lon/lat ring) around a center, radius in meters. */
 export function geoCircle(center: LatLon, radiusM: number, points = 48): [number, number][] {
   const ring: [number, number][] = []

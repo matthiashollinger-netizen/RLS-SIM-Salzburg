@@ -98,21 +98,33 @@ export function FunkPanel() {
                   „kommen"
                 </button>
               )}
-              {s.stage === 'offen' && (
+              {s.stage !== 'ruf' && (s.stage === 'offen' || (s.action && !s.actionDone)) && (
                 <div className="funk-offen-actions">
-                  {s.action?.type === 'a4' && (
+                  {s.action && !s.actionDone && s.action.type === 'a4' && (
                     <button className="funk-action funk-action-a4" onClick={() => executeAction(s.id)}>
-                      A4-Nachforderung anlegen
+                      Auftrag auf A4 aufwerten (NA nachfordern)
                     </button>
                   )}
-                  {s.action?.type === 'polizei' && (
+                  {s.action && !s.actionDone && s.action.type === 'polizei' && (
                     <button className="funk-action" onClick={() => executeAction(s.id)}>
                       Polizei alarmieren
                     </button>
                   )}
-                  <button className="funk-action funk-verstanden" onClick={() => verstanden(s.id)}>
-                    „Verstanden"
-                  </button>
+                  {s.action && !s.actionDone && s.action.type === 'lagefreigabe' && (
+                    <button className="funk-action" onClick={() => executeAction(s.id)}>
+                      Anfahrt freigeben (Lagefreigabe)
+                    </button>
+                  )}
+                  {s.action && !s.actionDone && s.action.type === 'na-abziehen' && (
+                    <button className="funk-action" onClick={() => executeAction(s.id)}>
+                      NA abziehen (wird frei)
+                    </button>
+                  )}
+                  {s.stage === 'offen' && (
+                    <button className="funk-action funk-verstanden" onClick={() => verstanden(s.id)}>
+                      „Verstanden"
+                    </button>
+                  )}
                 </div>
               )}
             </div>

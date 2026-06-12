@@ -201,6 +201,34 @@
   font-size: var(--fs-xs);
 }
 
+.lagefreigabe-ok {
+  color: var(--ok);
+  font-size: var(--fs-xs);
+}
+
+.lagefreigabe-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+  border: 1px solid var(--warn);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  margin-bottom: var(--sp-2);
+}
+
+.lagefreigabe-btn {
+  margin-left: auto;
+  white-space: nowrap;
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+.lagefreigabe-btn.lagefreigabe-risiko {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
 .heli-hint {
   font-size: var(--fs-xs);
   color: var(--info);
@@ -388,4 +416,52 @@
   margin: 0;
   font-size: var(--fs-xs);
   color: var(--signal-amber);
+}
+
+/* Freie Mittelwahl + Einsatzinfos (Rework 2) */
+.freie-mittelwahl {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.freie-mittelwahl input {
+  font-size: var(--fs-xs);
+}
+
+.auftrag-infos {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--sp-1);
+}
+
+.auftrag-infos-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.info-time {
+  color: var(--text-muted);
+}
+
+.auftrag-infos-form {
+  display: flex;
+  gap: 4px;
+}
+
+.auftrag-infos-form input {
+  flex: 1;
+  font-size: var(--fs-xs);
+}
+
+.auftrag-infos-form button {
+  font-size: var(--fs-xs);
 }

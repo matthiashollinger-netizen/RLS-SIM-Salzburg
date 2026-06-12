@@ -95,31 +95,6 @@ function questionText(frageId: string): string {
   return frageById.get(frageId)?.text ?? frageId
 }
 
-/** Capture structured interview facts revealed by a question (truth-driven). */
-function captureAnswers(call: ActiveCall, frageId: string): Partial<AbfrageAnswers> {
-  const t = call.scenario.truth
-  switch (frageId) {
-    case 'personen':
-      if (call.scenario.anrufer.emotion !== 'panisch' || call.callerState.calmed)
-        return { personen: t.personen }
-      return {}
-    case 'bewusstsein':
-      return { ansprechbar: t.ansprechbar }
-    case 'atmung':
-      return { atmet: t.atmet }
-    case 'alter':
-      return { alter: t.alter }
-    case 'zugang':
-      return {
-        zugang: t.zugang === 'frei' ? 'frei' : t.zugang === 'versperrt' ? 'versperrt' : 'schwer',
-      }
-    case 'rueckruf':
-      return { rueckrufOk: true }
-    default:
-      return {}
-  }
-}
-
 /** Transcript → OpenAI-style messages (caller = assistant, calltaker = user). */
 function toChatMessages(call: ActiveCall): ChatMessage[] {
   const msgs: ChatMessage[] = [{ role: 'system', content: buildSystemPrompt(call.scenario) }]
@@ -155,7 +130,8 @@ function sendQuestion(set: SetFn, get: GetFn, text: string, frageId: string | nu
   if (!call || call.ended || get().generating) return
   const updated = { ...call }
   say(updated, 'calltaker', text, simSec)
-  if (frageId) updated.answers = { ...updated.answers, ...captureAnswers(updated, frageId) }
+  // KEIN Auto-Fill mehr: der Calltaker notiert die Antworten selbst im
+  // Abfrageschema-Fenster (Rework 2, Fenster-Split)
 
   const llm = useLlmStore.getState()
   const engine = llm.status === 'ready' ? llm.engine : null

@@ -54,17 +54,23 @@ describe('Funkprotokoll (GAME_DATA §10c — verbindlich)', () => {
   })
 })
 
-describe('NA-Nachforderung trigger (GAME_DATA §10c example)', () => {
-  it('fires for severe incidents without NA assigned', () => {
-    expect(needsNaNachforderung(baseAuftrag, ['RTW'])).toBe(true)
+describe('NA-Nachforderung trigger (Rework 2: nur Aufwertung niedriger Codes)', () => {
+  it('never fires on A-codes — the NA was already part of the dispatch', () => {
+    expect(needsNaNachforderung({ ...baseAuftrag, code: 'A1' }, ['RTW'])).toBe(false)
+    expect(needsNaNachforderung({ ...baseAuftrag, code: 'MANV1' }, ['RTW'])).toBe(false)
+  })
+  it('fires when a lower-coded incident is truly critical and has no NA', () => {
+    const b1 = { ...baseAuftrag, code: 'B1', truthSeverity: 'hoch' as const }
+    expect(needsNaNachforderung(b1, ['RTW'])).toBe(true)
   })
   it('does not fire when an NA unit is on the incident', () => {
-    expect(needsNaNachforderung(baseAuftrag, ['RTW', 'NEF'])).toBe(false)
-    expect(needsNaNachforderung(baseAuftrag, ['HELI'])).toBe(false)
+    const b1 = { ...baseAuftrag, code: 'B1', truthSeverity: 'hoch' as const }
+    expect(needsNaNachforderung(b1, ['RTW', 'NEF'])).toBe(false)
+    expect(needsNaNachforderung(b1, ['HELI'])).toBe(false)
   })
-  it('does not fire for non-severe or transport codes', () => {
-    expect(needsNaNachforderung({ ...baseAuftrag, severity: 'normal' }, ['RTW'])).toBe(false)
-    expect(needsNaNachforderung({ ...baseAuftrag, code: 'D1' }, ['KTW'])).toBe(false)
+  it('does not fire when the truth is not critical', () => {
+    const b3 = { ...baseAuftrag, code: 'B3', severity: 'normal' as const, truthSeverity: 'normal' as const }
+    expect(needsNaNachforderung(b3, ['RTW'])).toBe(false)
   })
 })
 

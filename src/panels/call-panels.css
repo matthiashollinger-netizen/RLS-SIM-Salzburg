@@ -186,6 +186,90 @@
   padding: 2px var(--sp-2);
 }
 
+/* Abfrageschema-Formular (Rework 2: Fenster-Split, manuelles Notieren) */
+.schema-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  flex: none;
+}
+
+.schema-section {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel-inset);
+  padding: var(--sp-1) var(--sp-2) var(--sp-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.schema-section h4 {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--info);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.janein-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-xs);
+}
+
+.janein-label {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
+.janein-row button {
+  font-size: var(--fs-xs);
+  padding: 2px var(--sp-2);
+  min-width: 44px;
+}
+
+.janein-row select {
+  font-size: var(--fs-xs);
+}
+
+.schema-numbers {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.schema-numbers label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.schema-numbers input[type='number'] {
+  width: 70px;
+  font-size: var(--fs-xs);
+}
+
+.schema-rueckruf {
+  align-self: center;
+}
+
+.schema-warn {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.transcript-tall {
+  flex: 1 !important;
+  max-height: none !important;
+}
+
 /* Standardisiertes Abfrage-Schema (Rework #3) */
 .abfrage-schritte {
   display: flex;

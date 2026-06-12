@@ -1,40 +1,53 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
-  FRAGEN,
   HAUPTBESCHWERDEN,
   KT_KATEGORIEN,
   buildMerkmalskette,
   categoryFromAnswers,
-  hauptbeschwerdeById,
 } from '../engine/abfrage.ts'
 import { deriveCode } from '../engine/ao.ts'
 import { haversineKm } from '../engine/geo.ts'
 import { searchAddress } from '../lib/fuzzy.ts'
-import { formatCountdown } from '../lib/format.ts'
 import { useCallStore } from '../state/callStore.ts'
 import { useDispatchStore } from '../state/dispatchStore.ts'
 import { useGameStore } from '../state/gameStore.ts'
-import { useLlmStore } from '../state/llmStore.ts'
 import { alarmtext } from '../engine/auftrag.ts'
 import './panels.css'
 import './call-panels.css'
 
-function Transcript() {
-  const active = useCallStore((s) => s.active)
-  const endRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ block: 'end' })
-  }, [active?.transcript.length])
-  if (!active) return null
+/**
+ * Abfrageschema-Fenster (Rework 2, Fenster-Split): das OFFIZIELLE
+ * standardisierte Schema — Ja/Nein-Fragen und Auswahlpunkte, die der
+ * Calltaker selbst aus dem Gespräch NOTIERT (kein Auto-Fill). Daraus
+ * entsteht der Einsatz; editierbar bleibt er ohnehin.
+ */
+
+function JaNein({
+  label,
+  value,
+  onChange,
+}: {
+  label: string
+  value: boolean | undefined
+  onChange: (v: boolean) => void
+}) {
   return (
-    <div className="transcript" data-testid="transcript" role="log" aria-live="polite" aria-label="Gesprächsverlauf">
-      {active.transcript.map((t, i) => (
-        <p key={i} className={`transcript-${t.from}`}>
-          {t.from === 'anrufer' ? '☎ ' : t.from === 'calltaker' ? '🎧 ' : 'ℹ '}
-          {t.text}
-        </p>
-      ))}
-      <div ref={endRef} />
+    <div className="janein-row">
+      <span className="janein-label">{label}</span>
+      <button
+        className={value === true ? 'beschwerde-active' : ''}
+        aria-pressed={value === true}
+        onClick={() => onChange(true)}
+      >
+        Ja
+      </button>
+      <button
+        className={value === false ? 'beschwerde-active' : ''}
+        aria-pressed={value === false}
+        onClick={() => onChange(false)}
+      >
+        Nein
+      </button>
     </div>
   )
 }
@@ -162,59 +175,25 @@ function DuplikatBlock() {
   )
 }
 
-/** One numbered step of the standardized questionnaire (Rework #3). */
-function Schritt({
-  nr,
-  title,
-  done,
-  current,
-  children,
-}: {
-  nr: number
-  title: string
-  done: boolean
-  current: boolean
-  children: React.ReactNode
-}) {
-  return (
-    <section
-      className={`abfrage-schritt${done ? ' schritt-done' : ''}${current ? ' schritt-current' : ''}`}
-      aria-label={`Schritt ${nr}: ${title}`}
-    >
-      <header className="schritt-header">
-        <span className="schritt-nr mono">{done ? '✓' : nr}</span>
-        <span className="schritt-title">{title}</span>
-      </header>
-      <div className="schritt-body">{children}</div>
-    </section>
-  )
-}
-
 export function AbfragePanel() {
   const active = useCallStore((s) => s.active)
-  const ask = useCallStore((s) => s.ask)
-  const askFreeText = useCallStore((s) => s.askFreeText)
-  const generating = useCallStore((s) => s.generating)
-  const hangup = useCallStore((s) => s.hangup)
-  const chooseHauptbeschwerde = useCallStore((s) => s.chooseHauptbeschwerde)
   const setAnswer = useCallStore((s) => s.setAnswer)
+  const chooseHauptbeschwerde = useCallStore((s) => s.chooseHauptbeschwerde)
   const createAuftrag = useCallStore((s) => s.createAuftrag)
-  const simSec = useGameStore((s) => s.simSec)
-  const llmStatus = useLlmStore((s) => s.status)
-  const [freeText, setFreeText] = useState('')
 
   if (!active) {
     return (
       <div className="panel-empty" data-testid="abfrage-panel">
         <p>Kein aktives Gespräch.</p>
-        <p className="panel-hint">Anruf in der Anruf-Queue annehmen.</p>
+        <p className="panel-hint">
+          Das offizielle Abfrageschema füllt sich mit dem nächsten Anruf — Antworten
+          aus dem Gespräch hier selbst notieren.
+        </p>
       </div>
     )
   }
 
   const a = active.answers
-  const asked = active.callerState.asked
-  const hb = a.hauptbeschwerdeId ? hauptbeschwerdeById.get(a.hauptbeschwerdeId) : undefined
   const derived = categoryFromAnswers(a)
   const codePreview = deriveCode(derived.categoryId, {
     personen: a.personen ?? 1,
@@ -223,80 +202,112 @@ export function AbfragePanel() {
   const merkmalskette = buildMerkmalskette(a)
   const canCreate = !!a.adresse || !!active.amlPoint
 
-  // standardized phases (GAME_DATA §3) with completion state
-  const ortDone = !!a.adresse
-  const geschehenDone = !!a.hauptbeschwerdeId || !!a.categoryId
-  const personenDone = a.personen !== undefined && a.rueckrufOk === true
-  const vitalDone = a.ansprechbar !== undefined && a.atmet !== undefined
-  const detailDone = asked.includes('detail1') || asked.includes('detail2')
-  const steps = [ortDone, geschehenDone, personenDone, vitalDone, detailDone]
-  const currentStep = steps.findIndex((d) => !d) + 1 || 6
-
-  const frage = (id: string) => FRAGEN.find((f) => f.id === id)!
-
   return (
     <div className="abfrage-panel" data-testid="abfrage-panel">
-      <div className="abfrage-header">
-        <span className="mono">{active.id}</span>
-        <span>{active.scenario.phone === 'handy' ? 'Mobil' : 'Festnetz'}</span>
-        <span className="mono">
-          ⏱ {active.answeredAt !== undefined ? formatCountdown(simSec - active.answeredAt) : ''}
-        </span>
-        <span
-          className={`llm-indicator ${llmStatus === 'ready' ? 'llm-on' : ''}`}
-          title={
-            llmStatus === 'ready'
-              ? 'KI-Anrufer aktiv (freie Antworten)'
-              : 'Dialogbaum aktiv — KI-Anrufer in ⚙ Einstellungen aktivierbar'
-          }
-        >
-          {llmStatus === 'ready' ? 'KI' : 'Skript'}
-        </span>
-        <button onClick={() => ask('beruhigen')} title="Anrufer beruhigen">
-          Beruhigen
-        </button>
-        <button className="hangup-btn" onClick={hangup}>
-          Auflegen
-        </button>
-      </div>
-
-      <Transcript />
-      {generating && <div className="caller-typing">Anrufer spricht…</div>}
-
-      <form
-        className="freitext-row"
-        onSubmit={(e) => {
-          e.preventDefault()
-          const text = freeText.trim()
-          if (!text) return
-          askFreeText(text)
-          setFreeText('')
-        }}
-      >
-        <input
-          aria-label="Freitext-Frage"
-          placeholder="Eigene Frage stellen…"
-          value={freeText}
-          disabled={generating}
-          onChange={(e) => setFreeText(e.target.value)}
-        />
-        <button type="submit" disabled={generating || !freeText.trim()}>
-          Fragen
-        </button>
-      </form>
-
-      <div className="abfrage-schritte" data-testid="abfrage-schritte">
-        <Schritt nr={1} title="Notfallort" done={ortDone} current={currentStep === 1}>
-          <div className="schritt-buttons">
-            <button onClick={() => ask('ort')}>{frage('ort').text}</button>
-          </div>
+      <div className="schema-grid">
+        <section className="schema-section">
+          <h4>1 · Notfallort</h4>
           <AdresseBlock />
-        </Schritt>
+        </section>
 
-        <Schritt nr={2} title="Was ist passiert?" done={geschehenDone} current={currentStep === 2}>
-          <div className="schritt-buttons">
-            <button onClick={() => ask('geschehen')}>{frage('geschehen').text}</button>
+        <section className="schema-section">
+          <h4>2 · Anrufer & Personen</h4>
+          <div className="anrufer-rolle-row">
+            <span>Anrufer:</span>
+            {(['selbst', 'angehoeriger', 'passant', 'fachpersonal', 'kind'] as const).map((r) => (
+              <button
+                key={r}
+                className={a.rolle === r ? 'beschwerde-active' : ''}
+                onClick={() => setAnswer({ rolle: r })}
+              >
+                {r === 'selbst'
+                  ? 'Selbst'
+                  : r === 'angehoeriger'
+                    ? 'Angehörige/r'
+                    : r === 'passant'
+                      ? 'Passant'
+                      : r === 'fachpersonal'
+                        ? 'Fachpersonal'
+                        : 'Kind'}
+              </button>
+            ))}
           </div>
+          <div className="schema-numbers">
+            <label>
+              Personen
+              <input
+                aria-label="Personenzahl notieren"
+                type="number"
+                min={1}
+                max={200}
+                value={a.personen ?? ''}
+                onChange={(e) =>
+                  setAnswer({ personen: e.target.value ? Number(e.target.value) : undefined })
+                }
+              />
+            </label>
+            <label>
+              Alter (ca.)
+              <input
+                aria-label="Alter notieren"
+                type="number"
+                min={0}
+                max={120}
+                value={a.alter ?? ''}
+                onChange={(e) =>
+                  setAnswer({ alter: e.target.value ? Number(e.target.value) : undefined })
+                }
+              />
+            </label>
+            <label className="panel-checkbox schema-rueckruf">
+              <input
+                type="checkbox"
+                checked={a.rueckrufOk === true}
+                onChange={(e) => setAnswer({ rueckrufOk: e.target.checked })}
+              />
+              Rückruf bestätigt
+            </label>
+          </div>
+        </section>
+
+        <section className="schema-section">
+          <h4>3 · Vitalstatus (Schlüsselfragen)</h4>
+          <JaNein
+            label="Person ansprechbar?"
+            value={a.ansprechbar}
+            onChange={(v) => setAnswer({ ansprechbar: v })}
+          />
+          <JaNein label="Atmet normal?" value={a.atmet} onChange={(v) => setAnswer({ atmet: v })} />
+          <div className="janein-row">
+            <span className="janein-label">Zugang</span>
+            <select
+              aria-label="Zugang notieren"
+              value={a.zugang ?? ''}
+              onChange={(e) =>
+                setAnswer({
+                  zugang: (e.target.value || undefined) as
+                    | 'frei'
+                    | 'versperrt'
+                    | 'schwer'
+                    | undefined,
+                })
+              }
+            >
+              <option value="">—</option>
+              <option value="frei">frei zugänglich</option>
+              <option value="versperrt">versperrt</option>
+              <option value="schwer">schwer zugänglich</option>
+            </select>
+          </div>
+          {a.atmet === false && (
+            <p className="schema-warn">
+              ⚠ Keine normale Atmung → STILL (A1) — Telefonreanimation anleiten!
+            </p>
+          )}
+        </section>
+
+        <section className="schema-section">
+          <h4>4 · Hauptbeschwerde / Stichwort</h4>
           <div className="beschwerde-grid" data-testid="beschwerde-grid">
             {HAUPTBESCHWERDEN.map((h) => (
               <button
@@ -320,60 +331,7 @@ export function AbfragePanel() {
               </button>
             ))}
           </div>
-        </Schritt>
-
-        <Schritt nr={3} title="Personen & Rückruf" done={personenDone} current={currentStep === 3}>
-          <div className="schritt-buttons">
-            <button onClick={() => ask('personen')}>{frage('personen').text}</button>
-            <button onClick={() => ask('rueckruf')}>{frage('rueckruf').text}</button>
-          </div>
-          <div className="anrufer-rolle-row">
-            <span>Anrufer:</span>
-            {(['selbst', 'angehoeriger', 'passant', 'fachpersonal', 'kind'] as const).map((r) => (
-              <button
-                key={r}
-                className={a.rolle === r ? 'beschwerde-active' : ''}
-                onClick={() => setAnswer({ rolle: r })}
-              >
-                {r === 'selbst'
-                  ? 'Selbst'
-                  : r === 'angehoeriger'
-                    ? 'Angehörige/r'
-                    : r === 'passant'
-                      ? 'Passant'
-                      : r === 'fachpersonal'
-                        ? 'Fachpersonal'
-                        : 'Kind'}
-              </button>
-            ))}
-          </div>
-        </Schritt>
-
-        <Schritt nr={4} title="Vitalfragen" done={vitalDone} current={currentStep === 4}>
-          <div className="schritt-buttons">
-            <button onClick={() => ask('bewusstsein')}>{frage('bewusstsein').text}</button>
-            <button onClick={() => ask('atmung')}>{frage('atmung').text}</button>
-            <button onClick={() => ask('alter')}>{frage('alter').text}</button>
-            <button onClick={() => ask('zugang')}>{frage('zugang').text}</button>
-          </div>
-        </Schritt>
-
-        <Schritt
-          nr={5}
-          title={hb ? `Detailfragen (${hb.label})` : 'Detailfragen'}
-          done={detailDone}
-          current={currentStep === 5}
-        >
-          {hb ? (
-            <div className="schritt-buttons">
-              <button onClick={() => ask('detail1')}>{hb.detailFragen[0]}</button>
-              <button onClick={() => ask('detail2')}>{hb.detailFragen[1]}</button>
-              <button onClick={() => ask('eh_anweisung')}>EH-Anweisung geben</button>
-            </div>
-          ) : (
-            <p className="schritt-hint">Zuerst in Schritt 2 die Hauptbeschwerde wählen.</p>
-          )}
-        </Schritt>
+        </section>
       </div>
 
       <DuplikatBlock />

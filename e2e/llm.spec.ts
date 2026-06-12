@@ -23,7 +23,7 @@ test('settings: activate (mock) WebLLM caller and chat free-text', async ({ page
   // take a call and ask a free-text question → mock LLM answers
   await page.getByTestId('anruf-queue').getByRole('button', { name: 'Test-Anruf' }).click()
   await page.getByRole('button', { name: 'Annehmen' }).click()
-  const abfrage = page.getByTestId('abfrage-panel')
+  const abfrage = page.getByTestId('gespraech-panel')
   await abfrage.getByLabel('Freitext-Frage').fill('Wo genau ist der Notfallort?')
   await abfrage.getByRole('button', { name: 'Fragen' }).click()
   await expect(page.getByTestId('transcript')).toContainText('MOCK')
@@ -37,7 +37,7 @@ test('light mode stays fully playable with free text (Tier-1 classifier)', async
   await page.goto('/#/spiel')
   await page.getByTestId('anruf-queue').getByRole('button', { name: 'Test-Anruf' }).click()
   await page.getByRole('button', { name: 'Annehmen' }).click()
-  const abfrage = page.getByTestId('abfrage-panel')
+  const abfrage = page.getByTestId('gespraech-panel')
   await abfrage.getByLabel('Freitext-Frage').fill('Was ist denn genau passiert?')
   await abfrage.getByRole('button', { name: 'Fragen' }).click()
   // Tier-1 answers from the scenario truth (Brustschmerz demo)

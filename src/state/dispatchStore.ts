@@ -8,6 +8,7 @@ import {
   type AuftragOrt,
 } from '../engine/auftrag.ts'
 import { deriveCode, hospitalNeedsFor, type Severity } from '../engine/ao.ts'
+import { findUnits } from '../engine/dispatchSearch.ts'
 import { bestHospital, matchHospitals } from '../engine/hospitalMatch.ts'
 import { computeOutcome } from '../engine/outcome.ts'
 import { isAvailable } from '../engine/status.ts'
@@ -55,11 +56,27 @@ interface DispatchState {
   /** Stufe 2: alle zugeteilten Mittel alarmieren */
   alarmieren: (id: string) => boolean
   updateAuftrag: (id: string, patch: AuftragPatch) => void
+  /** timestamped Einsatzinfo (Rework 2) */
+  addInfo: (id: string, text: string) => void
+  /** Umdisponieren: pull a unit from its current Auftrag to another (Rework 2) */
+  redirectVehicle: (vehicleId: string, toAuftragId: string) => boolean
   cancelVehicle: (id: string, vehicleId: string) => void
   setHospital: (id: string, hospitalId: string) => void
   togglePartner: (id: string, partner: Partner) => void
+  /** dispatcher releases the approach after POL secured the scene (Rework 2) */
+  freigabeLage: (id: string) => void
+  /** sim-clock driven checks (police Lagefreigabe report) */
+  tick: (simSec: number) => void
   closeAuftrag: (id: string) => void
   handleVehicleEvent: (e: VehicleEvent) => void
+}
+
+/** Police needs ~4 min from alarm to secure the scene (ANNAHMEN.md, estimated). */
+const POLIZEI_SICHERUNG_SEC = 240
+
+/** Staging point ≈500 m north of the scene — units wait here until released. */
+function bereitstellungsraum(ort: { lat: number; lon: number }) {
+  return { lat: ort.lat + 0.0045, lon: ort.lon }
 }
 
 function log(kind: 'einsatz' | 'system', text: string, auftragId?: string) {
@@ -222,6 +239,11 @@ export const useDispatchStore = create<DispatchState>((set, get) => ({
       .map((rt) => ({ id: rt.id, typ: rt.unit.typ, notfallKtw: rt.unit.notfallKtw }))
     const transporters = allocateTransports(allUnits, a.personen)
 
+    // Lagefreigabe (Rework 2): unsecured POL scene → units only approach the
+    // Bereitstellungsraum until the dispatcher releases them (GAME_DATA §4 D/E)
+    const mustHold = a.lagefreigabe && !a.lageFreigegeben
+    const holdAt = mustHold ? bereitstellungsraum(a.ort) : undefined
+
     const alarmed: string[] = []
     for (const vid of staged) {
       const isTransporter = transporters.has(vid) && !!hospital
@@ -235,6 +257,7 @@ export const useDispatchStore = create<DispatchState>((set, get) => ({
           transport: isTransporter,
           zielort: hospital && isTransporter ? { lat: hospital.lat, lon: hospital.lon } : undefined,
           zielName: isTransporter ? hospital?.short : undefined,
+          holdAt,
         },
         simSec,
       )
@@ -277,7 +300,101 @@ export const useDispatchStore = create<DispatchState>((set, get) => ({
       })
       .join(', ')
     log('einsatz', `${id}: ALARMIERUNG — ${names}`, id)
+
+    // unsecured scene: police secures, dispatcher releases later (Rework 2)
+    if (mustHold) {
+      const cur = get().auftraege[id]!
+      if (!cur.partnersAlarmed.includes('POL')) {
+        get().togglePartner(id, 'POL')
+        get().addInfo(id, 'Polizei mitalarmiert — Lagefreigabe erforderlich')
+      }
+      if (cur.lagePolizeiFreiAt === undefined) {
+        set((s) => ({
+          auftraege: {
+            ...s.auftraege,
+            [id]: { ...s.auftraege[id]!, lagePolizeiFreiAt: simSec + POLIZEI_SICHERUNG_SEC },
+          },
+        }))
+        get().addInfo(
+          id,
+          'Anfahrt NUR bis Bereitstellungsraum — Einsatzort erst nach Lagefreigabe der Polizei anfahren!',
+        )
+      }
+    }
+
+    // „Kein NA verfügbar" (Rework 2): severe emergency alarmed without NA and
+    // none findable → the RTW crew must manage incl. transport
+    const after = get().auftraege[id]!
+    const isEmergency = !after.code.startsWith('D') && !after.code.startsWith('E')
+    if (isEmergency && after.severity === 'hoch') {
+      const hasNa = Object.keys(after.assigned).some((vid) => {
+        const typ = vehicleSim.get(vid)?.unit.typ
+        return typ === 'NEF' || typ === 'NAW' || typ === 'HELI'
+      })
+      if (!hasNa) {
+        const g = useGameStore.getState()
+        const naAvailable = findUnits(
+          vehicleSim,
+          ['NEF', 'NAW', 'HELI'],
+          after.ort,
+          true,
+          {
+            simSec,
+            weather: g.weather,
+            startWeekday: g.startWeekday,
+            month: g.month,
+            season: g.season,
+          },
+          1,
+        )
+        if (naAvailable.length === 0) {
+          get().addInfo(
+            id,
+            'KEIN Notarzt verfügbar — RTW-Besatzung übernimmt Versorgung und Transport!',
+          )
+        }
+      }
+    }
     return true
+  },
+
+  addInfo: (id, text) => {
+    const trimmed = text.trim()
+    if (!trimmed) return
+    const simSec = useGameStore.getState().simSec
+    set((s) => {
+      const a = s.auftraege[id]
+      if (!a) return s
+      return {
+        auftraege: {
+          ...s.auftraege,
+          [id]: { ...a, infos: [...(a.infos ?? []), { simSec, text: trimmed }] },
+        },
+      }
+    })
+    log('einsatz', `${id}: Info — ${trimmed}`, id)
+  },
+
+  redirectVehicle: (vehicleId, toAuftragId) => {
+    const rt = vehicleSim.get(vehicleId)
+    const target = get().auftraege[toAuftragId]
+    if (!rt || !target || target.state === 'abgeschlossen') return false
+    const simSec = useGameStore.getState().simSec
+    // pull from the current Auftrag (only before transport)
+    if (rt.assignment) {
+      const fromId = rt.assignment.id
+      if (rt.status === '4' || rt.status === '5') return false
+      if (get().auftraege[fromId]) {
+        get().cancelVehicle(fromId, vehicleId)
+        get().addInfo(fromId, `${unitDisplayName(rt.unit)} umdisponiert zu ${toAuftragId}`)
+      } else {
+        vehicleSim.cancelAssignment(vehicleId, simSec)
+      }
+    }
+    // direct dispatch to the new Auftrag (Umdisponierung = sofortiger Funkbefehl)
+    const ok = get().assignVehicle(toAuftragId, vehicleId) && get().alarmieren(toAuftragId)
+    if (ok) log('einsatz', `${toAuftragId}: ${unitDisplayName(rt.unit)} umdisponiert`, toAuftragId)
+    return ok
   },
 
   /** Auftrag bearbeiten (Rework #10): Ort/Kategorie/Schwere/Personen/Notiz. */
@@ -408,6 +525,48 @@ export const useDispatchStore = create<DispatchState>((set, get) => ({
       log('einsatz', `${id}: ${partner} ${has ? 'storniert' : 'alarmiert'}`, id)
       return { auftraege: { ...s.auftraege, [id]: { ...a, partnersAlarmed } } }
     }),
+
+  freigabeLage: (id) => {
+    const a = get().auftraege[id]
+    if (!a || !a.lagefreigabe || a.lageFreigegeben) return
+    const simSec = useGameStore.getState().simSec
+    set((s) => ({
+      auftraege: {
+        ...s.auftraege,
+        [id]: { ...s.auftraege[id]!, lageFreigegeben: true, lageGemeldet: true },
+      },
+    }))
+    vehicleSim.releaseHold(id, simSec)
+    get().addInfo(id, 'LAGEFREIGABE — Anfahrt zum Einsatzort frei')
+  },
+
+  tick: (simSec) => {
+    for (const a of Object.values(get().auftraege)) {
+      if (a.state === 'abgeschlossen' || !a.lagefreigabe) continue
+      if (a.lageGemeldet || a.lageFreigegeben) continue
+      if (a.lagePolizeiFreiAt === undefined || simSec < a.lagePolizeiFreiAt) continue
+      set((s) => ({
+        auftraege: { ...s.auftraege, [a.id]: { ...s.auftraege[a.id]!, lageGemeldet: true } },
+      }))
+      log('einsatz', `${a.id}: Polizei meldet — Lage gesichert`, a.id)
+      // police radios the clearance; the dispatcher confirms via funk action
+      void import('./funkStore.ts').then(({ useFunkStore }) =>
+        useFunkStore.getState().append({
+          simSec,
+          kind: 'lagemeldung',
+          auftragId: a.id,
+          stage: 'offen',
+          lines: [
+            {
+              speaker: 'Polizei',
+              text: `Lage ${a.ort.strasse} ist gesichert — Zufahrt für Rettung frei.`,
+            },
+          ],
+          action: { type: 'lagefreigabe', auftragId: a.id },
+        }),
+      )
+    }
+  },
 
   closeAuftrag: (id) =>
     set((s) => {

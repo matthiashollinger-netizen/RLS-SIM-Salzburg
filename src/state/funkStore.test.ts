@@ -45,13 +45,16 @@ describe('funkStore interactive radio (Rework #4)', () => {
     expect(useFunkStore.getState().sprueche.find((s) => s.id === spruch.id)!.stage).toBe('ruf')
   })
 
-  it('NA-Nachforderung action creates an A4 Auftrag after kommen', () => {
+  it('NA-Nachforderung UPGRADES the existing Auftrag to A4 after kommen (Rework 2)', () => {
     const dispatch = useDispatchStore.getState()
     const baseId = dispatch.createAuftrag({
-      categoryId: 'STILL',
-      severity: 'hoch',
+      categoryId: 'KRANK',
+      severity: 'normal',
       ort: { lat: 47.8, lon: 13.04, stadtteil: 'Lehen', strasse: 'Ignaz-Harrer-Straße' },
+      truthCategoryId: 'INTERN',
+      truthSeverity: 'hoch',
     })
+    expect(useDispatchStore.getState().auftraege[baseId]!.code).toBe('B3')
 
     const funk = useFunkStore.getState()
     funk.append({
@@ -60,7 +63,7 @@ describe('funkStore interactive radio (Rework #4)', () => {
       vehicleId: '5.20-201',
       auftragId: baseId,
       stage: 'ruf',
-      pendingMessage: 'Laufende CPR, benötigen dringend Notarzt!',
+      pendingMessage: 'Patient deutlich schlechter als gemeldet — benötigen Notarzt nach!',
       lines: [{ speaker: '20-201', text: 'Leitstelle von 20-201' }],
       action: { type: 'a4', auftragId: baseId },
     })
@@ -68,15 +71,16 @@ describe('funkStore interactive radio (Rework #4)', () => {
 
     // action is blocked while still ringing
     useFunkStore.getState().executeAction(spruch.id)
-    expect(Object.values(useDispatchStore.getState().auftraege).find((a) => a.code === 'A4')).toBeUndefined()
+    expect(useDispatchStore.getState().auftraege[baseId]!.code).toBe('B3')
 
     useFunkStore.getState().kommen(spruch.id)
     useFunkStore.getState().executeAction(spruch.id)
 
-    const a4 = Object.values(useDispatchStore.getState().auftraege).find((a) => a.code === 'A4')
-    expect(a4).toBeDefined()
-    expect(a4!.ort.strasse).toBe('Ignaz-Harrer-Straße')
-    expect(a4!.sosi).toBe(true)
+    const upgraded = useDispatchStore.getState().auftraege[baseId]!
+    expect(upgraded.code).toBe('A4') // same Auftrag, upgraded — no new one
+    expect(upgraded.sosi).toBe(true)
+    expect(upgraded.severity).toBe('hoch')
+    expect(upgraded.infos?.some((i) => i.text.includes('aufgewertet'))).toBe(true)
     expect(useFunkStore.getState().sprueche.find((s) => s.id === spruch.id)!.stage).toBe('quittiert')
   })
 

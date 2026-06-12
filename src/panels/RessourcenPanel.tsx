@@ -7,6 +7,7 @@ import { vehicleSim } from '../state/simulation.ts'
 import { useGameStore } from '../state/gameStore.ts'
 import { useMapStore } from '../state/mapStore.ts'
 import { probealarm } from '../state/debugActions.ts'
+import { useDispatchStore } from '../state/dispatchStore.ts'
 import { useFunkStore } from '../state/funkStore.ts'
 import { useWindowStore } from '../windows/windowStore.ts'
 import { StatusBadge } from '../components/StatusBadge.tsx'
@@ -63,6 +64,10 @@ export function RessourcenPanel() {
 
   const sel = selected ? vehicleSim.get(selected) : undefined
   const simSec = useGameStore.getState().simSec
+  const selectedAuftragId = useDispatchStore((s) => s.selectedId)
+  const selectedAuftrag = useDispatchStore((s) =>
+    s.selectedId ? s.auftraege[s.selectedId] : undefined,
+  )
 
   return (
     <div className="ressourcen-panel" data-testid="ressourcen-panel">
@@ -112,6 +117,18 @@ export function RessourcenPanel() {
               Anfunken
             </button>
           )}
+          {selectedAuftragId &&
+            selectedAuftrag?.state !== 'abgeschlossen' &&
+            sel.status !== 'AUS' &&
+            (isAvailable(sel.status) || sel.status === '1' || sel.status === '2' || sel.status === '3') &&
+            !selectedAuftrag?.assigned[sel.id] && (
+              <button
+                title="Mittel (auch aus laufendem Einsatz) zum ausgewählten Auftrag umdisponieren"
+                onClick={() => useDispatchStore.getState().redirectVehicle(sel.id, selectedAuftragId)}
+              >
+                ⇒ zu {selectedAuftragId}
+              </button>
+            )}
           {isAvailable(sel.status) && (
             <>
               <button onClick={() => probealarm(sel.id)}>Probealarm (ÜBUNG)</button>

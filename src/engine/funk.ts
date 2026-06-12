@@ -40,7 +40,12 @@ export interface FunkSpruch {
   /** revealed when the player answers „kommen" */
   pendingMessage?: string
   /** suggested dispatcher action (available once the message is heard) */
-  action?: { type: 'a4' | 'polizei'; auftragId: string }
+  action?: {
+    type: 'a4' | 'polizei' | 'na-abziehen' | 'lagefreigabe'
+    auftragId: string
+    vehicleId?: string
+  }
+  actionDone?: boolean
 }
 
 export const LEITSTELLE = 'Leitstelle'
@@ -84,17 +89,30 @@ export function eintreffMeldung(rt: VehicleRuntime): string {
 
 /**
  * NA-Nachforderung (GAME_DATA §10c Original: „Laufende CPR, benötigen NEF und RTW").
- * Trigger: severe incident, but no NA unit (NEF/NAW/Heli) assigned.
+ * Rework-Regel: Bei A-/MANV-Einsätzen ist der NA ohnehin disponiert — KEINE
+ * Nachforderung. Sie kommt nur, wenn ein niedriger eingestufter Einsatz
+ * (B/C/D/E) sich vor Ort als NA-pflichtig herausstellt (Wahrheits-Schwere),
+ * und sie WERTET den bestehenden Auftrag auf (Code → A4), statt einen neuen
+ * anzulegen.
  */
 export function needsNaNachforderung(auftrag: Auftrag, assignedTypes: string[]): boolean {
-  if (auftrag.severity !== 'hoch') return false
-  if (auftrag.code.startsWith('D') || auftrag.code.startsWith('E')) return false
+  if (auftrag.code.startsWith('A') || auftrag.code.startsWith('MANV')) return false
+  const wirklichKritisch = (auftrag.truthSeverity ?? auftrag.severity) === 'hoch'
+  if (!wirklichKritisch) return false
   return !assignedTypes.some((t) => t === 'NEF' || t === 'NAW' || t === 'HELI')
 }
 
 export function naNachforderungText(auftrag: Auftrag): string {
-  if (auftrag.categoryId === 'STILL') return 'Laufende CPR, benötigen dringend Notarzt!'
-  return 'Patient kritisch — benötigen Notarzt nach, bitte A4 auslösen.'
+  if ((auftrag.truthCategoryId ?? auftrag.categoryId) === 'STILL')
+    return 'Laufende CPR, benötigen dringend Notarzt!'
+  return 'Patient deutlich schlechter als gemeldet — benötigen Notarzt nach!'
+}
+
+/** Is the NA on scene releasable for another incident? (deterministic) */
+export function naReleasable(rt: VehicleRuntime, simSec: number): boolean {
+  if (rt.unit.typ !== 'NEF' && rt.unit.typ !== 'NAW' && rt.unit.typ !== 'HELI') return false
+  if (rt.status !== '3') return false
+  return (rt.id.length + Math.floor(simSec / 600)) % 2 === 0
 }
 
 /** Polizei-Nachforderung when the category needs POL but it was not alarmed. */
@@ -144,10 +162,9 @@ export function quickReply(id: QuickPhraseId, ctx: QuickReplyContext): string {
     case 'na-abkoemmlich': {
       if (rt.unit.typ !== 'NEF' && rt.unit.typ !== 'NAW' && rt.unit.typ !== 'HELI')
         return 'Hier ist kein Notarzt an Bord.'
-      // deterministic per vehicle+time bucket: roughly half are releasable
-      const releasable = (rt.id.length + Math.floor(simSec / 600)) % 2 === 0
-      return releasable
-        ? 'NA ist abkömmlich, Patient ist versorgt.'
+      if (rt.status !== '3') return 'Sind nicht an einer Einsatzstelle gebunden.'
+      return naReleasable(rt, simSec)
+        ? 'NA ist abkömmlich, Patient ist versorgt — RTW übernimmt.'
         : 'Negativ, NA wird hier noch benötigt.'
     }
   }

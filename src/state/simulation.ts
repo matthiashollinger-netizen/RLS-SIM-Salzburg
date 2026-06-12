@@ -129,6 +129,8 @@ async function tickWorld(simSec: number) {
   void maybeGenerateCall(simSec)
   const { useCallStore } = await import('./callStore.ts')
   useCallStore.getState().tick(simSec)
+  const { useDispatchStore } = await import('./dispatchStore.ts')
+  useDispatchStore.getState().tick(simSec)
   const ai = await import('./aiPartners.ts')
   if (g.role === 'disponent') ai.aiCalltakerTick(simSec)
   if (g.role === 'calltaker') ai.aiDispatcherTick(simSec)
@@ -140,8 +142,33 @@ async function tickWorld(simSec: number) {
   checkShiftEnd()
 }
 
+// ---- street routing graph (Rework: Fahrzeuge folgen der Straße) ----
+let roadGraphRequested = false
+
+async function loadRoads() {
+  if (roadGraphRequested) return
+  roadGraphRequested = true
+  try {
+    const { isRoadGraphLoaded, loadRoadGraph } = await import('../engine/roadGraph.ts')
+    if (isRoadGraphLoaded()) return
+    const base = import.meta.env.BASE_URL ?? './'
+    const res = await fetch(`${base}roads-sbg.json`)
+    if (!res.ok) throw new Error(String(res.status))
+    loadRoadGraph(await res.json())
+    useEventLog.getState().append({
+      simSec: useGameStore.getState().simSec,
+      kind: 'system',
+      text: 'Straßennetz geladen — Routen folgen jetzt dem Straßenverlauf.',
+    })
+  } catch {
+    // fallback model (Luftlinie × Umwegfaktor) keeps working
+    roadGraphRequested = false
+  }
+}
+
 /** Start the global game loop once (idempotent — StrictMode-safe). */
 export function startGameLoop() {
+  void loadRoads()
   if (loopHandle) return
   loopHandle = setInterval(() => {
     const g = useGameStore.getState()

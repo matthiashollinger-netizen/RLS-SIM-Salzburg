@@ -1,5 +1,6 @@
 import { balancing } from '../data/index.ts'
 import { haversineKm, pointInPolygon, type LatLon } from './geo.ts'
+import { routeRoad } from './roadGraph.ts'
 import type { VehicleType } from '../data/schemas.ts'
 
 /**
@@ -38,4 +39,27 @@ export function routeTravelSec(from: LatLon, to: LatLon, opts: TravelOptions): n
   const km = dist * balancing.routing.detourFactor
   const v = groundSpeedKmh(from, to, opts.sosi)
   return (km / v) * 3600
+}
+
+export interface GroundRoute {
+  sec: number
+  km: number
+  /** street polyline (only when the road graph is loaded) */
+  path?: LatLon[]
+}
+
+/**
+ * Ground route following real streets when the road graph is available
+ * (Rework: Luftlinie nur für Helis); falls back to the haversine model
+ * otherwise (tests, graph still loading).
+ */
+export function routeGround(from: LatLon, to: LatLon, opts: TravelOptions): GroundRoute {
+  if (opts.typ !== 'HELI') {
+    const road = routeRoad(from, to)
+    if (road) {
+      const sosiFactor = opts.sosi ? balancing.routing.sosiSpeedFactor : 1
+      return { sec: (road.timeH * 3600) / sosiFactor, km: road.km, path: road.path }
+    }
+  }
+  return { sec: routeTravelSec(from, to, opts), km: haversineKm(from, to) }
 }

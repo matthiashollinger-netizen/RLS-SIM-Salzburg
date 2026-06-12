@@ -280,3 +280,38 @@
   nicht gegen den Dev-Server.
 - **Begründung:** Testet die gleiche Artefakt-Konfiguration (relative Base), die auf Pages
   deployt wird.
+
+## 2026-06-12 — Rework 2 (zweites Spieler-Feedback)
+
+### Straßennetz & Routing
+- **Frage:** Wie folgen Fahrzeuge der Straße ohne Laufzeit-Routingdienst?
+- **Entscheidung:** Einmaliger Overpass-Export (Build-Zeit, `scripts/build-roads.mts`)
+  der Straßenklassen motorway…unclassified im Land Salzburg → `public/roads-sbg.json`
+  (2,8 MB, 58k Knoten). Im Browser A*-Suche mit Klassen-Geschwindigkeiten
+  100/80/65/50 km/h, SoSi-Faktor aus balancing.json. Heli weiter Luftlinie.
+- **Begründung:** CLAUDE.md verbietet Laufzeit-APIs; Buildzeit-OSM-Export ist
+  explizit erlaubt. Fallback (Luftlinie × Umwegfaktor) bleibt aktiv, wenn die
+  Datei nicht lädt (CI/offline).
+
+### Bereitstellungsraum & Lagefreigabe
+- **Frage:** Wie läuft ein Einsatz mit erforderlicher Polizei-Freigabe ab?
+- **Entscheidung:** Kategorien mit `lagefreigabe:true` → alarmierte Mittel fahren
+  einen Bereitstellungsraum ≈500 m nördlich des EO an (Status bleibt 2,
+  „wartet auf Lagefreigabe"). Polizei wird automatisch mitalarmiert und meldet
+  nach 240 s (SCHÄTZUNG) „Lage gesichert" über Funk; der Disponent gibt die
+  Anfahrt frei (Funk-Aktion oder Button im Auftrag — auch vorzeitig auf eigenes
+  Risiko möglich).
+- **Begründung:** Reale Eigensicherungs-Doktrin; 4 min Sicherungszeit ist eine
+  spielbare Schätzung.
+
+### NA-Logik
+- A4-Aufwertung nur bei B/C/D/E-Einsätzen, deren Wahrheits-Schwere „hoch" ist
+  und kein NA-Mittel disponiert wurde — der BESTEHENDE Auftrag wird auf A4
+  aufgewertet (kein neuer). „NA abkömmlich" deterministisch (~50 % nach Lage),
+  Abzug über Funk-Aktion. „Kein NA verfügbar" wird als Einsatzinfo gesetzt —
+  der RTW übernimmt Versorgung UND Transport.
+
+### Anrufer-Konsistenz
+- Szenario-Fakten (Lagetext, Detailantworten, Rolle, Alter, Geschlecht) sind
+  jetzt in EINER Variante gebunden statt unabhängig gewürfelt — keine
+  Widersprüche („Lift" vs. „Badezimmer", 7-jährige „Mutter") mehr möglich.

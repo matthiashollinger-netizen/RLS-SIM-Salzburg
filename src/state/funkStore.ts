@@ -7,6 +7,7 @@ import {
   eintreffMeldung,
   leitstelleCallsVehicle,
   naNachforderungText,
+  naReleasable,
   needsNaNachforderung,
   needsPolizeiNachforderung,
   quickReply,
@@ -134,24 +135,35 @@ export const useFunkStore = create<FunkState>((set, get) => ({
 
   executeAction: (spruchId) => {
     const spruch = get().sprueche.find((s) => s.id === spruchId)
-    if (!spruch?.action || spruch.stage === 'ruf') return
+    if (!spruch?.action || spruch.actionDone || spruch.stage === 'ruf') return
     const dispatch = useDispatchStore.getState()
     const auftrag = dispatch.auftraege[spruch.action.auftragId]
     if (!auftrag) return
     if (spruch.action.type === 'a4') {
-      // NA-Nachforderung durch Einsatzmittel vor Ort → A4 (GAME_DATA §4)
-      dispatch.createAuftrag({
-        categoryId: auftrag.categoryId,
-        severity: 'hoch',
-        personen: auftrag.personen,
-        ort: auftrag.ort,
-        merkmalskette: [`NA-Nachforderung zu ${auftrag.id}`, ...auftrag.merkmalskette],
-        code: 'A4',
-      })
+      // NA-Nachforderung WERTET den bestehenden Auftrag auf (Rework 2):
+      // Code → A4 (NA-Nachforderung durch Einsatzmittel vor Ort, GAME_DATA §4)
+      dispatch.overrideCode(auftrag.id, 'A4')
+      dispatch.updateAuftrag(auftrag.id, { severity: 'hoch' })
+      dispatch.addInfo(auftrag.id, 'NA nachgefordert durch Mannschaft — Auftrag auf A4 aufgewertet')
+      dispatch.select(auftrag.id)
     } else if (spruch.action.type === 'polizei') {
       if (!auftrag.partnersAlarmed.includes('POL')) dispatch.togglePartner(auftrag.id, 'POL')
+    } else if (spruch.action.type === 'lagefreigabe') {
+      dispatch.freigabeLage(auftrag.id)
+      dispatch.select(auftrag.id)
+    } else if (spruch.action.type === 'na-abziehen' && spruch.action.vehicleId) {
+      const vid = spruch.action.vehicleId
+      const rt = vehicleSim.get(vid)
+      dispatch.cancelVehicle(auftrag.id, vid)
+      dispatch.addInfo(
+        auftrag.id,
+        `${rt ? unitDisplayName(rt.unit) : vid} (NA) abgezogen — RTW übernimmt die Versorgung`,
+      )
     }
-    get().verstanden(spruchId)
+    set((st) => ({
+      sprueche: st.sprueche.map((s) => (s.id === spruchId ? { ...s, actionDone: true } : s)),
+    }))
+    if (spruch.stage === 'offen') get().verstanden(spruchId)
   },
 
   callVehicle: (vehicleId, phraseId) => {
@@ -175,6 +187,9 @@ export const useFunkStore = create<FunkState>((set, get) => ({
     const current = vehicleSim.get(vehicleId)!
     const statusLabel = statusByCode.get(current.status)?.label ?? ''
     const reply = quickReply(phraseId, { rt: current, simSec, statusLabel, cancelOk })
+    // releasable NA → offer the "abziehen" action right on the dialog (Rework 2)
+    const releasable =
+      phraseId === 'na-abkoemmlich' && current.assignment && naReleasable(current, simSec)
     get().append({
       simSec,
       kind: 'anfrage',
@@ -182,6 +197,10 @@ export const useFunkStore = create<FunkState>((set, get) => ({
       auftragId: rt.assignment?.id,
       stage: 'quittiert',
       lines: leitstelleCallsVehicle(name, phrase.question, reply),
+      action:
+        releasable && current.assignment
+          ? { type: 'na-abziehen', auftragId: current.assignment.id, vehicleId }
+          : undefined,
     })
   },
 
@@ -254,9 +273,11 @@ export const useFunkStore = create<FunkState>((set, get) => ({
         action,
       })
 
+    const isEmergency = !auftrag.code.startsWith('D') && !auftrag.code.startsWith('E')
+
     if (e.to === '3') {
-      // Erstmeldung: only the FIRST unit on scene calls in (Rework #5)
-      if (!erstmeldungDone.has(auftrag.id)) {
+      // Erstmeldung: only the FIRST unit on scene, only for emergencies (Rework 2)
+      if (isEmergency && !erstmeldungDone.has(auftrag.id)) {
         erstmeldungDone.add(auftrag.id)
         incomingCall('eintreffen', eintreffMeldung(rt))
       }
@@ -282,8 +303,8 @@ export const useFunkStore = create<FunkState>((set, get) => ({
         })
       }
     } else if (e.to === '5') {
-      // Sprechwunsch (~every third unit, deterministic per id)
-      if (rt.id.charCodeAt(rt.id.length - 1) % 3 === 0) {
+      // Sprechwunsch: seltener (~jede 5. Einheit) und nur bei Notfällen (Rework 2)
+      if (isEmergency && rt.id.charCodeAt(rt.id.length - 1) % 5 === 0) {
         incomingCall('sprechwunsch', sprechwunschText(rt))
       }
     }
